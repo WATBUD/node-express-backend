@@ -1,6 +1,7 @@
 import axios from "axios";
 import _ from "lodash";
 
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 class GetStocksService {
   //static httpClient = axios.create();
   constructor() {
@@ -60,25 +61,23 @@ class GetStocksService {
 
   static async getThreeMajorInstitutionalInvestors() {
     try {
-      const latestOpeningDate = await this.getTheLatestOpeningDate(); // 假设实现了这个函数来获取最新的开放日期
-
-      const apiUrl = `https://wwwc.twse.com.tw/rwd/zh/fund/T86?date=${latestOpeningDate}&selectType=ALL&response=json&_=1704631325883`;
+    //   const axiosConfig = {
+    //     httpsAgent: false,
+    //   };
+      const latestOpeningDate = await this.getTheLatestOpeningDate();
+      console.log(
+        "%c latestOpeningDate",
+        "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
+        latestOpeningDate
+      );
+      const apiUrl = `https://wwwc.twse.com.tw/rwd/zh/fund/T86?date=${latestOpeningDate}&selectType=ALL&response=json`;
 
       const response = await axios.get(apiUrl);
 
       if (response.status === 200) {
-        const data = response.data.data || []; // 获取数据
-        if (data.length > 0) {
-          const sortedResult = _.orderBy(
-            data,
-            [(item) => parseInt(item[5].replace(/,/g, ""))],
-            ["desc"]
-          ); // 根据第六列排序（假设是数值类型的字符串）
-          const top100Items = _.take(sortedResult, 10); // 取前10项
-          return JSON.stringify(top100Items); // 返回 JSON 字符串
-        } else {
-          return "HTTP请求失败，状态码：200，但未能获取有效数据"; // 数据为空的情况
-        }
+        //const data = response.data.data || []; // 获取数据
+        const data = (response.data.data || []).slice(0, 10); // 只获取前十个数据
+        return data;
       } else {
         return `HTTP请求失败，状态码：${response.status}`;
       }
@@ -88,33 +87,37 @@ class GetStocksService {
   }
 
   //日收盤價及月平均收盤價
+
   static async getTheLatestOpeningDate() {
     try {
-      const responseClosingDates = await this.getStockMarketOpeningAndClosingDates(
-        false
-      );
+      const responseClosingDates =
+        await this.getStockMarketOpeningAndClosingDates(false);
       const dates = responseClosingDates.map(
         (dateString) => new Date(dateString)
       ); // 转换为 Date 对象的数组
 
-      let currentDate = new Date();
-      if (currentDate.getHours() < 20) {
-        currentDate.setDate(currentDate.getDate() - 1);
-      }
+      let currentTimeStamp = Date.now();
+      let taiwanOffset = 8 * 60 * 60 * 1000;
+      let taiwanTimeStamp = currentTimeStamp + taiwanOffset;
+      let taiwanDate = new Date(taiwanTimeStamp);
 
-      // 循环递减日期，直到找到不是周六的日期
+      //   let currentDate = new Date();
+      //   let options = { timeZone: 'Asia/Taipei', hour12: false };
+      //   let taiwanDate = new Date(currentDate.toLocaleString('en-US', options));
+
+      if (taiwanDate.getHours() < 20) {
+        taiwanDate.setDate(taiwanDate.getDate() - 1);
+      }
+      //循环递减日期，直到找到不是周六的日期
       while (
-        currentDate.getDay() === 6 ||
-        currentDate.getDay() === 0 ||
-        dates.some((date) => date.toDateString() === currentDate.toDateString())
+        taiwanDate.getDay() === 6 ||
+        taiwanDate.getDay() === 0 ||
+        dates.some((date) => date.toDateString() === taiwanDate.toDateString())
       ) {
-        currentDate.setDate(currentDate.getDate() - 1);
+        taiwanDate.setDate(taiwanDate.getDate() - 1);
       }
 
-      const _yyyyMMdd = currentDate
-        .toISOString()
-        .slice(0, 10)
-        .replace(/-/g, ""); // 格式化为 yyyyMMdd
+      const _yyyyMMdd = taiwanDate.toISOString().slice(0, 10).replace(/-/g, ""); // 格式化为 yyyyMMdd
       return _yyyyMMdd;
     } catch (error) {
       return "发生异常：" + error.message;
@@ -129,23 +132,25 @@ class GetStocksService {
 
       const response = await axios.get(apiUrl);
 
-      if (response.status === 200) {
+      if (response.status === 200 && response.data.data.length > 0) {
         const responseBody = response.data;
         const originalResult = responseBody.data || [];
-
-        if (originalResult.length > 0 && !requestAllData) {
+        if (requestAllData == false) {
           const dates = originalResult.map((item) => item[0]);
-          const jsonResult = JSON.stringify(dates);
-          return jsonResult;
+          return dates;
         } else {
-          const jsonResult = JSON.stringify(responseBody);
-          return jsonResult;
+          return responseBody;
         }
       } else {
-        return null; // 或者返回错误信息，取决于你的需求
+        console.log(
+          "%c getStockMarketOpeningAndClosingDates",
+          "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
+          "req:",
+          req
+        );
       }
     } catch (error) {
-      return null; // 或者返回错误信息，取决于你的需求
+      return `发生异常：${error.message}`;
     }
   }
   static async getQuoteTimeSalesStore() {
