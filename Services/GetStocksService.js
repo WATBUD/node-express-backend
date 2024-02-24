@@ -1,6 +1,5 @@
 import axios from "axios";
 import _ from "lodash";
-
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 class GetStocksService {
   //static httpClient = axios.create();

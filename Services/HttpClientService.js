@@ -1,10 +1,7 @@
 import axios from "axios";
 
-class GetStocksService {
-  //static httpClient = axios.create();
+class HttpClientService {
   constructor() {
-    // 初始化 axios 实例
-    //this.httpClient = axios.create();
   }
 
   static async getNordVPNDataAsync(ipAddress) {
@@ -33,4 +30,4 @@ class GetStocksService {
   }
 }
 
-export default GetStocksService;
+export default HttpClientService;
