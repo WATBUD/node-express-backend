@@ -30,7 +30,7 @@ const options2 = {
 };
 const swaggerSpecs = [
   swaggerJsdoc(options1)
-  //, swaggerJsdoc(options2)
+  ,swaggerJsdoc(options2)
 
 ];
 
