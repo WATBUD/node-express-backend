@@ -1,9 +1,19 @@
-// routes.js
-
 import express from 'express';
 import HttpClientService from '../Services/HttpClientService.js';
 const appRouter  = express.Router();
 
+/**
+ * @swagger
+ * /GetClientIP:
+ *   get:
+ *     tags:
+ *         - Shared
+ *     summary: Get client IP information
+ *     description: Returns client IP information along with NordVPN data.
+ *     responses:
+ *       200:
+ *         description: Successful response with client IP and NordVPN data.
+ */
 appRouter.get("/GetClientIP", async (req, res) => {
   try {
     var ipAddress = req.ip;
