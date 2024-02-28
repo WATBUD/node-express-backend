@@ -15,7 +15,7 @@
 - Make sure cmd has system administrator rights
 
 
-
+# 參考官網 https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/relational-databases-typescript-postgresql
 
 
 
