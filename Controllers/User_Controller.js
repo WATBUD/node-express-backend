@@ -17,20 +17,12 @@ import prismaServiceInstance from '../Database/prisma/prismaService.js';
  *         description: Successful response with tag群組表 data.
  */
 appRouter.get("/getTagGroupDetails", async (req, res) => {
-    const users = await prismaServiceInstance.getAssignViewTable("V_TagGroupDetail");
+    const tableData = await prismaServiceInstance.getAssignViewTable("V_TagGroupDetail");
     try {
-      const data = users;
-    //   console.log(
-    //     "%c getTagGroupDetails_data",
-    //     "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
-    //     data
-    //   );
-      res.json(data);
+      res.json(tableData);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   });
-
-
 
 export default appRouter ;

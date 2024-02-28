@@ -5,17 +5,17 @@ import swaggerSpecs from '../swaggerSpecs.js';
 
 /**
  * @swagger
- * /GetClientIP:
+ * /getClientIP:
  *   get:
  *     tags:
  *         - Shared
- *     summary: Get client IP information
+ *     summary: Get IP information
  *     description: Returns client IP information along with NordVPN data.
  *     responses:
  *       200:
  *         description: Successful response with client IP and NordVPN data.
  */
-appRouter.get("/GetClientIP", async (req, res) => {
+appRouter.get("/getClientIP", async (req, res) => {
   try {
     var ipAddress = req.ip;
     if (ipAddress == "::1" || "127.0.0.1") {
@@ -26,7 +26,7 @@ appRouter.get("/GetClientIP", async (req, res) => {
     res.json(data);
     //res.send(ipAddress);
     console.log(
-      "%c GetClientIP",
+      "%c getClientIP",
       "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
       "req:",
       req
@@ -36,69 +36,27 @@ appRouter.get("/GetClientIP", async (req, res) => {
   }
 });
 
-appRouter.get("/222", (req, res) => {
-  res.send(`
-    <html>
-    <head>
-      <title>歡迎來到水靈網站！</title>
-      <style>
-        body {
-          font-family: Arial, sans-serif;
-          background-color: #f0f0f0;
-          margin: 0;
-          padding: 0;
-        }
-        .container {
-          max-width: 800px;
-          margin: 50px auto;
-          background-color: #fff;
-          padding: 20px;
-          border-radius: 10px;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-          color: #333;
-          text-align: center;
-        }
-        p {
-          font-size: 18px;
-          line-height: 1.6;
-          color: #666;
-        }
-        a {
-          color: #007bff;
-          text-decoration: none;
-          font-weight: bold;
-        }
-        a:hover {
-          text-decoration: underline;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <h1>歡迎來到水靈網站！</h1>
-        <table>
-        <tr>
-          <td>關於</td>
-          <td><a href="/about">關於我們</a></td>
-        </tr>
-        <tr>
-          <td>聯繫我們</td>
-          <td><a href="/contact">聯繫我們</a></td>
-        </tr>
-      </table>
-        <p>
-          感謝您來訪水靈網站。我們致力於為您提供最優質的服務和內容。
-          請隨意瀏覽我們的關於頁面，了解更多關於我們的資訊。
-          如果您有任何疑問或反饋意見，請隨時<a href="/contact">聯繫我們</a>。
-          祝您在我們的網站上度過愉快的時光！
-        </p>
-      </div>
-    </body>
-    </html>
-  `);
+/**
+ * @swagger
+ * /getRequestLogs:
+ *   get:
+ *     tags:
+ *         - Shared
+ *     summary: Get Api call record table
+ *     description: Returns Get Api call record table data.
+ *     responses:
+ *       200:
+ *         description: Successful response with Get Api call record table data.
+ */
+appRouter.get("/getRequestLogs", async (req, res) => {
+  const table = await prismaServiceInstance.getAssignViewTable("GetRequestLogs");
+  try {
+    res.json(table);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
+
 
 
 appRouter.get("/", (req, res) => {
