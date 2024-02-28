@@ -25,4 +25,51 @@ appRouter.get("/getTagGroupDetails", async (req, res) => {
     }
   });
 
+
+
+/**
+ * @swagger
+ * /updateUserPassword:
+ *   post:
+ *     tags:
+ *       - Users Api
+ *     summary: 更新使用者密碼
+ *     description: 更新使用者密碼。
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: integer
+ *                 description: 使用者ID
+ *               password:
+ *                 type: string
+ *                 description: 使用者新密碼
+ *     responses:
+ *       200:
+ *         description: 成功更新使用者密碼。
+ *       400:
+ *         description: 缺少必需的參數或參數格式錯誤。
+ *       500:
+ *         description: 內部伺服器錯誤。
+ */
+appRouter.post("/updateUserPassword", async (req, res) => {
+    const { userId, password } = req.body;
+    console.log(req.body)
+    try {
+        const updatedUser = await UserService.updateUserPassword(userId, password);
+        res.send(updatedUser);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+
+
+
+
 export default appRouter ;
