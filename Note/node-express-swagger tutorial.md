@@ -35,7 +35,7 @@ const appRouter = express.Router();
 
 /**
  * @swagger
- * /GetClientIP:
+ * /routeName:
  *   get:
  *     summary: Get client IP information
  *     description: Returns client IP information along with NordVPN data.
@@ -43,7 +43,7 @@ const appRouter = express.Router();
  *       200:
  *         description: Successful response with client IP and NordVPN data.
  */
-appRouter.get("/GetClientIP", async (req, res) => {
+appRouter.get("/routeName", async (req, res) => {
   try {
     var ipAddress = req.ip;
     if (ipAddress == "::1" || ipAddress == "127.0.0.1") {
