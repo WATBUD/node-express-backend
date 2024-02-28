@@ -160,6 +160,7 @@ appRouter.get("/getSecuritiesCompanyTransactionRecords/:stockNo", async (req, re
       // 获取当前 <tr> 元素下的所有 <td> 元素
       const tdElements = $(element).find('td');
       
+
       // 如果 <td> 元素数量为 10，说明这是您想要的格式
       if (tdElements.length === 10) {
         // 创建一个对象来存储 <td> 元素的文本内容
@@ -177,15 +178,13 @@ appRouter.get("/getSecuritiesCompanyTransactionRecords/:stockNo", async (req, re
           totalDifference: $(tdElements[6]).text().trim()-$(tdElements[7]).text().trim(), //$(tdElements[8]).text().trim(),
           percentage: $(tdElements[9]).text().trim(),
         };
+
         if (dataObject.percentage !== "佔成交比重") {
           dataArray.push(dataObject);
         }
-
         if (dataObject2.percentage !== "佔成交比重") {
           dataArray.push(dataObject2);
         }
-
-
       }
     });
 
