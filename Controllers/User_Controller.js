@@ -10,18 +10,11 @@ import prismaServiceInstance from '../Database/prisma/prismaService.js';
  *   get:
  *     tags:
  *         - Users Api
- *     summary: 取得tag群組表
- *     parameters:
- *       - in: path
- *         name: stockNo
- *         required: true
- *         description: Stock No
- *         schema:
- *           type: string
- *     description: Returns 取得tag群組表 data.
+ *     summary: tag群組表
+ *     description: Returns tag群組表 data.
  *     responses:
  *       200:
- *         description: Successful response with 取得tag群組表 and NordVPN data.
+ *         description: Successful response with tag群組表 data.
  */
 appRouter.get("/getTagGroupDetails", async (req, res) => {
     const users = await prismaServiceInstance.getAssignViewTable("V_TagGroupDetail");
