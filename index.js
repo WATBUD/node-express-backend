@@ -3,15 +3,10 @@ import express from "express";
 import bodyParser from "body-parser";
 import StockController from "./Controllers/StockController.js"
 import SharedAPI_Controller from "./Controllers/SharedAPI_Controller.js"
-
 import User_Controller from "./Controllers/User_Controller.js"
 
 import swaggerUiExpress from 'swagger-ui-express';
 import swaggerSpecs from './swaggerSpecs.js';
-
-import prismaServiceInstance from './Database/prisma/prismaService.js';
-
-// import swaggerDocument from './swagger.json' assert { type: 'json' };
 const app = express();
 const PORT = 9421;
 const HOST = "0.0.0.0"; // This will make the server accessible externally
