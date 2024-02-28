@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model all_tags {
+  tag_id       Int?    @unique(map: "all_tags_UN") @default(2)
+  tag_group_id Int     @default(0)
+  tag_Name     String? @default("empty") @db.VarChar(40)
+
+  @@ignore
+}
+
+model all_tags_group {
+  tag_group_id   Int     @id
+  tag_group_name String? @db.VarChar(10)
+}
+
+model chat_messages {
+  message_id  Int       @id @default(autoincrement())
+  content     String?   @db.Text
+  sender_id   Int
+  receiver_id Int
+  time_stamp  DateTime? @db.Timestamp(0)
+}
+
+model record_log_table {
+  id         Int       @id @default(autoincrement())
+  data_text  String    @db.VarChar(200)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model request_logs {
+  Id         Int      @id @default(autoincrement())
+  path       String   @db.VarChar(255)
+  method     String   @db.VarChar(10)
+  client_ip  String   @db.VarChar(45)
+  created_at DateTime @db.DateTime(0)
+}
+
+model user_detail {
+  ud_user_id           Int                              @id @default(autoincrement())
+  gender               String?                          @db.VarChar(10)
+  birthday             DateTime?                        @db.Date
+  user_has_tag         Json?
+  profile_picture      String?                          @db.VarChar(255)
+  interests            String?                          @db.Text
+  personal_description String?                          @db.Text
+  location             String?                          @db.VarChar(100)
+  relationship_status  user_detail_relationship_status?
+  looking_for          user_detail_looking_for?
+  privacy_settings     Json?
+  social_links         Json?
+  is_banned            Boolean?                         @default(false)
+  users                users                            @relation(fields: [ud_user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_userdetail_user")
+}
+
+model users {
+  user_id     Int          @id @default(autoincrement())
+  account     String       @unique(map: "Account") @db.VarChar(100)
+  username    String       @db.VarChar(50)
+  password    String       @db.VarChar(100)
+  email       String       @db.VarChar(100)
+  created_at  DateTime?    @default(now()) @db.Timestamp(0)
+  updated_at  DateTime?    @default(now()) @db.Timestamp(0)
+  user_detail user_detail?
+}
+
+enum user_detail_relationship_status {
+  Single
+  Married
+  Divorced
+  Other
+}
+
+enum user_detail_looking_for {
+  Friendship
+  Dating
+  Long_term_Relationship @map("Long-term Relationship")
+  Other
+}
