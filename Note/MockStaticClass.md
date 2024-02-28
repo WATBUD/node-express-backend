@@ -1,6 +1,4 @@
-
-//在 JavaScript 中，类本身不能被定义为静态的
-//class XXXXXXX {
+```javascript
 const Calculator = {
     add: function(a, b) {
         return a + b;
