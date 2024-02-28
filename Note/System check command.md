@@ -17,3 +17,12 @@ ps -p <PID>
 
 
 
+# Print out the variables in the .env file
+- Unix/Linux 
+cat .env | grep "DATABASE_URL"
+- Windows 
+type .env | findstr "DATABASE_URL"
+
+
+
+
