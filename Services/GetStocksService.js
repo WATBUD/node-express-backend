@@ -58,11 +58,75 @@ class GetStocksService {
     }
   }
 
+  static async getDailyMarketTrading() {
+    try {
+      const apiUrl =
+        "https://www.twse.com.tw/rwd/zh/afterTrading/FMTQIK?response=json&_=1709117440570";
+      const response = await axios.get(apiUrl);
+      if (response.status === 200 && response.data.data.length > 0) {
+        const responseBody = response.data;
+        return responseBody;
+      } else {
+        console.log(
+          "%c getDailyMarketTrading",
+          "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
+          "req:",
+          req
+        );
+      }
+    } catch (error) {
+      return `发生异常：${error.message}`;
+    }
+  }
+
+  static async getDailyClosingQuote() {
+    try {
+      const apiUrl =
+        "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?response=json&_=1709118194485";
+      const response = await axios.get(apiUrl);
+      if (response.status === 200) {
+        const responseData = response.data;
+        console.log(
+          "%c response",
+          "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
+          "response:",
+          response
+        );
+        return responseData;
+      } else {
+        console.log(
+          "%c getDailyClosingQuote",
+          "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
+          "req:",
+          req
+        );
+      }
+    } catch (error) {
+      return `发生异常：${error.message}`;
+    }
+  }
+
+
+
+
+
+  static async getTop20_SecuritiesByTradingVolume() {
+    try {
+      const apiUrl =
+        "  https://www.twse.com.tw/rwd/zh/fund/T86?date=20240227&selectType=ALL&response=json&_=1709119072350";
+      const response = await axios.get(apiUrl);
+      if (response.status === 200) {
+        const responseData = response.data;
+        return responseData;
+      } else {
+      }
+    } catch (error) {
+      return `发生异常：${error.message}`;
+    }
+  }
+
   static async getThreeMajorInstitutionalInvestors() {
     try {
-    //   const axiosConfig = {
-    //     httpsAgent: false,
-    //   };
       const latestOpeningDate = await this.getTheLatestOpeningDate();
       console.log(
         "%c latestOpeningDate",
@@ -74,8 +138,8 @@ class GetStocksService {
       const response = await axios.get(apiUrl);
 
       if (response.status === 200) {
-        //const data = response.data.data || []; // 获取数据
-        const data = (response.data.data || []).slice(0, 10); // 只获取前十个数据
+        //const data = response.data.data || [];
+        const data = (response.data.data || []).slice(0, 100); 
         return data;
       } else {
         return `HTTP请求失败，状态码：${response.status}`;
@@ -85,7 +149,6 @@ class GetStocksService {
     }
   }
 
-  //日收盤價及月平均收盤價
 
   static async getTheLatestOpeningDate() {
     try {
@@ -161,16 +224,6 @@ class GetStocksService {
     }
   }
 
-  static async fetchAndParseJson(
-    url = "https://tw.stock.yahoo.com/quote/3231.TW/time-sales"
-  ) {
-    try {
-      // 缺失的代码请自行补充
-    } catch (error) {
-      console.error("发生异常：", error.message);
-      return "发生异常：" + error.message;
-    }
-  }
 }
 
 export default GetStocksService;

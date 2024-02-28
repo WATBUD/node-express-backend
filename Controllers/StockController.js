@@ -18,7 +18,7 @@ import iconv from 'iconv-lite';
  *     description: Returns 三大法人買賣超日報 data.
  *     responses:
  *       200:
- *         description: Successful response with 三大法人買賣超日報 and NordVPN data.
+ *         description: Successful response data.
  */
 appRouter.get("/getThreeMajorInstitutionalInvestors", async (req, res) => {
   try {
@@ -38,7 +38,7 @@ appRouter.get("/getThreeMajorInstitutionalInvestors", async (req, res) => {
  *     description: Returns 最後一次開盤日期 data.
  *     responses:
  *       200:
- *         description: Successful response with 最後一次開盤日期 and NordVPN data.
+ *         description: Successful response data.
  */
 appRouter.get("/getTheLatestOpeningDate", async (req, res) => {
     try {
@@ -48,6 +48,95 @@ appRouter.get("/getTheLatestOpeningDate", async (req, res) => {
       res.status(500).json({ error: error.message });
     }
 });
+
+
+/**
+ * @swagger
+ * /getTheLatestOpeningDate:
+ *   get:
+ *     tags:
+ *         - Stock
+ *     summary: 最後一次開盤日期
+ *     description: Returns data.
+ *     responses:
+ *       200:
+ *         description: Successful response.
+ */
+appRouter.get("/getTheLatestOpeningDate", async (req, res) => {
+  try {
+    const data = await GetStocksService.getTheLatestOpeningDate();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * @swagger
+ * /getDailyMarketTrading:
+ *   get:
+ *     tags:
+ *         - Stock
+ *     summary: 每日市場成交資訊
+ *     description: Returns data.
+ *     responses:
+ *       200:
+ *         description: Successful response.
+ */
+appRouter.get("/getDailyMarketTrading", async (req, res) => {
+  try {
+    const data = await GetStocksService.getDailyMarketTrading();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * @swagger
+ * /getDailyClosingQuote:
+ *   get:
+ *     tags:
+ *         - Stock
+ *     summary: 每日收盤行情
+ *     description: Returns data.
+ *     responses:
+ *       200:
+ *         description: Successful response.
+ */
+appRouter.get("/getDailyClosingQuote", async (req, res) => {
+  try {
+    const data = await GetStocksService.getDailyClosingQuote();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * @swagger
+ * /getTop20_SecuritiesByTradingVolume:
+ *   get:
+ *     tags:
+ *         - Stock
+ *     summary: 成交量前二十名證券
+ *     description: Returns data.
+ *     responses:
+ *       200:
+ *         description: Successful response.
+ */
+appRouter.get("/getTop20_SecuritiesByTradingVolume", async (req, res) => {
+  try {
+    const data = await GetStocksService.getTop20_SecuritiesByTradingVolume();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
 
 /**
  * @swagger
@@ -59,7 +148,7 @@ appRouter.get("/getTheLatestOpeningDate", async (req, res) => {
  *     description: Returns 市場開休市日期 data.
  *     responses:
  *       200:
- *         description: Successful response with 市場開休市日期 and NordVPN data.
+ *         description: Successful response data.
  */
 appRouter.get("/getStockMarketOpeningAndClosingDates", async (req, res) => {
     try {
@@ -89,7 +178,7 @@ appRouter.get("/getStockMarketOpeningAndClosingDates", async (req, res) => {
  *     description: Returns 取得股票五檔 data.
  *     responses:
  *       200:
- *         description: Successful response with 取得股票五檔 and NordVPN data.
+ *         description: Successful response data.
  */
 appRouter.get("/getFiveLevelsOfStockInformation/:stockNo", async (req, res) => {
     try {
@@ -119,7 +208,7 @@ appRouter.get("/getFiveLevelsOfStockInformation/:stockNo", async (req, res) => {
  *     description: Returns 卷商分點進出 data.
  *     responses:
  *       200:
- *         description: Successful response with getSecuritiesCompanyTransactionRecords data.
+ *         description: Successful response data.
  */
 appRouter.get("/getSecuritiesCompanyTransactionRecords/:stockNo", async (req, res) => {
   const stockNo = req.params.stockNo;
