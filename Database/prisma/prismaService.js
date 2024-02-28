@@ -15,22 +15,30 @@ class PrismaService {
     console.log(allUsers);
   }
 
-  async getAssignViewTable(viewTablename) {
+  async getAssignViewTable(viewTablename,limit) {
     try {
       if (!viewTablename) {
         throw new Error("viewTablename 不能是空字符串");
       }
       //console.log(customViewData);
-
       console.log(viewTablename);
-      const customViewData = await this.prisma.$queryRawUnsafe(
-        `SELECT * FROM ${viewTablename}`
+
+      let customQuery = `SELECT * FROM ${viewTablename}`
+      if (limit && !isNaN(limit) && limit > 0) {
+        customQuery += ` LIMIT ${limit}`;
+      }
+
+      let customQueryCallbackData = await this.prisma.$queryRawUnsafe(
+        customQuery
       );
-      //const customViewData = await this.prisma.$queryRaw`SELECT * FROM V_TagGroupDetail`;
-      return customViewData;
+
+
+
+      console.log(customQueryCallbackData);
+
+      return customQueryCallbackData;
     } catch (error) {
       console.error("发生错误：", error.message);
-      // 在这里可以处理错误，比如记录日志、返回错误信息等
     }
   }
 

@@ -2,6 +2,7 @@ import express from 'express';
 import HttpClientService from '../Services/HttpClientService.js';
 const appRouter  = express.Router();
 import swaggerSpecs from '../swaggerSpecs.js';
+import prismaServiceInstance from '../Database/prisma/prismaService.js';
 
 /**
  * @swagger
@@ -43,13 +44,13 @@ appRouter.get("/getClientIP", async (req, res) => {
  *     tags:
  *         - Shared
  *     summary: Get Api call record table
- *     description: Returns Get Api call record table data.
+ *     description: Returns data.
  *     responses:
  *       200:
- *         description: Successful response with Get Api call record table data.
+ *         description: Successful response data.
  */
 appRouter.get("/getRequestLogs", async (req, res) => {
-  const table = await prismaServiceInstance.getAssignViewTable("GetRequestLogs");
+  const table = await prismaServiceInstance.getAssignViewTable("record_log_table",5);
   try {
     res.json(table);
   } catch (error) {
