@@ -41,10 +41,10 @@ const options3 = {
   apis: ['./Controllers/User_Controller.js'],
 
 };
-const swaggerSpecs = [
+const SwaggerSpecs = [
   swaggerJsdoc(options1)
   ,swaggerJsdoc(options2)
   ,swaggerJsdoc(options3)
 ];
 
-export default swaggerSpecs;
+export default SwaggerSpecs;

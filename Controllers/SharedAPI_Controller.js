@@ -1,7 +1,7 @@
 import express from 'express';
 import HttpClientService from '../Services/HttpClientService.js';
 const appRouter  = express.Router();
-import swaggerSpecs from '../swaggerSpecs.js';
+import SwaggerSpecs from '../SwaggerSpecs.js';
 import prismaServiceInstance from '../Database/prisma/prismaService.js';
 
 /**
@@ -62,7 +62,7 @@ appRouter.get("/getRequestLogs", async (req, res) => {
 
 appRouter.get("/", (req, res) => {
   let tableRows = '';
-  swaggerSpecs.forEach(spec => {
+  SwaggerSpecs.forEach(spec => {
     const routePath = spec.info.routePath || '/';
     const routeTitle = spec.info.title || '/';
     tableRows += `
