@@ -1,7 +1,7 @@
 import express from 'express';
 import UserService from '../Services/UserService.js';
 const appRouter  = express.Router();
-import prismaServiceInstance from '../Database/pr
+import PrismaServiceInstance from '../Database/pr
 import path from 'path';
 const formData_Middlewares = multer();//解析form data的中間件
 /**
@@ -17,7 +17,7 @@ const formData_Middlewares = multer();//解析form data的中間件
  *         description: Successful response with tag群組表 data.
  */
 appRouter.get("/getTagGroupDetails", async (req, res) => {
-    const tableData = await prismaServiceInstance.getAssignViewTable("V_TagGroupDetail");
+    const tableData = await PrismaServiceInstance.getAssignViewTable("V_TagGroupDetail");
     try {
       res.json(tableData);
     } catch (error) {

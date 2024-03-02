@@ -79,6 +79,6 @@ class PrismaService {
     console.dir(allUsers, { depth: null });
   }
 }
-const prismaServiceInstance = new PrismaService();
+const PrismaServiceInstance = new PrismaService();
 
-export default prismaServiceInstance;
+export default PrismaServiceInstance;

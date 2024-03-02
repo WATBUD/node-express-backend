@@ -1,5 +1,5 @@
 import axios from "axios";
-import prismaServiceInstance from '../Database/prisma/prismaService.js';
+import PrismaServiceInstance from '../Database/prisma/PrismaService.js';
 class UserService {
   constructor() {}
 
@@ -35,13 +35,13 @@ class UserService {
     }
     // console.log('updateUserPassword',userId,newPassword)
     try {
-      const existingUser = await prismaServiceInstance.prisma.users.findUnique({
+      const existingUser = await PrismaServiceInstance.prisma.users.findUnique({
         where: { user_id: parseInt(userId, 10) },
       });
       if (!existingUser) {
         throw new Error(`ID ${userId} 的用户不存在`);
       }
-      updatedUser = await prismaServiceInstance.prisma.users.update({
+      updatedUser = await PrismaServiceInstance.prisma.users.update({
         where: { user_id: parseInt(userId, 10) },
         data: { password: newPassword.toString()},
       });

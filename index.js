@@ -33,7 +33,7 @@ app.listen(PORT, HOST, () => {
 
 
 // console.log(
-//   "%c prismaServiceInstance",
+//   "%c PrismaServiceInstance",
 //   "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
 // );
 
