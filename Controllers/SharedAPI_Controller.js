@@ -124,7 +124,7 @@ appRouter.get("/", (req, res) => {
         </table>
         <p>
         感謝您來訪水靈的api文件網站。水靈致力於為您提供最優質的服務和內容。
-        請隨意瀏覽我們的關於頁面，此網站使用node.js/mysql/swagger/express。
+        請隨意瀏覽頁面，此網站使用node.js/mysql/swagger/express。
         祝您在水靈的網站上度過愉快的時光！
       </p>
       </div>
