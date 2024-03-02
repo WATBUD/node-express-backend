@@ -33,7 +33,7 @@ class UserService {
     if (!userId || !newPassword) {
       return "userId 和 newPassword 不能为空";
     }
-    console.log(userId,newPassword)
+    // console.log('updateUserPassword',userId,newPassword)
     try {
       const existingUser = await prismaServiceInstance.prisma.users.findUnique({
         where: { user_id: parseInt(userId, 10) },

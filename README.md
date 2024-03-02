@@ -4,8 +4,10 @@
 - npm init -y        
 - npm install --save-dev nodemon
 - npm install --save express
+# `package.json`
 - npm install axios
 - npm install lodash
+- npm install multer
 
 
 ### `yarn install`
