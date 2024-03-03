@@ -112,14 +112,32 @@ class GetStocksService {
 
   static async getTop20_SecuritiesByTradingVolume() {
     try {
+      const latestOpeningDate = await this.getTheLatestOpeningDate();
       const apiUrl =
-        "  https://www.twse.com.tw/rwd/zh/fund/T86?date=20240227&selectType=ALL&response=json&_=1709119072350";
+      `https://www.twse.com.tw/rwd/zh/fund/T86?date=${latestOpeningDate}&selectType=ALL&response=json`;
       const response = await axios.get(apiUrl);
-      if (response.status === 200) {
-        const responseData = response.data;
-        return responseData;
-      } else {
-      }
+
+      if (response.status == 200) {
+        console.log(
+          "%c getTop20_SecuritiesByTradingVolume",
+          "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
+          latestOpeningDate,response,
+        );
+        const _data = (response.data.data || []).slice(0, 20); 
+        response.data.data=_data;
+
+        return response.data;
+
+        // const responseData = response.data;
+        // return responseData;
+
+//         const responseData = response.data;
+// const jsonData = JSON.stringify(responseData);
+// return jsonData;
+      } 
+      // else {
+      //   return `发生异常`;
+      // }
     } catch (error) {
       return `发生异常：${error.message}`;
     }
