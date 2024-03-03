@@ -1,9 +1,12 @@
 import express from 'express';
 import UserService from '../Services/UserService.js';
 const appRouter  = express.Router();
-import PrismaServiceInstance from '../Database/pr
+import PrismaServiceInstance from '../Database/prisma/PrismaService.js';
 import path from 'path';
+import multer from 'multer';
 const formData_Middlewares = multer();//解析form data的中間件
+import { avatarUpload } from '../Uploads/UploadService.js';
+
 /**
  * @swagger
  * /getTagGroupDetails:
@@ -25,8 +28,6 @@ appRouter.get("/getTagGroupDetails", async (req, res) => {
     }
   });
 
-
-
 /**
  * @swagger
  * /updateUserPassword:
@@ -34,53 +35,16 @@ appRouter.get("/getTagGroupDetails", async (req, res) => {
  *     tags:
  *       - Users Api
  *     summary: 更新使用者密碼
- *     description: 更新使用者密碼。
- *     requestBody:
- *       required: true
- *       content:
- *         application/x-www-form-urlencoded:
- *           schema:
- *             type: object
- *             properties:
- *               userId:
- *                 type: integer
- *                 description: 使用者ID
- *               password:
- *                 type: string
- *                 description: 使用者新密碼
- *     responses:
- *       200:
- *         description: 成功更新使用者密碼。
- *       400:
- *         description: 缺少必需的參數或參數格式錯誤。
- *       500:
- *         description: 內部伺服器錯誤。
- */
-appRouter.post("/updateUserPassword",formData_Middlewares.none(),async (req, res) => {
-    const { userId, password } = req.body;
-    console.log(req.body)
-    try {
-        const updatedUser = await UserService.updateUserPassword(userId, password);
-        res.send(updatedUser);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-/**
- * @swagger
- * /updateUserPasswordFormData:
- *   post:
- *     tags:
- *       - Users Api
- *     summary: 更新使用者密碼
- *     description: 更新使用者密碼。
+ *     description: 
  *     requestBody:
  *       required: true
  *       content:
  *         multipart/form-data:
  *           schema:
  *             type: object
+ *             required:
+ *               - userId
+ *               - password
  *             properties:
  *               userId:
  *                 type: string
@@ -91,12 +55,8 @@ appRouter.post("/updateUserPassword",formData_Middlewares.none(),async (req, res
  *     responses:
  *       200:
  *         description: 成功更新使用者密碼。
- *       400:
- *         description: 缺少必需的參數或參數格式錯誤。
- *       500:
- *         description: 內部伺服器錯誤。
  */
-appRouter.post("/updateUserPasswordFormData",formData_Middlewares.none(), async (req, res) => {
+appRouter.post("/updateUserPassword",formData_Middlewares.none(), async (req, res) => {
     const { userId, password } = req.body;
     console.log('req.body=>>>',userId, password,req.body);
     try {
@@ -106,5 +66,58 @@ appRouter.post("/updateUserPasswordFormData",formData_Middlewares.none(), async 
         res.status(500).json({ error: error.message });
     }
 });
+
+/**
+ * @swagger
+ * /updateUserAvatar:
+ *   post:
+ *     tags:
+ *       - Users Api
+ *     summary: 更新使用者頭像
+ *     description:
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *               - avatar
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 description: 用户ID
+ *               avatar:
+ *                 type: string
+ *                 format: binary
+ *                 description: 使用者頭像
+ *     responses:
+ *       200:
+ *         description: 成功更新使用者頭像。
+ *       500:
+ *         description: 內部伺服器錯誤。
+ */
+appRouter.post("/updateUserAvatar", (req, res, next) => {
+  try {
+    avatarUpload.single("avatar")(req, res, function (err) {
+      const _userId = req.body.userId;
+      console.log("updateUserAvatar", _userId);
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      } else {
+        return res
+          .status(200)
+          .json({ message: "Avatar updated successfully." });
+
+      }
+      next();
+    });
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
 
 export default appRouter ;
