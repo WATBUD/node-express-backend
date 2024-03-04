@@ -125,7 +125,6 @@ class GetStocksService {
         );
         const _data = (response.data.data || []).slice(0, 20); 
         response.data.data=_data;
-
         return response.data;
 
         // const responseData = response.data;
@@ -174,7 +173,7 @@ class GetStocksService {
         await this.getStockMarketOpeningAndClosingDates(false);
       const dates = responseClosingDates.map(
         (dateString) => new Date(dateString)
-      ); // 转换为 Date 对象的数组
+      );
 
       let currentTimeStamp = Date.now();
       let taiwanOffset = 8 * 60 * 60 * 1000;
@@ -185,16 +184,16 @@ class GetStocksService {
       //   let options = { timeZone: 'Asia/Taipei', hour12: false };
       //   let taiwanDate = new Date(currentDate.toLocaleString('en-US', options));
 
-      if (taiwanDate.getHours() < 20) {
+      if (taiwanDate.getHours() >= 20) {
         taiwanDate.setDate(taiwanDate.getDate() - 1);
       }
-      //循环递减日期，直到找到不是周六的日期
+      // Find the next valid trading date
       while (
-        taiwanDate.getDay() === 6 ||
-        taiwanDate.getDay() === 0 ||
-        dates.some((date) => date.toDateString() === taiwanDate.toDateString())
+        taiwanDate.getDay() === 6 || // Saturday
+        taiwanDate.getDay() === 0 || // Sunday
+        dates.some((date) => date.toDateString() === taiwanDate.toDateString()) // Closing date
       ) {
-        taiwanDate.setDate(taiwanDate.getDate() - 1);
+        taiwanDate.setDate(taiwanDate.getDate() - 1); // Decrement date
       }
 
       const _yyyyMMdd = taiwanDate.toISOString().slice(0, 10).replace(/-/g, ""); // 格式化为 yyyyMMdd
@@ -233,6 +232,7 @@ class GetStocksService {
       return `发生异常：${error.message}`;
     }
   }
+  
   static async getQuoteTimeSalesStore() {
     try {
       // 缺失的代码请自行补充
