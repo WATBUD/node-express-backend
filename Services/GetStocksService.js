@@ -6,7 +6,6 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 class GetStocksService {
   //static httpClient = axios.create();
   constructor() {
-    // 初始化 axios 实例
     //this.httpClient = axios.create();
   }
 
@@ -196,7 +195,7 @@ class GetStocksService {
             buyingIn: $(tdElements[1]).text().trim(),
             sellingOut: $(tdElements[2]).text().trim(),
             totalDifference:
-              $(tdElements[6]).text().trim() - $(tdElements[7]).text().trim(), //$(tdElements[3]).text().trim(),
+              $(tdElements[1]).text().trim() - $(tdElements[2]).text().trim(), //$(tdElements[3]).text().trim(),
             percentage: $(tdElements[4]).text().trim(),
           };
           const dataObject2 = {
@@ -264,9 +263,6 @@ class GetStocksService {
       return "发生异常：" + error.message;
     }
   }
-
-
-
 
   static async getStockMarketOpeningAndClosingDates(requestAllData = false) {
     try {
