@@ -1,5 +1,3 @@
-//吃飯有事留言~~~
-
 import express from 'express';
 import GetStocksService from '../Services/GetStocksService.js';
 const appRouter  = express.Router();
