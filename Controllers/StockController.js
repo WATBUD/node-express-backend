@@ -25,6 +25,7 @@ appRouter.get("/getThreeMajorInstitutionalInvestors", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 /**
  * @swagger
  * /getTheLatestOpeningDate:
@@ -46,27 +47,6 @@ appRouter.get("/getTheLatestOpeningDate", async (req, res) => {
     }
 });
 
-
-/**
- * @swagger
- * /getTheLatestOpeningDate:
- *   get:
- *     tags:
- *         - Stock
- *     summary: 最後一次開盤日期
- *     description: Returns data.
- *     responses:
- *       200:
- *         description: Successful response.
- */
-appRouter.get("/getTheLatestOpeningDate", async (req, res) => {
-  try {
-    const data = await GetStocksService.getTheLatestOpeningDate();
-    res.json(data);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 /**
  * @swagger
@@ -131,10 +111,6 @@ appRouter.get("/getTop20_SecuritiesByTradingVolume", async (req, res) => {
   }
 });
 
-
-
-
-
 /**
  * @swagger
  * /getStockMarketOpeningAndClosingDates:
@@ -156,7 +132,6 @@ appRouter.get("/getStockMarketOpeningAndClosingDates", async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-
 
 /**
  * @swagger
@@ -187,6 +162,35 @@ appRouter.get("/getFiveLevelsOfStockInformation/:stockNo", async (req, res) => {
     }
   });
 
+// /**
+//  * @swagger
+//  * /getSecuritiesCompanyTransactionRecords/{stockNo}:
+//  *   get:
+//  *     tags:
+//  *         - Stock
+//  *     summary: 卷商分點進出
+//  *     parameters:
+//  *       - in: path
+//  *         name: stockNo
+//  *         required: true
+//  *         description: Stock No
+//  *         schema:
+//  *           type: string
+//  *     description: Returns 卷商分點進出 data.
+//  *     responses:
+//  *       200:
+//  *         description: Successful response data.
+//  */
+// appRouter.get("/getSecuritiesCompanyTransactionRecords/:stockNo", async (req, res) => {
+//   try {
+//     const stockNo = req.params.stockNo;
+//     const data = await GetStocksService.getSecuritiesCompanyTransactionRecords(stockNo);
+//     res.json(data);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
 
 /**
  * @swagger
@@ -202,25 +206,33 @@ appRouter.get("/getFiveLevelsOfStockInformation/:stockNo", async (req, res) => {
  *         description: Stock No
  *         schema:
  *           type: string
- *     description: Returns 卷商分點進出 data.
+ *       - in: query
+ *         name: displayMethod
+ *         required: true
+ *         description: 指定顯示資料方法
+ *         schema:
+ *           type: string
+ *           enum: ['All','Overbuy', 'OverSold']
+ *       - in: query
+ *         name: sortBy
+ *         required: false
+ *         description: 排序方式
+ *         schema:
+ *           type: string
+ *           enum: ['ASC','DESC']
+ *         default: ASC
  *     responses:
  *       200:
  *         description: Successful response data.
  */
-appRouter.get("/getSecuritiesCompanyTransactionRecords/:stockNo", async (req, res) => {
+appRouter.get("/getSecuritiesCompanyTransactionRecords/:stockNo/", async (req, res) => {
   try {
-    const stockNo = req.params.stockNo;
-    const data = await GetStocksService.getSecuritiesCompanyTransactionRecords(stockNo);
+    const data = await GetStocksService.getSecuritiesCompanyTransactionRecords(req);
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
-
-
-
-
-
 
 
 

@@ -123,17 +123,7 @@ class GetStocksService {
         const _data = (response.data.data || []).slice(0, 20); 
         response.data.data=_data;
         return response.data;
-
-        // const responseData = response.data;
-        // return responseData;
-
-//         const responseData = response.data;
-// const jsonData = JSON.stringify(responseData);
-// return jsonData;
       } 
-      // else {
-      //   return `发生异常`;
-      // }
     } catch (error) {
       return `发生异常：${error.message}`;
     }
@@ -163,8 +153,17 @@ class GetStocksService {
     }
   }
 
-  static async getSecuritiesCompanyTransactionRecords(stockNo) {
+  static async getSecuritiesCompanyTransactionRecords(req) {
     try {
+      const stockNo = req.params.stockNo;
+      console.log(
+        "%c getSecuritiesCompanyTransactionRecords",
+        "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
+        'req.params',
+        req.params,
+        'req.query',
+        req.query,
+      );
       const url = `https://fubon-ebrokerdj.fbs.com.tw/z/zc/zco/zco.djhtm?a=${stockNo}&e=2024-2-19&f=2024-2-19`;
   
       const response = await axios.get(url, {
@@ -175,19 +174,15 @@ class GetStocksService {
       const $ = cheerio.load(html);
       const trElements = $("tr");
       const dataArray = [];
-      const result = [];
-      console.log(
-        "%c getSecuritiesCompanyTransactionRecords",
-        "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
-        // "tdContentArray",
-        // tdContentArray,
-        "trElements",
-        trElements
-      );
+      // console.log(
+      //   "%c getSecuritiesCompanyTransactionRecords",
+      //   "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
+      //   "trElements",
+      //   trElements
+      // );
       trElements.each((index, element) => {
         // 获取当前 <tr> 元素下的所有 <td> 元素
         const tdElements = $(element).find("td");
-        // 如果 <td> 元素数量为 10，说明这是您想要的格式
         if (tdElements.length === 10) {
           // 创建一个对象来存储 <td> 元素的文本内容
           const dataObject = {
@@ -215,15 +210,33 @@ class GetStocksService {
           }
         }
       });
-      dataArray.sort((a, b) => {
-        const percentageA = parseFloat(a.percentage.replace("%", ""));
-        const percentageB = parseFloat(b.percentage.replace("%", ""));
-        return percentageB - percentageA;
-      });
-      //res.json(dataArray);
+      // dataArray.sort((a, b) => {
+      //   const percentageA = parseFloat(a.percentage.replace("%", ""));
+      //   const percentageB = parseFloat(b.percentage.replace("%", ""));
+      //   return percentageB - percentageA;
+      // });
+      switch (req.query.displayMethod) {
+        case "Overbuy":
+          dataArray = dataArray.filter((item) => item.totalDifference > 0);
+          break;
+        case "OverSold":
+          dataArray = dataArray.filter((item) => item.totalDifference < 0);
+          break;
+        default:
+          break;
+      }
+      switch (req.query.sortBy) {
+        case "ASC":
+          dataArray.sort((a, b) => a.totalDifference - b.totalDifference);
+          break;
+        case "DESC":
+          dataArray.sort((a, b) => b.totalDifference - a.totalDifference);
+          break;
+        default:
+          break;
+      }
       return dataArray;
     } catch (error) {
-      //res.status(500).json({ error: error.message });
       return error.message;
     }
   }
