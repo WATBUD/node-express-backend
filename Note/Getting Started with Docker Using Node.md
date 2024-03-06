@@ -8,13 +8,11 @@ docker build -t node_express_backend .
 
 - After the build completes, you can run the following command to start the container:
 
-docker run -p 9421:9421 --name NodeServer node_express_backend
+normal docker run -p 9421:9421 --name NodeServer node_express_backend
 
+bash docker run -p 9421:9421 -v $PWD:/app --name NodeServer node_express_backend
 
-
-bash 
-docker run -p 9421:9421 -v $PWD:/app --name NodeServer node_express_backend
-
+windows cmd docker run -p 9421:9421 -v %CD%:/app --name NodeServer node_express_backend npm start -- --legacy-watch
 
 
 
