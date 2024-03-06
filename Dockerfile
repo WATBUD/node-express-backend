@@ -18,4 +18,4 @@ COPY . .
 EXPOSE 9421
 
 # 定義啟動命令
-CMD ["npm","run","start"]
+CMD ["npm","run","start","--","--legacy-watch"]
