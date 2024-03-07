@@ -7,6 +7,12 @@ echo. > Dockerfile
 docker build -t node_express_backend .
 
 - After the build completes, you can run the following command to start the container:
+ß
+normal 
+docker run -p 9421:9421 --name NodeServer node_express_backend --legacy-watch
+
+bash 
+docker run -p 9421:9421 -v $PWD:/app --name NodeServer node_express_backend 
 
 normal 
 docker run -p 9421:9421 --name NodeServer node_express_backend --legacy-watch
@@ -17,6 +23,7 @@ docker run -p 9421:9421 -v $PWD:/app --name NodeServer node_express_backend
 windows cmd 
 docker run -p 9421:9421 -v %CD%:/app --name NodeServer node_express_backend npm start -- --legacy-watch
 
+docker run -d --name mysql-container -e MYSQL_ROOT_PASSWORD=password -p 3306:3306 mysql:latest
 
 
 - Start the specified images
