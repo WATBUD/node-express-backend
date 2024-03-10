@@ -1,15 +1,16 @@
-# Getting Started with project
+### Getting Started with Node Server
 
-# `init`
-- npm init -y        
-- npm install --save-dev nodemon
-- npm install --save express
-# `package.json`
-- npm install axios
-- npm install lodash
-- npm install multer
+### Available Scripts
 
+In the project directory, you can run:
 
-### `yarn install`
+### `npm start`
+
 Runs the app in the development mode.\
-Open [http://localhost:port] to view it in your browser.
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
+
+### List of authors
+- 水靈 Louis ([@timneutkens](https://github.com/WATBUD))
