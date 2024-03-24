@@ -2,8 +2,6 @@ import express from "express";
 //const express=require('express');
 import bodyParser from "body-parser";
 import multer from 'multer';
-
-
 import StockController from "./Controllers/StockController.js"
 import SharedAPI_Controller from "./Controllers/SharedAPI_Controller.js"
 import User_Controller from "./Controllers/User_Controller.js"
