@@ -243,6 +243,7 @@ class GetStocksService {
 
   static async getTheLatestOpeningDate() {
     try {
+      
       const responseClosingDates =
         await this.getStockMarketOpeningAndClosingDates(false);
       const dates = responseClosingDates.map(

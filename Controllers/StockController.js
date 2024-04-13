@@ -2,6 +2,7 @@ import express from 'express';
 import GetStocksService from '../Services/GetStocksService.js';
 const appRouter  = express.Router();
 import axios from "axios";
+import { fetchTimeout,timeoutPromise } from '../Services/CustomUtilService.js';
 
 /**
  * @swagger
@@ -24,6 +25,24 @@ appRouter.get("/getThreeMajorInstitutionalInvestors", async (req, res) => {
   }
 });
 
+appRouter.get('/fake-api', (req, res) => {
+
+   
+});
+
+appRouter.get('/testfakeApi', async (req, res) => {
+  try {
+    const fakeApiResponse = await fetchTimeout('http://localhost:9421/fake-api');
+    res.json(fakeApiResponse);
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
 /**
  * @swagger
  * /getTheLatestOpeningDate:
@@ -38,7 +57,8 @@ appRouter.get("/getThreeMajorInstitutionalInvestors", async (req, res) => {
  */
 appRouter.get("/getTheLatestOpeningDate", async (req, res) => {
     try {
-      const data = await GetStocksService.getTheLatestOpeningDate();
+
+      const data = await timeoutPromise(GetStocksService.getTheLatestOpeningDate(), 8000);
       res.json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
