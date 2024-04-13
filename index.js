@@ -7,12 +7,27 @@ import SharedAPI_Controller from "./Controllers/SharedAPI_Controller.js"
 import User_Controller from "./Controllers/User_Controller.js"
 import swaggerUiExpress from 'swagger-ui-express';
 import SwaggerSpecs from './SwaggerSpecs.js';
+import cors from 'cors';
+
+
+
 const app = express();
 const PORT = 9421;
 const HOST = "0.0.0.0"; // This will make the server accessible externally
 // console.log('Swagger Spec 1:', SwaggerSpecs[0]);
 // console.log('Swagger Spec 2:', SwaggerSpecs[1]);
 app.use(express.json());// Express 4.16.0 Middlewares 解析傳入請求的 JSON 格式數據
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (/^http:\/\/localhost(:\d+)?$/.test(origin) || origin === 'http://aaa:3000') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+}));
+
 //app.use(bodyParser.json());Old
 //app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.urlencoded({ extended: true }));
