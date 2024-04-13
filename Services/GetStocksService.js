@@ -43,7 +43,7 @@ class GetStocksService {
     }
   }
 
-  static async getFiveLevelsOfStockInformation(stockCode) {
+  static async fiveLevelsOfStockInformation(stockCode) {
     try {
       const apiUrl = `https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_${stockCode}.tw&json=1&delay=0&_=1701445552510`;
 
@@ -59,7 +59,7 @@ class GetStocksService {
     }
   }
 
-  static async getDailyMarketTrading() {
+  static async dailyMarketTrading() {
     try {
       const apiUrl =
         "https://www.twse.com.tw/rwd/zh/afterTrading/FMTQIK?response=json&_=1709117440570";
@@ -69,7 +69,7 @@ class GetStocksService {
         return responseBody;
       } else {
         console.log(
-          "%c getDailyMarketTrading",
+          "%c dailyMarketTrading",
           "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
           "req:",
           req
@@ -80,7 +80,7 @@ class GetStocksService {
     }
   }
 
-  static async getDailyClosingQuote() {
+  static async dailyClosingQuote() {
     try {
       const apiUrl =
         "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?response=json&_=1709118194485";
@@ -96,7 +96,7 @@ class GetStocksService {
         return responseData;
       } else {
         console.log(
-          "%c getDailyClosingQuote",
+          "%c dailyClosingQuote",
           "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
           "req:",
           req
@@ -107,16 +107,16 @@ class GetStocksService {
     }
   }
 
-  static async getTop20_SecuritiesByTradingVolume() {
+  static async top20_SecuritiesByTradingVolume() {
     try {
-      const latestOpeningDate = await this.getTheLatestOpeningDate();
+      const latestOpeningDate = await this.theLatestOpeningDate();
       const apiUrl =
       `https://www.twse.com.tw/rwd/zh/fund/T86?date=${latestOpeningDate}&selectType=ALL&response=json`;
       const response = await axios.get(apiUrl);
 
       if (response.status == 200) {
         console.log(
-          "%c getTop20_SecuritiesByTradingVolume",
+          "%c top20_SecuritiesByTradingVolume",
           "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
           latestOpeningDate,response,
         );
@@ -129,9 +129,9 @@ class GetStocksService {
     }
   }
 
-  static async getThreeMajorInstitutionalInvestors() {
+  static async threeMajorInstitutionalInvestors() {
     try {
-      const latestOpeningDate = await this.getTheLatestOpeningDate();
+      const latestOpeningDate = await this.theLatestOpeningDate();
       console.log(
         "%c latestOpeningDate",
         "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
@@ -153,11 +153,11 @@ class GetStocksService {
     }
   }
 
-  static async getSecuritiesCompanyTransactionRecords(req) {
+  static async securitiesCompanyTransactionRecords(req) {
     try {
       const stockNo = req.params.stockNo;
       console.log(
-        "%c getSecuritiesCompanyTransactionRecords",
+        "%c securitiesCompanyTransactionRecords",
         "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
         'req.params',
         req.params,
@@ -175,7 +175,7 @@ class GetStocksService {
       const trElements = $("tr");
       const dataArray = [];
       // console.log(
-      //   "%c getSecuritiesCompanyTransactionRecords",
+      //   "%c securitiesCompanyTransactionRecords",
       //   "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
       //   "trElements",
       //   trElements
@@ -241,11 +241,11 @@ class GetStocksService {
     }
   }
 
-  static async getTheLatestOpeningDate() {
+  static async theLatestOpeningDate() {
     try {
       
       const responseClosingDates =
-        await this.getStockMarketOpeningAndClosingDates(false);
+        await this.stockMarketOpeningAndClosingDates(false);
       const dates = responseClosingDates.map(
         (dateString) => new Date(dateString)
       );
@@ -278,11 +278,17 @@ class GetStocksService {
     }
   }
 
-  static async getStockMarketOpeningAndClosingDates(requestAllData = false) {
+  static async stockMarketOpeningAndClosingDates(requestAllData = false) {
     try {
       const apiUrl =
         "https://www.twse.com.tw/rwd/zh/holidaySchedule/holidaySchedule?response=json&_=" +
         Date.now();
+
+      // 使用 Promise 封装等待函数
+      const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+      // 强制等待 3 秒
+      await wait(3000);
 
       const response = await axios.get(apiUrl);
 
@@ -297,7 +303,7 @@ class GetStocksService {
         }
       } else {
         console.log(
-          "%c getStockMarketOpeningAndClosingDates",
+          "%c stockMarketOpeningAndClosingDates",
           "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
           "req:",
           req
