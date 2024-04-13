@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 9421:9421
+    image: node_express_backend
+    container_name: nodeJSContainer
+    volumes:
+      - ./:/app
+    network_mode: bridge
+
+
+

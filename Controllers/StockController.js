@@ -18,7 +18,7 @@ import { fetchTimeout,timeoutPromise } from '../Services/CustomUtilService.js';
  */
 appRouter.get("/threeMajorInstitutionalInvestors", async (req, res) => {
   try {
-    const data = await GetStocksService.threeMajorInstitutionalInvestors(); 
+    const data = await timeoutPromise(GetStocksService.threeMajorInstitutionalInvestors(), 8000);
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -80,7 +80,7 @@ appRouter.get("/theLatestOpeningDate", async (req, res) => {
  */
 appRouter.get("/dailyMarketTrading", async (req, res) => {
   try {
-    const data = await GetStocksService.dailyMarketTrading();
+    const data = await timeoutPromise(GetStocksService.dailyMarketTrading(), 8000);
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -101,7 +101,7 @@ appRouter.get("/dailyMarketTrading", async (req, res) => {
  */
 appRouter.get("/dailyClosingQuote", async (req, res) => {
   try {
-    const data = await GetStocksService.dailyClosingQuote();
+    const data = await timeoutPromise(GetStocksService.dailyClosingQuote(), 8000);
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -122,7 +122,8 @@ appRouter.get("/dailyClosingQuote", async (req, res) => {
  */
 appRouter.get("/top20_SecuritiesByTradingVolume", async (req, res) => {
   try {
-    const data = await GetStocksService.top20_SecuritiesByTradingVolume();
+    const data = await timeoutPromise(GetStocksService.top20_SecuritiesByTradingVolume(), 8000);
+
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -144,7 +145,8 @@ appRouter.get("/top20_SecuritiesByTradingVolume", async (req, res) => {
 appRouter.get("/stockMarketOpeningAndClosingDates", async (req, res) => {
     try {
         const requestAllData = req.query.requestAllData === 'true'; // 将查询参数转换为布尔值
-        const data = await GetStocksService.stockMarketOpeningAndClosingDates(requestAllData); 
+        const data = await timeoutPromise(GetStocksService.stockMarketOpeningAndClosingDates(requestAllData), 8000);
+
         res.json(data);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -173,7 +175,7 @@ appRouter.get("/stockMarketOpeningAndClosingDates", async (req, res) => {
 appRouter.get("/fiveLevelsOfStockInformation/:stockNo", async (req, res) => {
     try {
       const stockNo = req.params.stockNo;
-      const data = await GetStocksService.fiveLevelsOfStockInformation(stockNo);
+      const data = await timeoutPromise(GetStocksService.fiveLevelsOfStockInformation(stockNo), 8000);
       res.json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -245,7 +247,7 @@ appRouter.get("/fiveLevelsOfStockInformation/:stockNo", async (req, res) => {
  */
 appRouter.get("/securitiesCompanyTransactionRecords/:stockNo/", async (req, res) => {
   try {
-    const data = await GetStocksService.securitiesCompanyTransactionRecords(req);
+    const data = await timeoutPromise(GetStocksService.securitiesCompanyTransactionRecords(req), 8000);
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });

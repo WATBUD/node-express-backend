@@ -284,11 +284,11 @@ class GetStocksService {
         "https://www.twse.com.tw/rwd/zh/holidaySchedule/holidaySchedule?response=json&_=" +
         Date.now();
 
-      // 使用 Promise 封装等待函数
-      const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+      // // 使用 Promise 封装等待函数
+      // const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-      // 强制等待 3 秒
-      await wait(3000);
+      // // 强制等待 3 秒
+      // await wait(3000);
 
       const response = await axios.get(apiUrl);
 
