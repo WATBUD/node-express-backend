@@ -13,4 +13,4 @@ The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
 ### List of authors
-- 水靈 Louis ([@timneutkens](https://github.com/WATBUD))
+- 水靈 Louis ([@WATBUD](https://github.com/WATBUD))
