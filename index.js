@@ -10,6 +10,16 @@ import SwaggerSpecs from './SwaggerSpecs.js';
 import cors from 'cors';
 
 
+const corsOptions = {
+  origin: [
+    'http://www.example.com',
+    'http://localhost:8080',
+    'https://nextshadcn14.vercel.app',
+    
+  ],
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
 
 const app = express();
 const PORT = 9421;
@@ -18,15 +28,14 @@ const HOST = "0.0.0.0"; // This will make the server accessible externally
 // console.log('Swagger Spec 2:', SwaggerSpecs[1]);
 app.use(express.json());// Express 4.16.0 Middlewares 解析傳入請求的 JSON 格式數據
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (/^http:\/\/localhost(:\d+)?$/.test(origin) || origin === 'http://aaa:3000') {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-}));
+// app.use(cors({
+//   origin: (origin, callback) => {
+//     console.log(origin);
+
+//     callback(null, true);
+//   },
+// }));
+app.use(cors(corsOptions));
 
 //app.use(bodyParser.json());Old
 //app.use(bodyParser.urlencoded({ extended: false }));
@@ -35,6 +44,13 @@ app.use(express.urlencoded({ extended: true }));
 SwaggerSpecs.forEach(spec=>{
   app.use(`${spec.info.routePath}`, swaggerUiExpress.serve, (...args) => swaggerUiExpress.setup(spec)(...args));
 })   
+
+// app.get('/', (req, res) => {
+//   const clientIP = req.ip.split(':')[0]; // 解析IP地址
+//   console.log(clientIP);
+//   res.send('Hello World!');
+// });
+
 app.use('/', StockController); 
 app.use('/', SharedAPI_Controller);
 app.use('/', User_Controller); 
