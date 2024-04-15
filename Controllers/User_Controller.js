@@ -67,6 +67,85 @@ appRouter.post("/updateUserPassword",formData_Middlewares.none(), async (req, re
     }
 });
 
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   get:
+ *     tags:
+ *       - Users Api
+ *     summary: 取得使用者資料
+ *     description: 取得使用者資料。
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: 使用者ID
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: 成功取得使用者資料。
+ */
+appRouter.get('/users/:id', async (req, res) => {
+  const userId = req.params.id;
+  console.log('req.params.id=>>>', userId);
+  try {
+    const user = await UserService.getUserById(userId);
+    res.send(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
+/**
+ * @swagger
+ * /users/{id}/password:
+ *   put:
+ *     tags:
+ *       - Users Api
+ *     summary: 更新使用者密碼
+ *     description: 更新指定使用者的密碼。
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: 使用者ID
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - password
+ *             properties:
+ *               password:
+ *                 type: string
+ *                 description: 使用者新密碼
+ *     responses:
+ *       200:
+ *         description: 成功更新使用者密碼。
+ */
+appRouter.put('/users/:id/password',formData_Middlewares.none(), async (req, res) => {
+
+  const userId = req.params.id;
+  const password = req.body.password; // Access password field from form-data
+  console.log('req.body=>>>',userId, password,req.body);
+  try {
+      const updatedUser = await UserService.updateUserPassword(userId, password);
+      res.send(updatedUser);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
+
 /**
  * @swagger
  * /updateUserAvatar:

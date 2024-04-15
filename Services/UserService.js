@@ -3,6 +3,22 @@ import UserRepositoryInstance from '../Database/prisma/R_UserRepository.js';
 class UserService {
   constructor() {}
 
+  static async getUserById(ID) {
+    try {
+      const tableData = await UserRepositoryInstance.getUserById(ID);
+      
+      if (tableData) {
+        return tableData;
+      } else {
+        return "Unable to retrieve data for ID: " + ID;
+      }
+    } catch (error) {
+      return "Error: " + error.message;
+    }
+  }
+  
+
+
   static async getAssignViewTable(tableName) {
     try {
       const tableData = await UserRepositoryInstance.getAssignViewTable(tableName); // 等待 UserRepositoryInstance.getAssignViewTable 完成

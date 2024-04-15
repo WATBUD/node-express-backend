@@ -35,21 +35,14 @@ class UserRepository {
   }
 
 
-  // async getAssignViewTable(viewTableName) {
-  //   try {
-  //     const tableData = await this.prisma.$queryRaw(`SELECT * FROM ${viewTableName}`);
-  //     return tableData;
-  //   } catch (error) {
-  //     console.error('Error fetching table data:', error);
-  //     throw error;
-  //   }
-  // }
-
-
 
   async getUserById(id) {
-    return await this.prisma.user.findUnique({
-      where: { id },
+    // Convert the id to an integer
+    const userId = parseInt(id, 10);
+  
+    // Query the database using the converted numeric id
+    return await this.prisma.users.findUnique({
+      where: { user_id: userId },
     });
   }
   async getAllUsers() {
