@@ -28,13 +28,6 @@ const HOST = "0.0.0.0"; // This will make the server accessible externally
 // console.log('Swagger Spec 2:', SwaggerSpecs[1]);
 app.use(express.json());// Express 4.16.0 Middlewares 解析傳入請求的 JSON 格式數據
 
-// app.use(cors({
-//   origin: (origin, callback) => {
-//     console.log(origin);
-
-//     callback(null, true);
-//   },
-// }));
 app.use(cors(corsOptions));
 
 //app.use(bodyParser.json());Old

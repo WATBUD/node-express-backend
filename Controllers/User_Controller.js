@@ -1,7 +1,7 @@
 import express from 'express';
 import UserService from '../Services/UserService.js';
 const appRouter  = express.Router();
-import PrismaServiceInstance from '../Database/prisma/PrismaService.js';
+//import PrismaServiceInstance from '../Database/prisma/PrismaService.js';
 import path from 'path';
 import multer from 'multer';
 const formData_Middlewares = multer();//解析form data的中間件
@@ -9,7 +9,7 @@ import { avatarUpload } from '../Uploads/UploadService.js';
 
 /**
  * @swagger
- * /getTagGroupDetails:
+ * /tagGroupDetails:
  *   get:
  *     tags:
  *         - Users Api
@@ -19,8 +19,8 @@ import { avatarUpload } from '../Uploads/UploadService.js';
  *       200:
  *         description: Successful response with tag群組表 data.
  */
-appRouter.get("/getTagGroupDetails", async (req, res) => {
-    const tableData = await PrismaServiceInstance.getAssignViewTable("V_TagGroupDetail");
+appRouter.get("/tagGroupDetails", async (req, res) => {
+    const tableData = await UserService.getAssignViewTable("V_TagGroupDetail");
     try {
       res.json(tableData);
     } catch (error) {

@@ -1,7 +1,22 @@
 import axios from "axios";
-import PrismaServiceInstance from '../Database/prisma/PrismaService.js';
+import UserRepositoryInstance from '../Database/prisma/R_UserRepository.js';
 class UserService {
   constructor() {}
+
+  static async getAssignViewTable(tableName) {
+    try {
+      const tableData = await UserRepositoryInstance.getAssignViewTable(tableName); // 等待 UserRepositoryInstance.getAssignViewTable 完成
+  
+      if (tableData) {
+        return tableData;
+      } else {
+        return "Unable to retrieve data for table: " + tableName;
+      }
+    } catch (error) {
+      return "Error: " + error.message;
+    }
+  }
+
 
   static async getNordVPNDataAsync(ipAddress) {
     try {
@@ -27,6 +42,10 @@ class UserService {
       return "Error: " + error.message;
     }
   }
+
+
+
+
   static async updateUserPassword(userId, newPassword) {
     let updatedUser = null;
     let transactionError = null;
@@ -35,13 +54,13 @@ class UserService {
     }
     // console.log('updateUserPassword',userId,newPassword)
     try {
-      const existingUser = await PrismaServiceInstance.prisma.users.findUnique({
+      const existingUser = await UserRepositoryInstance.prisma.users.findUnique({
         where: { user_id: parseInt(userId, 10) },
       });
       if (!existingUser) {
         throw new Error(`ID ${userId} 的用户不存在`);
       }
-      updatedUser = await PrismaServiceInstance.prisma.users.update({
+      updatedUser = await UserRepositoryInstance.prisma.users.update({
         where: { user_id: parseInt(userId, 10) },
         data: { password: newPassword.toString()},
       });
