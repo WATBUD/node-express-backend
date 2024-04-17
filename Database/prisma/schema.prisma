@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
@@ -70,6 +70,14 @@ model users {
   created_at  DateTime?    @default(now()) @db.Timestamp(0)
   updated_at  DateTime?    @default(now()) @db.Timestamp(0)
   user_detail user_detail?
+  user_stock  user_stock?
+}
+
+model user_stock {
+  stock_userid         Int     @id @default(autoincrement())
+  favorite_stocks_json Json?
+  favorite_stocks      String? @db.Text
+  users                users   @relation(fields: [stock_userid], references: [user_id], onUpdate: Restrict, map: "stock_user_fk")
 }
 
 enum user_detail_relationship_status {
