@@ -76,7 +76,8 @@ model users {
 model user_stock {
   stock_userid         Int     @id @default(autoincrement())
   favorite_stocks_json Json?
-  favorite_stocks      String? @db.Text
+  favorite_stocks      String? @db.VarChar(2000)
+  favorite_blob        Bytes?  @db.Blob
   users                users   @relation(fields: [stock_userid], references: [user_id], onUpdate: Restrict, map: "stock_user_fk")
 }
 

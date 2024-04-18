@@ -25,7 +25,7 @@ import { fetchTimeout,timeoutPromise } from '../Services/CustomUtilService.js';
  *       200:
  *         description: 成功取得使用者資料。
  */
-appRouter.get('stock/trackinglist/:userID', async (req, res) => {
+appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
   const userId = req.params.userID;
   console.log('req.params.id=>>>', userId);
   try {
