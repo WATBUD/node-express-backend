@@ -1,5 +1,6 @@
 import axios from "axios";
-import UserRepositoryInstance from '../Database/prisma/R_UserRepository.js';
+import UserRepositoryInstance from '../Database/prisma/UserRepository.js';
+
 class UserService {
   constructor() {}
 

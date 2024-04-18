@@ -3,11 +3,34 @@ import _ from "lodash";
 import cheerio from "cheerio";
 import iconv from 'iconv-lite';
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
-class GetStocksService {
+
+
+
+import StockRepository from '../Database/prisma/StockRepository.js';
+
+class StocksService {
   //static httpClient = axios.create();
   constructor() {
     //this.httpClient = axios.create();
   }
+  static async getStockTrackinglist(userID) {
+    try {
+      const tableData = await StockRepository.getStockTrackinglist(userID);
+      
+      if (tableData) {
+        return tableData;
+      } else {
+        return "Unable to find data for userID: " + userID;
+      }
+    } catch (error) {
+      return "Error: " + error.message;
+    }
+  }
+  
+
+
+
+
 
   static async getNordVPNDataAsync(ipAddress) {
     try {
@@ -173,7 +196,7 @@ class GetStocksService {
       const html = iconv.decode(htmlBuffer, "big5"); // 使用 iconv-lite 解码 Big5 编码
       const $ = cheerio.load(html);
       const trElements = $("tr");
-      const dataArray = [];
+      let dataArray = [];
       // console.log(
       //   "%c securitiesCompanyTransactionRecords",
       //   "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
@@ -237,6 +260,12 @@ class GetStocksService {
       }
       return dataArray;
     } catch (error) {
+      console.log(
+        "%c securitiesCompanyTransactionRecords",
+        "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
+        "error:",
+        error
+      );
       return error.message;
     }
   }
@@ -325,4 +354,4 @@ class GetStocksService {
 
 }
 
-export default GetStocksService;
+export default StocksService;

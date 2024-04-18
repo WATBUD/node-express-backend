@@ -1,12 +1,46 @@
 import express from 'express';
-import GetStocksService from '../Services/GetStocksService.js';
+import StocksService from '../Services/StocksService.js';
 const appRouter  = express.Router();
 import axios from "axios";
 import { fetchTimeout,timeoutPromise } from '../Services/CustomUtilService.js';
 
+
+
 /**
  * @swagger
- * /threeMajorInstitutionalInvestors:
+ * /stock/trackinglist/{userID}:
+ *   get:
+ *     tags:
+ *       - Stock
+ *     summary: 取得使用者追蹤股票名單
+ *     description: 取得使用者追蹤股票資料。
+ *     parameters:
+ *       - in: path
+ *         name: userID
+ *         required: true
+ *         description: 使用者ID
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: 成功取得使用者資料。
+ */
+appRouter.get('stock/trackinglist/:userID', async (req, res) => {
+  const userId = req.params.userID;
+  console.log('req.params.id=>>>', userId);
+  try {
+    const user = await StocksService.getStockTrackinglist(userId);
+    res.send(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+/**
+ * @swagger
+ * /stock/threeMajorInstitutionalInvestors:
  *   get:
  *     tags:
  *         - Stock
@@ -16,9 +50,9 @@ import { fetchTimeout,timeoutPromise } from '../Services/CustomUtilService.js';
  *       200:
  *         description: Successful response data.
  */
-appRouter.get("/threeMajorInstitutionalInvestors", async (req, res) => {
+appRouter.get("/stock/threeMajorInstitutionalInvestors", async (req, res) => {
   try {
-    const data = await timeoutPromise(GetStocksService.threeMajorInstitutionalInvestors(), 8000);
+    const data = await timeoutPromise(StocksService.threeMajorInstitutionalInvestors(), 8000);
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -45,7 +79,7 @@ appRouter.get('/testfakeApi', async (req, res) => {
 
 /**
  * @swagger
- * /theLatestOpeningDate:
+ * /stock/theLatestOpeningDate:
  *   get:
  *     tags:
  *         - Stock
@@ -55,10 +89,10 @@ appRouter.get('/testfakeApi', async (req, res) => {
  *       200:
  *         description: Successful response data.
  */
-appRouter.get("/theLatestOpeningDate", async (req, res) => {
+appRouter.get("/stock/theLatestOpeningDate", async (req, res) => {
     try {
 
-      const data = await timeoutPromise(GetStocksService.theLatestOpeningDate(), 8000);
+      const data = await timeoutPromise(StocksService.theLatestOpeningDate(), 8000);
       res.json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -68,7 +102,7 @@ appRouter.get("/theLatestOpeningDate", async (req, res) => {
 
 /**
  * @swagger
- * /dailyMarketTrading:
+ * /stock/dailyMarketTrading:
  *   get:
  *     tags:
  *         - Stock
@@ -78,9 +112,9 @@ appRouter.get("/theLatestOpeningDate", async (req, res) => {
  *       200:
  *         description: Successful response.
  */
-appRouter.get("/dailyMarketTrading", async (req, res) => {
+appRouter.get("/stock/dailyMarketTrading", async (req, res) => {
   try {
-    const data = await timeoutPromise(GetStocksService.dailyMarketTrading(), 8000);
+    const data = await timeoutPromise(StocksService.dailyMarketTrading(), 8000);
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -89,7 +123,7 @@ appRouter.get("/dailyMarketTrading", async (req, res) => {
 
 /**
  * @swagger
- * /dailyClosingQuote:
+ * /stock/dailyClosingQuote:
  *   get:
  *     tags:
  *         - Stock
@@ -99,9 +133,9 @@ appRouter.get("/dailyMarketTrading", async (req, res) => {
  *       200:
  *         description: Successful response.
  */
-appRouter.get("/dailyClosingQuote", async (req, res) => {
+appRouter.get("/stock/dailyClosingQuote", async (req, res) => {
   try {
-    const data = await timeoutPromise(GetStocksService.dailyClosingQuote(), 8000);
+    const data = await timeoutPromise(StocksService.dailyClosingQuote(), 8000);
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -110,7 +144,7 @@ appRouter.get("/dailyClosingQuote", async (req, res) => {
 
 /**
  * @swagger
- * /top20_SecuritiesByTradingVolume:
+ * /stock/top20_SecuritiesByTradingVolume:
  *   get:
  *     tags:
  *         - Stock
@@ -120,9 +154,9 @@ appRouter.get("/dailyClosingQuote", async (req, res) => {
  *       200:
  *         description: Successful response.
  */
-appRouter.get("/top20_SecuritiesByTradingVolume", async (req, res) => {
+appRouter.get("/stock/top20_SecuritiesByTradingVolume", async (req, res) => {
   try {
-    const data = await timeoutPromise(GetStocksService.top20_SecuritiesByTradingVolume(), 8000);
+    const data = await timeoutPromise(StocksService.top20_SecuritiesByTradingVolume(), 8000);
 
     res.json(data);
   } catch (error) {
@@ -132,7 +166,7 @@ appRouter.get("/top20_SecuritiesByTradingVolume", async (req, res) => {
 
 /**
  * @swagger
- * /stockMarketOpeningAndClosingDates:
+ * /stock/stockMarketOpeningAndClosingDates:
  *   get:
  *     tags:
  *         - Stock
@@ -142,10 +176,10 @@ appRouter.get("/top20_SecuritiesByTradingVolume", async (req, res) => {
  *       200:
  *         description: Successful response data.
  */
-appRouter.get("/stockMarketOpeningAndClosingDates", async (req, res) => {
+appRouter.get("/stock/stockMarketOpeningAndClosingDates", async (req, res) => {
     try {
         const requestAllData = req.query.requestAllData === 'true'; // 将查询参数转换为布尔值
-        const data = await timeoutPromise(GetStocksService.stockMarketOpeningAndClosingDates(requestAllData), 8000);
+        const data = await timeoutPromise(StocksService.stockMarketOpeningAndClosingDates(requestAllData), 8000);
 
         res.json(data);
     } catch (error) {
@@ -155,7 +189,7 @@ appRouter.get("/stockMarketOpeningAndClosingDates", async (req, res) => {
 
 /**
  * @swagger
- * /fiveLevelsOfStockInformation/{stockNo}:
+ * /stock/fiveLevelsOfStockInformation/{stockNo}:
  *   get:
  *     tags:
  *         - Stock
@@ -172,10 +206,10 @@ appRouter.get("/stockMarketOpeningAndClosingDates", async (req, res) => {
  *       200:
  *         description: Successful response data.
  */
-appRouter.get("/fiveLevelsOfStockInformation/:stockNo", async (req, res) => {
+appRouter.get("/stock/fiveLevelsOfStockInformation/:stockNo", async (req, res) => {
     try {
       const stockNo = req.params.stockNo;
-      const data = await timeoutPromise(GetStocksService.fiveLevelsOfStockInformation(stockNo), 8000);
+      const data = await timeoutPromise(StocksService.fiveLevelsOfStockInformation(stockNo), 8000);
       res.json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -184,7 +218,7 @@ appRouter.get("/fiveLevelsOfStockInformation/:stockNo", async (req, res) => {
 
 // /**
 //  * @swagger
-//  * /securitiesCompanyTransactionRecords/{stockNo}:
+//  * /stock/securitiesCompanyTransactionRecords/{stockNo}:
 //  *   get:
 //  *     tags:
 //  *         - Stock
@@ -204,7 +238,7 @@ appRouter.get("/fiveLevelsOfStockInformation/:stockNo", async (req, res) => {
 // appRouter.get("/securitiesCompanyTransactionRecords/:stockNo", async (req, res) => {
 //   try {
 //     const stockNo = req.params.stockNo;
-//     const data = await GetStocksService.securitiesCompanyTransactionRecords(stockNo);
+//     const data = await StocksService.securitiesCompanyTransactionRecords(stockNo);
 //     res.json(data);
 //   } catch (error) {
 //     res.status(500).json({ error: error.message });
@@ -214,7 +248,7 @@ appRouter.get("/fiveLevelsOfStockInformation/:stockNo", async (req, res) => {
 
 /**
  * @swagger
- * /securitiesCompanyTransactionRecords/{stockNo}:
+ * /stock/securitiesCompanyTransactionRecords/{stockNo}:
  *   get:
  *     tags:
  *         - Stock
@@ -245,9 +279,9 @@ appRouter.get("/fiveLevelsOfStockInformation/:stockNo", async (req, res) => {
  *       200:
  *         description: Successful response data.
  */
-appRouter.get("/securitiesCompanyTransactionRecords/:stockNo/", async (req, res) => {
+appRouter.get("/stock/securitiesCompanyTransactionRecords/:stockNo/", async (req, res) => {
   try {
-    const data = await timeoutPromise(GetStocksService.securitiesCompanyTransactionRecords(req), 8000);
+    const data = await timeoutPromise(StocksService.securitiesCompanyTransactionRecords(req), 8000);
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });

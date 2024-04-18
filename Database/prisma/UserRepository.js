@@ -37,9 +37,8 @@ class UserRepository {
 
 
   async getUserById(id) {
-    // Convert the id to an integer
     const userId = parseInt(id, 10);
-  
+
     // Query the database using the converted numeric id
     return await this.prisma.users.findUnique({
       where: { user_id: userId },
