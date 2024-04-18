@@ -1,0 +1,1 @@
+DELETE FROM `RN_NetCoreDB`.`Users` WHERE `ID`=7;

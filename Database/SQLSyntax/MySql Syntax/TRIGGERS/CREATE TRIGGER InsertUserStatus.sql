@@ -1,0 +1,9 @@
+DELIMITER //
+CREATE TRIGGER T_AfterInsertUser
+AFTER INSERT ON users
+FOR EACH ROW
+BEGIN
+ INSERT INTO user_detail (ud_user_id) VALUES (NEW.user_id);
+END;
+//
+DELIMIRN_NetCoreDBRN_NetCoreDBTER ;

@@ -8,7 +8,7 @@ const options1 = {
     info: {
       title: 'Stocks',
       version: '1.0.0',
-      description: 'APIs for managing stocks data',
+      description: 'APIs come from crawlers and third parties. If you have any questions, please contact Louis.',
       routePath:'/api/stock'
     },
   },
@@ -21,7 +21,7 @@ const options2 = {
     info: {
       title: 'Shared',
       version: '1.0.0',
-      description: 'APIs for managing users data',
+      description: 'APIs for managing share data',
       routePath:'/api/share'
     },
   },
