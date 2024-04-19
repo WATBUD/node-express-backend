@@ -15,10 +15,17 @@ class StocksService {
   }
   static async getStockTrackinglist(userID) {
     try {
-      const tableData = await StockRepository.getStockTrackinglist(userID);
-      
-      if (tableData) {
-        return tableData;
+      const _trackinglist = await StockRepository.getStockTrackinglist(userID);
+
+      if (_trackinglist) {
+        const convertedData = _trackinglist.map((obj) => {
+          return {
+            ...obj, // 保持其他属性不变
+            user_id: obj.user_id.toString(),
+          };
+        });
+
+        return convertedData;
       } else {
         return "Unable to find data for userID: " + userID;
       }
@@ -26,11 +33,6 @@ class StocksService {
       return "Error: " + error.message;
     }
   }
-  
-
-
-
-
 
   static async getNordVPNDataAsync(ipAddress) {
     try {
@@ -133,20 +135,20 @@ class StocksService {
   static async top20_SecuritiesByTradingVolume() {
     try {
       const latestOpeningDate = await this.theLatestOpeningDate();
-      const apiUrl =
-      `https://www.twse.com.tw/rwd/zh/fund/T86?date=${latestOpeningDate}&selectType=ALL&response=json`;
+      const apiUrl = `https://www.twse.com.tw/rwd/zh/fund/T86?date=${latestOpeningDate}&selectType=ALL&response=json`;
       const response = await axios.get(apiUrl);
 
       if (response.status == 200) {
         console.log(
           "%c top20_SecuritiesByTradingVolume",
           "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
-          latestOpeningDate,response,
+          latestOpeningDate,
+          response
         );
-        const _data = (response.data.data || []).slice(0, 20); 
-        response.data.data=_data;
+        const _data = (response.data.data || []).slice(0, 20);
+        response.data.data = _data;
         return response.data;
-      } 
+      }
     } catch (error) {
       return `发生异常：${error.message}`;
     }
@@ -166,7 +168,7 @@ class StocksService {
 
       if (response.status === 200) {
         //const data = response.data.data || [];
-        const data = (response.data.data || []).slice(0, 100); 
+        const data = (response.data.data || []).slice(0, 100);
         return data;
       } else {
         return `HTTP请求失败，状态码：${response.status}`;
@@ -182,13 +184,13 @@ class StocksService {
       console.log(
         "%c securitiesCompanyTransactionRecords",
         "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
-        'req.params',
+        "req.params",
         req.params,
-        'req.query',
-        req.query,
+        "req.query",
+        req.query
       );
       const url = `https://fubon-ebrokerdj.fbs.com.tw/z/zc/zco/zco.djhtm?a=${stockNo}&e=2024-2-19&f=2024-2-19`;
-  
+
       const response = await axios.get(url, {
         responseType: "arraybuffer", // 将响应类型设置为 arraybuffer
       });
@@ -224,7 +226,7 @@ class StocksService {
               $(tdElements[6]).text().trim() - $(tdElements[7]).text().trim(), //$(tdElements[8]).text().trim(),
             percentage: $(tdElements[9]).text().trim(),
           };
-  
+
           if (dataObject.percentage !== "佔成交比重") {
             dataArray.push(dataObject);
           }
@@ -272,9 +274,9 @@ class StocksService {
 
   static async theLatestOpeningDate() {
     try {
-      
-      const responseClosingDates =
-        await this.stockMarketOpeningAndClosingDates(false);
+      const responseClosingDates = await this.stockMarketOpeningAndClosingDates(
+        false
+      );
       const dates = responseClosingDates.map(
         (dateString) => new Date(dateString)
       );
@@ -342,7 +344,7 @@ class StocksService {
       return `发生异常：${error.message}`;
     }
   }
-  
+
   static async getQuoteTimeSalesStore() {
     try {
       // 缺失的代码请自行补充
@@ -351,7 +353,6 @@ class StocksService {
       return "发生异常：" + error.message;
     }
   }
-
 }
 
 export default StocksService;

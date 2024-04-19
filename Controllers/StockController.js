@@ -29,12 +29,65 @@ appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
   const userId = req.params.userID;
   console.log('req.params.id=>>>', userId);
   try {
+    const _trackinglist = await StocksService.getStockTrackinglist(userId);
+  
+    console.log('_trackinglist=>>>', _trackinglist);
+
+  
+    res.send(_trackinglist);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+  
+});
+
+/**
+ * @swagger
+ * /stock/trackinglist:
+ *   post:
+ *     tags:
+ *       - Stock
+ *     summary: 新增使用者追蹤股票名單
+ *     description: 新增使用者追蹤股票資料。
+ *     parameters:
+ *       - in: body
+ *         name: requestBody
+ *         required: true
+ *         description: 使用者ID和股票ID
+ *         schema:
+ *           type: object
+ *           properties:
+ *             userID:
+ *               type: string
+ *             stockID:
+ *               type: number
+ *     responses:
+ *       200:
+ *         description: 成功取得使用者資料。
+ */
+
+appRouter.post("/stock/trackinglist", async (req, res) => {
+  const { userID, stockID } = req.body;
+
+  
+  // 確認 userID 和 stockID 是否存在且為數字
+  if (!userID || !stockID || isNaN(stockID)) {
+    return res.status(400).json({ error: "Invalid userID or stockID" });
+  }
+  try {
     const user = await StocksService.getStockTrackinglist(userId);
     res.send(user);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+
+
+
+  res.status(200).json({ message: "成功新增使用者追蹤股票名單" });
 });
+
+
+
 
 
 

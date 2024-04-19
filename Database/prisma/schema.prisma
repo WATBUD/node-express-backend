@@ -62,18 +62,26 @@ model user_detail {
 }
 
 model users {
-  user_id     Int          @id @default(autoincrement())
-  account     String       @unique(map: "Account") @db.VarChar(100)
-  username    String       @db.VarChar(50)
-  password    String       @db.VarChar(100)
-  email       String       @db.VarChar(100)
-  created_at  DateTime?    @default(now()) @db.Timestamp(0)
-  updated_at  DateTime?    @default(now()) @db.Timestamp(0)
-  user_detail user_detail?
-  user_stock  user_stock?
+  user_id          Int               @id @default(autoincrement())
+  account          String            @unique(map: "Account") @db.VarChar(100)
+  username         String            @db.VarChar(50)
+  password         String            @db.VarChar(100)
+  email            String            @db.VarChar(100)
+  created_at       DateTime?         @default(now()) @db.Timestamp(0)
+  updated_at       DateTime?         @default(now()) @db.Timestamp(0)
+  user_detail      user_detail?
+  user_stockBackup user_stockBackup?
 }
 
 model user_stock {
+  index    Int    @id @default(autoincrement())
+  stock_id String @db.VarChar(5)
+  user_id  BigInt @db.UnsignedBigInt
+
+  @@unique([stock_id, user_id], map: "user_stock_key")
+}
+
+model user_stockBackup {
   stock_userid         Int     @id @default(autoincrement())
   favorite_stocks_json Json?
   favorite_stocks      String? @db.VarChar(2000)

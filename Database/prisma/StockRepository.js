@@ -9,14 +9,38 @@ class StockRepository {
     return StockRepository.instance;
   }
 
-  
-  async getStockTrackinglist(id) {
-    const userId = parseInt(id, 10);
-      return await this.prisma.user_stock.findUnique({
-      where: { stock_userid: userId },
-      select: { favorite_stocks: true } // 選擇要返回的欄位
-    });
+
+  async getStockTrackinglist(userId) {
+    try {
+      const _userId = BigInt(userId).toString();
+      return await this.prisma.user_stock.findMany({
+        where: { user_id: _userId }
+      });
+    } catch (error) {
+      console.error("Error getStockTrackinglist:", error);
+      throw error; // 重新拋出錯誤以便上層處理
+    }
+
+
   }
+  
+  
+  async createStockTrackinglist(userId, favoriteStocks) {
+    try {
+      const createdUserStock = await this.prisma.user_stock.create({
+        data: {
+          userid: userId,
+          favorite_stocks: favoriteStocks,
+        },
+      });
+      return createdUserStock;
+    } catch (error) {
+      // 在這裡處理錯誤
+      console.error("Error creating stock tracking list:", error);
+      throw error; // 重新拋出錯誤以便上層處理
+    }
+  }
+  
 
 }
 const StockRepositoryInstance = new StockRepository();
