@@ -2,8 +2,7 @@ import express from 'express';
 import HttpClientService from '../Services/HttpClientService.js';
 const appRouter  = express.Router();
 import SwaggerSpecs from '../SwaggerSpecs.js';
-import PrismaServiceInstance from '../Database/prisma/PrismaService.js';
-
+import SharedService from '../Services/SharedService.js';
 /**
  * @swagger
  * /getClientIP:
@@ -50,7 +49,7 @@ appRouter.get("/getClientIP", async (req, res) => {
  *         description: Successful response data.
  */
 appRouter.get("/getRequestLogs", async (req, res) => {
-  const table = await PrismaServiceInstance.getAssignViewTable("record_log_table",5);
+  const table = await SharedService.getAssignViewTable("record_log_table",5);
   try {
     res.json(table);
   } catch (error) {
