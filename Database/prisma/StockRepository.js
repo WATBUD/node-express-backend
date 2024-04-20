@@ -34,8 +34,9 @@ class StockRepository {
       return createdUserStock;
     } catch (error) {
       // 在這裡處理錯誤
-      console.error("Error creating stock tracking list:", error);
       if (error.message.includes('Unique constraint')) {
+        //console.error("Error creating stock tracking list:", error);
+        console.error("Error creating stock tracking list:", '使用者已收藏此股票');
         throw new Error('使用者已收藏此股票');
       }
       
