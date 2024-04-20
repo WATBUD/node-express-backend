@@ -3,7 +3,8 @@ import StocksService from '../Services/StocksService.js';
 const appRouter  = express.Router();
 import axios from "axios";
 import { fetchTimeout,timeoutPromise } from '../Services/CustomUtilService.js';
-
+import multer from 'multer';
+const formData_Middlewares_multer = multer();//解析form data的中間件
 
 
 /**
@@ -47,43 +48,51 @@ appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
  *   post:
  *     tags:
  *       - Stock
- *     summary: 新增使用者追蹤股票名單
- *     description: 新增使用者追蹤股票資料。
- *     parameters:
- *       - in: body
- *         name: requestBody
- *         required: true
- *         description: 使用者ID和股票ID
- *         schema:
- *           type: object
- *           properties:
- *             userID:
- *               type: string
- *             stockID:
- *               type: number
+ *     summary: Add new stock to trackinglist
+ *     description: Add a new stock to the user's trackinglist.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userID:
+ *                 type: string
+ *                 description: User ID
+ *               stockID:
+ *                 type: string
+ *                 description: Stock ID
  *     responses:
  *       200:
- *         description: 成功取得使用者資料。
+ *         description: Success message indicating the stock was added to the trackinglist.
+ *       400:
+ *         description: Invalid request body or missing required fields.
+ *       500:
+ *         description: Internal server error.
  */
 
-appRouter.post("/stock/trackinglist", async (req, res) => {
+appRouter.post("/stock/trackinglist",formData_Middlewares_multer.none(),async (req, res) => {
   const { userID, stockID } = req.body;
-
-  
-  // 確認 userID 和 stockID 是否存在且為數字
-  if (!userID || !stockID || isNaN(stockID)) {
+  console.log(
+    "%c /stock/trackinglist",
+    "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
+    req.body,
+  );
+  if (!userID || !stockID) {
     return res.status(400).json({ error: "Invalid userID or stockID" });
   }
+
   try {
-    const user = await StocksService.getStockTrackinglist(userId);
-    res.send(user);
+    const _trackinglist = await StocksService.createStockTrackinglist(userID,stockID);
+    //res.status(200).json(user); 
+
+    res.send(_trackinglist);
+
+    _trackinglist
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message }); // 发送错误的响应
   }
-
-
-
-  res.status(200).json({ message: "成功新增使用者追蹤股票名單" });
 });
 
 

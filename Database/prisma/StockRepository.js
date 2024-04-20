@@ -20,23 +20,25 @@ class StockRepository {
       console.error("Error getStockTrackinglist:", error);
       throw error; // 重新拋出錯誤以便上層處理
     }
-
-
   }
   
   
-  async createStockTrackinglist(userId, favoriteStocks) {
+  async createStockTrackinglist(userID, stockID) {
     try {
       const createdUserStock = await this.prisma.user_stock.create({
         data: {
-          userid: userId,
-          favorite_stocks: favoriteStocks,
+          user_id: userID,
+          stock_id: stockID,
         },
       });
       return createdUserStock;
     } catch (error) {
       // 在這裡處理錯誤
       console.error("Error creating stock tracking list:", error);
+      if (error.message.includes('Unique constraint')) {
+        throw new Error('使用者已收藏此股票');
+      }
+      
       throw error; // 重新拋出錯誤以便上層處理
     }
   }

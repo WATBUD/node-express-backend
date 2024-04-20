@@ -76,7 +76,7 @@ model users {
 model user_stock {
   index    Int    @id @default(autoincrement())
   stock_id String @db.VarChar(5)
-  user_id  BigInt @db.UnsignedBigInt
+  user_id  String @db.VarChar(16)
 
   @@unique([stock_id, user_id], map: "user_stock_key")
 }

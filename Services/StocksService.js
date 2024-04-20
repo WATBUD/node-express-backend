@@ -13,19 +13,18 @@ class StocksService {
   constructor() {
     //this.httpClient = axios.create();
   }
+
   static async getStockTrackinglist(userID) {
     try {
       const _trackinglist = await StockRepository.getStockTrackinglist(userID);
 
       if (_trackinglist) {
-        const convertedData = _trackinglist.map((obj) => {
-          return {
-            ...obj, // 保持其他属性不变
-            user_id: obj.user_id.toString(),
-          };
+        const modifiedStocks = _trackinglist.map(stock => {
+          const { index, user_id, ...rest } = stock;
+          return rest;
         });
 
-        return convertedData;
+        return modifiedStocks;
       } else {
         return "Unable to find data for userID: " + userID;
       }
@@ -33,6 +32,23 @@ class StocksService {
       return "Error: " + error.message;
     }
   }
+
+  static async createStockTrackinglist(userID,stockID) {
+    try {
+      const _trackinglist = await StockRepository.createStockTrackinglist(userID,stockID);
+
+      if (_trackinglist) {
+        return _trackinglist;
+      } else {
+        return "Unable to find data for userID: " + userID;
+      }
+    } catch (error) {
+      return "Error: " + error.message;
+    }
+  }
+
+
+
 
   static async getNordVPNDataAsync(ipAddress) {
     try {

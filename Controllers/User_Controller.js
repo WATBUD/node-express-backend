@@ -4,7 +4,7 @@ const appRouter  = express.Router();
 //import PrismaServiceInstance from '../Database/prisma/PrismaService.js';
 import path from 'path';
 import multer from 'multer';
-const formData_Middlewares = multer();//解析form data的中間件
+const formData_Middlewares_multer = multer();//解析form data的中間件
 import { avatarUpload } from '../Uploads/UploadService.js';
 
 /**
@@ -56,7 +56,7 @@ appRouter.get("/tagGroupDetails", async (req, res) => {
  *       200:
  *         description: 成功更新使用者密碼。
  */
-appRouter.post("/updateUserPassword",formData_Middlewares.none(), async (req, res) => {
+appRouter.post("/updateUserPassword",formData_Middlewares_multer.none(), async (req, res) => {
     const { userId, password } = req.body;
     console.log('req.body=>>>',userId, password,req.body);
     try {
@@ -132,7 +132,7 @@ appRouter.get('/users/:id', async (req, res) => {
  *       200:
  *         description: 成功更新使用者密碼。
  */
-appRouter.put('/users/:id/password',formData_Middlewares.none(), async (req, res) => {
+appRouter.put('/users/:id/password',formData_Middlewares_multer.none(), async (req, res) => {
 
   const userId = req.params.id;
   const password = req.body.password; // Access password field from form-data
