@@ -1,4 +1,6 @@
 import express from "express";
+import dotenv from 'dotenv';
+dotenv.config();
 //const express=require('express');
 import bodyParser from "body-parser";
 import multer from 'multer';
@@ -23,7 +25,8 @@ const corsOptions = {
 };
 
 const app = express();
-const PORT = 9421;
+const PORT = process.env.PORT || 3000;
+
 const HOST = "0.0.0.0"; // This will make the server accessible externally
 // console.log('Swagger Spec 1:', SwaggerSpecs[0]);
 // console.log('Swagger Spec 2:', SwaggerSpecs[1]);
