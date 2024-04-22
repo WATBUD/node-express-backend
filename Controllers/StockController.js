@@ -96,6 +96,64 @@ appRouter.post("/stock/trackinglist",formData_Middlewares_multer.none(),async (r
 });
 
 
+/**
+ * @swagger
+ * /stock/trackinglist:
+ *   delete:
+ *     tags:
+ *       - Stock
+ *     summary: Delete specified stock
+ *     description: Delete the specified stock from the user's tracking list.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userID:
+ *                 type: string
+ *                 description: User ID
+ *               stockID:
+ *                 type: string
+ *                 description: Stock ID
+ *     responses:
+ *       200:
+ *         description: Success message indicating the stock was added to the trackinglist.
+ *       400:
+ *         description: Invalid request body or missing required fields.
+ *       500:
+ *         description: Internal server error.
+ */
+
+appRouter.delete("/stock/trackinglist",formData_Middlewares_multer.none(),async (req, res) => {
+  const { userID, stockID } = req.body;
+  console.log(
+    "%c /stock/trackinglist",
+    "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
+    req.body,
+  );
+  if (!userID || !stockID) {
+    return res.status(400).json({ error: "Invalid userID or stockID" });
+  }
+
+  try {
+    const _trackinglist = await StocksService.deleteStockTrackinglist(userID,stockID);
+    //res.status(200).json(user); 
+
+    res.send(_trackinglist);
+
+    _trackinglist
+  } catch (error) {
+    res.status(500).json({ error: error.message }); // 发送错误的响应
+  }
+});
+
+
+
+
+
+
 
 
 

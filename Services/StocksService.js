@@ -19,7 +19,7 @@ class StocksService {
       const _trackinglist = await StockRepository.getStockTrackinglist(userID);
 
       if (_trackinglist) {
-        const modifiedStocks = _trackinglist.map(stock => {
+        const modifiedStocks = _trackinglist.map((stock) => {
           const { index, user_id, ...rest } = stock;
           return rest;
         });
@@ -33,9 +33,12 @@ class StocksService {
     }
   }
 
-  static async createStockTrackinglist(userID,stockID) {
+  static async createStockTrackinglist(userID, stockID) {
     try {
-      const _trackinglist = await StockRepository.createStockTrackinglist(userID,stockID);
+      const _trackinglist = await StockRepository.createStockTrackinglist(
+        userID,
+        stockID
+      );
 
       if (_trackinglist) {
         return _trackinglist;
@@ -46,9 +49,18 @@ class StocksService {
       return "Error: " + error.message;
     }
   }
+  static async deleteStockTrackinglist(userID, stockID) {
+    const _trackinglist = await StockRepository.deleteStockTrackinglist(
+      userID,
+      stockID
+    );
 
-
-
+    if (_trackinglist) {
+      return _trackinglist;
+    } else {
+      return "Unable to find data for userID: " + userID;
+    }
+  }
 
   static async getNordVPNDataAsync(ipAddress) {
     try {
