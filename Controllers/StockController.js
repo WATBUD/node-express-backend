@@ -7,6 +7,31 @@ import multer from 'multer';
 const formData_Middlewares_multer = multer();//解析form data的中間件
 
 
+
+/**
+ * @swagger
+ * /stock/ETF_DividendYieldRanking:
+ *   get:
+ *     tags:
+ *         - Stock
+ *     summary: ETF殖利率排行
+ *     description: Returns ETF殖利率排行 data.
+ *     responses:
+ *       200:
+ *         description: Successful response data.
+ */
+appRouter.get("/stock/ETF_DividendYieldRanking", async (req, res) => {
+  try {
+    const data = await timeoutPromise(StocksService.ETF_DividendYieldRanking(), 8000);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
 /**
  * @swagger
  * /stock/trackinglist/{userID}:
@@ -41,6 +66,7 @@ appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
   }
   
 });
+
 
 /**
  * @swagger
@@ -407,6 +433,53 @@ appRouter.get("/stock/securitiesCompanyTransactionRecords/:stockNo/", async (req
     res.status(500).json({ error: error.message });
   }
 });
+
+
+/**
+ * @swagger
+ * /stock/securitiesCompanyTransactionRecords/{stockNo}:
+ *   get:
+ *     tags:
+ *         - Stock
+ *     summary: 卷商分點進出
+ *     parameters:
+ *       - in: path
+ *         name: stockNo
+ *         required: true
+ *         description: Stock No
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: displayMethod
+ *         required: true
+ *         description: 指定顯示資料方法
+ *         schema:
+ *           type: string
+ *           enum: ['All','Overbuy', 'OverSold']
+ *       - in: query
+ *         name: sortBy
+ *         required: false
+ *         description: 排序方式
+ *         schema:
+ *           type: string
+ *           enum: ['ASC','DESC']
+ *         default: ASC
+ *     responses:
+ *       200:
+ *         description: Successful response data.
+ */
+appRouter.get("/stock/securitiesCompanyTransactionRecords/:stockNo/", async (req, res) => {
+  try {
+    const data = await timeoutPromise(StocksService.securitiesCompanyTransactionRecords(req), 8000);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
 
 
 

@@ -1,5 +1,4 @@
 import axios from "axios";
-import _ from "lodash";
 import cheerio from "cheerio";
 import iconv from 'iconv-lite';
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
@@ -300,6 +299,106 @@ class StocksService {
     }
   }
 
+  static async ETF_DividendYieldRanking(req) {
+    try {
+      //const stockNo = req.params.stockNo;
+      console.log(
+        "%c ETF_DividendYieldRanking",
+        "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
+        // "req.params",
+        // req.params,
+        // "req.query",
+        // req.query
+      );
+      const url = `https://www.moneydj.com/etf/x/rank/rank0005.xdjhtm?erank=yeild&eord=t800880`;
+
+      const headers = {
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Accept-Encoding': 'gzip, deflate, br, zstd',
+        'Accept-Language': 'zh-TW,zh;q=0.9,en;q=0.8',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+        'Cookie': 'djaid=1.cfff769e-f4f2-43ee-b895-11b88688767b.1690828117.1039206186.0.0.32ce3; memlog=06dfd227-c4b1-46bc-abf8-db3c4903e021; _ss_pp_id=1f3f2486f4165202b8f1678011359496; _fbp=fb.2.1712889288530.173557996; _td=0a4d829a-85dd-4024-a9d1-c7dbfcb40eeb; USER=; ASP.NET_SessionId=fc0tyk55uqmpxr45udoa3e45; FI=FI_E:00690.TW^$^FI_E:00918.TW^$^FI_E:00733.TW',
+        'Host': 'www.moneydj.com',
+        'Pragma': 'no-cache',
+        'Sec-Ch-Ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Sec-Ch-Ua-Platform': '"Windows"',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'Upgrade-Insecure-Requests': '1',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+      };
+      
+      // // 发起 GET 请求
+      // const response222=await axios.get(url, { headers })
+      // .then(response => {
+      //   // 处理响应
+      //   console.log(response.data);
+      // })
+      // .catch(error => {
+      //   // 处理错误
+      //   console.error(error);
+      // });
+
+
+
+
+      const response = await axios.get(url, {
+        headers,
+        responseType: "arraybuffer", // 将响应类型设置为 arraybuffer
+      });
+
+
+
+      const htmlBuffer = response.data;
+      const html = iconv.decode(htmlBuffer, 'utf8'); 
+      const $ = cheerio.load(html);
+
+      const trElements = $("tr");
+      let dataArray = [];
+      // console.log(
+      //   "%c securitiesCompanyTransactionRecords",
+      //   "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
+      //   "trElements",
+      //   trElements
+      // );
+
+      //选择每个<tr>元素
+      $("tr").each((index, element) => {
+        const $element = $(element);
+
+        // 提取href属性
+        const href = $element.find("td.col01 a").attr("href");
+
+        // 提取其他列的文本内容
+
+        const name = $element.find("td.col01 a").text();
+        const description = $element.find("td.col02 a").text();
+        const date = $element.find("td.col03").text();
+        const value = $element.find("td.col04").text();
+        const dividendYield = $element.find("td.col07").text();
+        const itemData={ name, description,dividendYield, date, value }
+        if(name.trim() !== '')
+        dataArray.push(itemData);
+        // 在这里可以将提取到的数据存储到数组或对象中，或进行其他处理
+
+      });
+      //console.log(itemData);
+      return dataArray;
+    } catch (error) {
+      console.log(
+        "%c securitiesCompanyTransactionRecords",
+        "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
+        "error:",
+        error
+      );
+      return error.message;
+    }
+  }
+  
   static async theLatestOpeningDate() {
     try {
       const responseClosingDates = await this.stockMarketOpeningAndClosingDates(
