@@ -68,6 +68,76 @@ appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
 });
 
 
+
+
+/**
+ * @swagger
+ * /stock/StockTrackinglistWithETF_DividendYieldRanking/{userID}:
+ *   get:
+ *     tags:
+ *       - Stock
+ *     summary: 取得使用者未追蹤股票比對ETF名單。
+ *     description: 取得使用者未追蹤股票比對ETF名單。
+ *     parameters:
+ *       - in: path
+ *         name: userID
+ *         required: true
+ *         description: 使用者ID
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: percentage
+ *         required: false
+ *         description: 指定殖利率多少以上(ex:20)。
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: value
+ *         required: false
+ *         description: 指定股價價格多少以上。
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: 成功取得資料。
+ */
+appRouter.get("/stock/StockTrackinglistWithETF_DividendYieldRanking/:userID", async (req, res) => {
+  const userId = req.params.userID;
+  const percentage = req.query.percentage; // 默认为 100%
+  const value = req.query.value; // 默认为 100%
+
+  console.log('req.params.id=>>>', userId);
+  try {
+    const _filterlist = await StocksService.getStockTrackinglistWithETF_DividendYieldRanking(userId,percentage,value);
+    console.log('_filterlist=>>>', _filterlist);
+
+    res.send(_filterlist);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+  
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * @swagger
  * /stock/trackinglist:
@@ -85,10 +155,15 @@ appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
  *             properties:
  *               userID:
  *                 type: string
+ *                 required: true
  *                 description: User ID
  *               stockID:
  *                 type: string
+ *                 required: true
  *                 description: Stock ID
+ *               note:
+ *                 type: string
+ *                 description: 備註
  *     responses:
  *       200:
  *         description: Success message indicating the stock was added to the trackinglist.
@@ -99,7 +174,7 @@ appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
  */
 
 appRouter.post("/stock/trackinglist",formData_Middlewares_multer.none(),async (req, res) => {
-  const { userID, stockID } = req.body;
+  const { userID, stockID,note } = req.body;
   console.log(
     "%c /stock/trackinglist",
     "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
@@ -110,7 +185,7 @@ appRouter.post("/stock/trackinglist",formData_Middlewares_multer.none(),async (r
   }
 
   try {
-    const _trackinglist = await StocksService.createStockTrackinglist(userID,stockID);
+    const _trackinglist = await StocksService.createStockTrackinglist(userID,stockID,note);
     //res.status(200).json(user); 
 
     res.send(_trackinglist);
@@ -449,6 +524,7 @@ appRouter.get("/stock/securitiesCompanyTransactionRecords/:stockNo/", async (req
  *         description: Stock No
  *         schema:
  *           type: string
+ * 
  *       - in: query
  *         name: displayMethod
  *         required: true
@@ -456,6 +532,7 @@ appRouter.get("/stock/securitiesCompanyTransactionRecords/:stockNo/", async (req
  *         schema:
  *           type: string
  *           enum: ['All','Overbuy', 'OverSold']
+ * 
  *       - in: query
  *         name: sortBy
  *         required: false

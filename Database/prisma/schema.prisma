@@ -74,9 +74,10 @@ model users {
 }
 
 model user_stock {
-  index    Int    @id @default(autoincrement())
-  stock_id String @db.VarChar(6)
-  user_id  String @db.VarChar(16)
+  index    Int     @id @default(autoincrement())
+  stock_id String  @db.VarChar(6)
+  user_id  String  @db.VarChar(16)
+  note     String? @db.VarChar(16)
 
   @@unique([stock_id, user_id], map: "user_stock_key")
 }
