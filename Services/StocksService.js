@@ -32,7 +32,7 @@ class StocksService {
     }
   }
 
-  static async getStockTrackinglistWithETF_DividendYieldRanking(userID,percentage,value) {
+  static async aListOf_ETF_NotTrackedByTheUser(userID,percentage,value) {
     try {
 
       //const _ETFlist = await this.ETF_DividendYieldRanking();

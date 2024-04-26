@@ -26,6 +26,9 @@ appRouter.get("/stock/TestStock", async (req, res) => {
 
 
 
+
+
+
 /**
  * @swagger
  * /stock/ETF_DividendYieldRanking:
@@ -92,7 +95,7 @@ appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
 
 /**
  * @swagger
- * /stock/stockTrackinglistWithETF_DividendYieldRanking/{userID}:
+ * /stock/aListOf_ETF_NotTrackedByTheUser/{userID}:
  *   get:
  *     tags:
  *       - Stock
@@ -121,14 +124,17 @@ appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
  *       200:
  *         description: 成功取得資料。
  */
-appRouter.get("/stock/stockTrackinglistWithETF_DividendYieldRanking/:userID", async (req, res) => {
+
+
+
+appRouter.get("/stock/aListOf_ETF_NotTrackedByTheUser/:userID", async (req, res) => {
   const userId = req.params.userID;
   const percentage = req.query.percentage; // 默认为 100%
   const value = req.query.value; // 默认为 100%
 
   console.log('req.params.id=>>>', userId);
   try {
-    const _filterlist = await StocksService.getStockTrackinglistWithETF_DividendYieldRanking(userId,percentage,value);
+    const _filterlist = await StocksService.aListOf_ETF_NotTrackedByTheUser(userId,percentage,value);
     console.log('_filterlist=>>>', _filterlist);
 
     res.send(_filterlist);
