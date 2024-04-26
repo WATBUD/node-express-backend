@@ -7,6 +7,24 @@ import multer from 'multer';
 const formData_Middlewares_multer = multer();//解析form data的中間件
 
 
+/**
+ * @swagger
+ * /stock/TestStock:
+ *   get:
+ *     deprecated: true
+ *     tags:
+ *         - Stock
+ *     summary: TestStock
+ *     description:
+ */
+appRouter.get("/stock/TestStock", async (req, res) => {
+  try {
+
+  } catch (error) {
+  }
+});
+
+
 
 /**
  * @swagger
@@ -23,6 +41,8 @@ const formData_Middlewares_multer = multer();//解析form data的中間件
 appRouter.get("/stock/ETF_DividendYieldRanking", async (req, res) => {
   try {
     const data = await timeoutPromise(StocksService.ETF_DividendYieldRanking(), 8000);
+    console.log('_trackinglist=>>>', data);
+
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -60,7 +80,7 @@ appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
     console.log('_trackinglist=>>>', _trackinglist);
 
   
-    res.send(_trackinglist);
+    res.json(_trackinglist);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -72,7 +92,7 @@ appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
 
 /**
  * @swagger
- * /stock/StockTrackinglistWithETF_DividendYieldRanking/{userID}:
+ * /stock/stockTrackinglistWithETF_DividendYieldRanking/{userID}:
  *   get:
  *     tags:
  *       - Stock
@@ -101,7 +121,7 @@ appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
  *       200:
  *         description: 成功取得資料。
  */
-appRouter.get("/stock/StockTrackinglistWithETF_DividendYieldRanking/:userID", async (req, res) => {
+appRouter.get("/stock/stockTrackinglistWithETF_DividendYieldRanking/:userID", async (req, res) => {
   const userId = req.params.userID;
   const percentage = req.query.percentage; // 默认为 100%
   const value = req.query.value; // 默认为 100%
@@ -142,6 +162,7 @@ appRouter.get("/stock/StockTrackinglistWithETF_DividendYieldRanking/:userID", as
  * @swagger
  * /stock/trackinglist:
  *   post:
+ *     deprecated: false
  *     tags:
  *       - Stock
  *     summary: Add new stock to trackinglist
