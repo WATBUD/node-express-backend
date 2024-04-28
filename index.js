@@ -6,6 +6,8 @@ import bodyParser from "body-parser";
 import multer from 'multer';
 import StockController from "./Controllers/StockController.js"
 import SharedAPI_Controller from "./Controllers/SharedAPI_Controller.js"
+import SharedService from './Services/SharedService.js';
+import HttpClientService from './Services/HttpClientService.js';
 import User_Controller from "./Controllers/User_Controller.js"
 import swaggerUiExpress from 'swagger-ui-express';
 import SwaggerSpecs from './SwaggerSpecs.js';
@@ -49,8 +51,9 @@ SwaggerSpecs.forEach(spec=>{
 // });
 
 app.use('/', StockController); 
-app.use('/', SharedAPI_Controller);
 app.use('/', User_Controller); 
+app.use('/', SharedAPI_Controller(SharedService,HttpClientService));
+
 
 
 app.listen(PORT, HOST, () => {
