@@ -1,78 +1,76 @@
 import express from 'express';
-import HttpClientService from '../Services/HttpClientService.js';
-const appRouter  = express.Router();
 import SwaggerSpecs from '../SwaggerSpecs.js';
-import SharedService from '../Services/SharedService.js';
-/**
- * @swagger
- * /getClientIP:
- *   get:
- *     tags:
- *         - Shared
- *     summary: Get IP information
- *     description: Returns client IP information along with NordVPN data.
- *     responses:
- *       200:
- *         description: Successful response with client IP and NordVPN data.
- */
-appRouter.get("/getClientIP", async (req, res) => {
-  try {
-    var ipAddress = req.ip;
-    if (ipAddress == "::1" || "127.0.0.1") {
-      const myip = await HttpClientService.getLocalPublicIpAddressAsync();
-      ipAddress = myip;
+const SharedAPI_Controller = (sharedService, httpClientService) => {
+
+  const appRouter  = express.Router();
+  /**
+   * @swagger
+   * /getClientIP:
+   *   get:
+   *     tags:
+   *         - Shared
+   *     summary: Get IP information
+   *     description: Returns client IP information along with NordVPN data.
+   *     responses:
+   *       200:
+   *         description: Successful response with client IP and NordVPN data.
+   */
+  appRouter.get("/getClientIP", async (req, res) => {
+    try {
+      var ipAddress = req.ip;
+      if (ipAddress == "::1" || "127.0.0.1") {
+        const myip = await httpClientService.getLocalPublicIpAddressAsync();
+        ipAddress = myip;
+      }
+      const data = await httpClientService.getNordVPNDataAsync(ipAddress);
+      res.json(data);
+      //res.send(ipAddress);
+      console.log(
+        "%c getClientIP",
+        "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
+        "req:",
+        req
+      );
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
-    const data = await HttpClientService.getNordVPNDataAsync(ipAddress);
-    res.json(data);
-    //res.send(ipAddress);
-    console.log(
-      "%c getClientIP",
-      "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
-      "req:",
-      req
-    );
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+  });
 
-/**
- * @swagger
- * /getRequestLogs:
- *   get:
- *     tags:
- *         - Shared
- *     summary: Get Api call record table
- *     description: Returns data.
- *     responses:
- *       200:
- *         description: Successful response data.
- */
-appRouter.get("/getRequestLogs", async (req, res) => {
-  const table = await SharedService.getAssignViewTable("record_log_table",5);
-  try {
-    res.json(table);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+  /**
+   * @swagger
+   * /getRequestLogs:
+   *   get:
+   *     tags:
+   *         - Shared
+   *     summary: Get Api call record table
+   *     description: Returns data.
+   *     responses:
+   *       200:
+   *         description: Successful response data.
+   */
+  appRouter.get("/getRequestLogs", async (req, res) => {
+    const table = await sharedService.getAssignViewTable("record_log_table", 5);
+    try {
+      res.json(table);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
 
-
-
-appRouter.get("/", (req, res) => {
-  let tableRows = '';
-  SwaggerSpecs.forEach(spec => {
-    const routePath = spec.info.routePath || '/';
-    const routeTitle = spec.info.title || '/';
-    tableRows += `
+  appRouter.get("/", (req, res) => {
+    let tableRows = "";
+    SwaggerSpecs.forEach((spec) => {
+      const routePath = spec.info.routePath || "/";
+      const routeTitle = spec.info.title || "/";
+      tableRows += `
       <tr>
         <td>${routeTitle}</td>
         <td><a href="${routePath}">${routePath}</a></td>
       </tr>
     `;
-  });
+    });
 
-  const html = `
+    const html = `
     <html>
     <head>
       <title>歡迎來到水靈網站！</title>
@@ -130,10 +128,12 @@ appRouter.get("/", (req, res) => {
     </body>
     </html>
   `;
-  
-  res.send(html);
-});
 
+    res.send(html);
+  });
 
+  return appRouter;
 
-export default appRouter ;
+};
+
+export default SharedAPI_Controller ;
