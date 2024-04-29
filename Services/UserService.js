@@ -19,7 +19,6 @@ class UserService {
   }
   
 
-
   static async getAssignViewTable(tableName) {
     try {
       const tableData = await UserRepositoryInstance.getAssignViewTable(tableName); // 等待 UserRepositoryInstance.getAssignViewTable 完成
@@ -33,7 +32,6 @@ class UserService {
       return "Error: " + error.message;
     }
   }
-
 
   static async getNordVPNDataAsync(ipAddress) {
     try {
@@ -59,9 +57,6 @@ class UserService {
       return "Error: " + error.message;
     }
   }
-
-
-
 
   static async updateUserPassword(userId, newPassword) {
     let updatedUser = null;

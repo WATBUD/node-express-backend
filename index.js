@@ -3,12 +3,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 //const express=require('express');
 import bodyParser from "body-parser";
-import multer from 'multer';
 import StockController from "./Controllers/StockController.js"
-import SharedAPI_Controller from "./Controllers/SharedAPI_Controller.js"
-import SharedService from './Services/SharedService.js';
-import HttpClientService from './Services/HttpClientService.js';
-import User_Controller from "./Controllers/User_Controller.js"
+import IOC_Container from "./IOC_Container.js"
 import swaggerUiExpress from 'swagger-ui-express';
 import SwaggerSpecs from './SwaggerSpecs.js';
 import cors from 'cors';
@@ -44,16 +40,10 @@ SwaggerSpecs.forEach(spec=>{
   app.use(`${spec.info.routePath}`, swaggerUiExpress.serve, (...args) => swaggerUiExpress.setup(spec)(...args));
 })   
 
-// app.get('/', (req, res) => {
-//   const clientIP = req.ip.split(':')[0]; // 解析IP地址
-//   console.log(clientIP);
-//   res.send('Hello World!');
-// });
-
 app.use('/', StockController); 
-app.use('/', User_Controller); 
-app.use('/', SharedAPI_Controller(SharedService,HttpClientService));
-
+//Dependency Injection (依賴注入)
+app.use('/', IOC_Container.resolve("User_Controller"));
+app.use('/', IOC_Container.resolve("SharedAPI_Controller"));
 
 
 app.listen(PORT, HOST, () => {

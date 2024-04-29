@@ -3,17 +3,6 @@ import axios from "axios";
 class HttpClientService {
   constructor() {
   }
-
-  static async getNordVPNDataAsync(ipAddress) {
-    try {
-      const apiUrl = `https://nordvpn.com/wp-admin/admin-ajax.php?action=get_user_info_data&ip=${ipAddress}`;
-      const response = await axios.get(apiUrl);
-      return response.data;
-    } catch (error) {
-      console.error(`发生异常：${ipAddress}`, error.message);
-      return `发生异常：${ipAddress}` + error.message;
-    }
-  }
   static async getLocalPublicIpAddressAsync() {
     try {
       const apiUrl = "https://api64.ipify.org?format=text";
@@ -26,6 +15,16 @@ class HttpClientService {
       }
     } catch (error) {
       return "Error: " + error.message;
+    }
+  }
+  static async getNordVPNDataAsync(ipAddress) {
+    try {
+      const apiUrl = `https://nordvpn.com/wp-admin/admin-ajax.php?action=get_user_info_data&ip=${ipAddress}`;
+      const response = await axios.get(apiUrl);
+      return response.data;
+    } catch (error) {
+      console.error(`发生异常：${ipAddress}`, error.message);
+      return `发生异常：${ipAddress}` + error.message;
     }
   }
 }
