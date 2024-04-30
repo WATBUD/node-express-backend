@@ -1,4 +1,6 @@
 
+
+
 - ======= Navigate into a specific directory:
 cd folder_name
 - ======= View the current working directory:

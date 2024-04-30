@@ -35,8 +35,6 @@ docker run -p 9421:9421 -v $PWD:/app --name NodeServer node_express_backend
 windows cmd 
 docker run -p 9421:9421 -v %CD%:/app --name NodeServer node_express_backend npm start -- --legacy-watch
 
-docker run -d --name mysql-container -e MYSQL_ROOT_PASSWORD=password -p 3306:3306 mysql:latest
-
 
 - Start the specified images
 docker run -it --rm node:20.11.1-slim /bin/bash

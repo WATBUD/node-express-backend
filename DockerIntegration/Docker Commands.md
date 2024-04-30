@@ -6,15 +6,31 @@ docker run -it --rm node:20.11.1-slim /bin/bash
 # Run the following command in Docker Quickstart Terminal or Windows PowerShell to execute the script:
 bash sh_FileName.sh
 
+
+
+
+
+
 - docker network
-docker network create my-network
+
 Commands:
   connect     Connect a container to a network
-  create      Create a network
   disconnect  Disconnect a container from a network
-  inspect     Display detailed information on one or more networks
-  ls          List networks
-  prune       Remove all unused networks
-  rm          Remove one or more networks
+ # Create a network
+- docker network create custom_network     
+- docker network create --subnet=172.18.0.0/16 custom_subnet_network
 
-  docker network inspect host
+#   Remove one or more networks 
+- docker network rm custom_subnet_network   
+#  List networks              
+- docker network ls    
+#  Display detailed information on one or more networks             
+- docker network inspect host      
+- docker network inspect bridge  
+- docker network inspect custom_subnet_network   
+
+
+# View the IP addresses of all running containers
+- bash
+- docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q)
+

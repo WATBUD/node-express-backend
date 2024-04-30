@@ -1,5 +1,4 @@
 ```javascript
-// 创建服务定位器
 class ServiceLocator {
   constructor() {
     this.services = {};
