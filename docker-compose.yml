@@ -10,7 +10,7 @@ services:
     container_name: nodeJSContainer
     volumes:
       - ./:/app
-    network_mode: bridge
+    network_mode: custom_subnet_network #custom_subnet_network/bridge
 
 
 
