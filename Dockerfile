@@ -17,5 +17,5 @@ COPY . .
 # 暴露應用程式運行的端口
 EXPOSE 9421
 
-# 定義啟動命令
-CMD ["npm","run","start","--","--legacy-watch"]
+# 定義啟動命令 ,"--","--legacy-watch"]
+CMD ["npm","run","start"]
