@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - 9421:9421
+      - 9421:1234
     image: node_express_backend
     container_name: nodeJSContainer
     volumes:

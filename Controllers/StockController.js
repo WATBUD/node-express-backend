@@ -70,17 +70,27 @@ appRouter.get("/stock/ETF_DividendYieldRanking", async (req, res) => {
  *         description: 使用者ID
  *         schema:
  *           type: string
+ *       - in: query
+ *         name: is_blocked
+ *         required: true
+ *         description: 是否封鎖
+ *         schema:
+ *           type: string
+ *           enum: [true,false]
+ *         default: false
+ * 
  *     responses:
  *       200:
  *         description: 成功取得使用者資料。
  */
 appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
   const userId = req.params.userID;
-  console.log('req.params.id=>>>', userId);
+  console.log('req.params=>>>', req.params);
+  console.log('req.query=>>>', req.query);
   try {
-    const _trackinglist = await StocksService.getStockTrackinglist(userId);
+    const _trackinglist = await StocksService.getStockTrackinglist(userId,req.query?.is_blocked);
   
-    console.log('_trackinglist=>>>', _trackinglist);
+    //console.log('_trackinglist=>>>', _trackinglist);
 
   
     res.json(_trackinglist);
@@ -95,7 +105,7 @@ appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
 
 /**
  * @swagger
- * /stock/aListOf_ETF_NotTrackedByTheUser/{userID}:
+ * /stock/listOf_ETF_NotTrackedByTheUser/{userID}:
  *   get:
  *     tags:
  *       - Stock
@@ -108,12 +118,14 @@ appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
  *         description: 使用者ID
  *         schema:
  *           type: string
+ *         default: "111"
  *       - in: query
  *         name: percentage
  *         required: false
  *         description: 指定殖利率多少以上(ex:20)。
  *         schema:
  *           type: string
+ *         default: "5.5"
  *       - in: query
  *         name: value
  *         required: false
@@ -127,14 +139,14 @@ appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
 
 
 
-appRouter.get("/stock/aListOf_ETF_NotTrackedByTheUser/:userID", async (req, res) => {
+appRouter.get("/stock/listOf_ETF_NotTrackedByTheUser/:userID", async (req, res) => {
   const userId = req.params.userID;
   const percentage = req.query.percentage; // 默认为 100%
   const value = req.query.value; // 默认为 100%
 
   console.log('req.params.id=>>>', userId);
   try {
-    const _filterlist = await StocksService.aListOf_ETF_NotTrackedByTheUser(userId,percentage,value);
+    const _filterlist = await StocksService.listOf_ETF_NotTrackedByTheUser(userId,percentage,value);
     console.log('_filterlist=>>>', _filterlist);
 
     res.send(_filterlist);
@@ -464,35 +476,6 @@ appRouter.get("/stock/fiveLevelsOfStockInformation/:stockNo", async (req, res) =
     }
   });
 
-// /**
-//  * @swagger
-//  * /stock/securitiesCompanyTransactionRecords/{stockNo}:
-//  *   get:
-//  *     tags:
-//  *         - Stock
-//  *     summary: 卷商分點進出
-//  *     parameters:
-//  *       - in: path
-//  *         name: stockNo
-//  *         required: true
-//  *         description: Stock No
-//  *         schema:
-//  *           type: string
-//  *     description: Returns 卷商分點進出 data.
-//  *     responses:
-//  *       200:
-//  *         description: Successful response data.
-//  */
-// appRouter.get("/securitiesCompanyTransactionRecords/:stockNo", async (req, res) => {
-//   try {
-//     const stockNo = req.params.stockNo;
-//     const data = await StocksService.securitiesCompanyTransactionRecords(stockNo);
-//     res.json(data);
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// });
-
 
 /**
  * @swagger
@@ -535,52 +518,6 @@ appRouter.get("/stock/securitiesCompanyTransactionRecords/:stockNo/", async (req
     res.status(500).json({ error: error.message });
   }
 });
-
-
-/**
- * @swagger
- * /stock/securitiesCompanyTransactionRecords/{stockNo}:
- *   get:
- *     tags:
- *         - Stock
- *     summary: 卷商分點進出
- *     parameters:
- *       - in: path
- *         name: stockNo
- *         required: true
- *         description: Stock No
- *         schema:
- *           type: string
- * 
- *       - in: query
- *         name: displayMethod
- *         required: true
- *         description: 指定顯示資料方法
- *         schema:
- *           type: string
- *           enum: ['All','Overbuy', 'OverSold']
- * 
- *       - in: query
- *         name: sortBy
- *         required: false
- *         description: 排序方式
- *         schema:
- *           type: string
- *           enum: ['ASC','DESC']
- *         default: ASC
- *     responses:
- *       200:
- *         description: Successful response data.
- */
-appRouter.get("/stock/securitiesCompanyTransactionRecords/:stockNo/", async (req, res) => {
-  try {
-    const data = await timeoutPromise(StocksService.securitiesCompanyTransactionRecords(req), 8000);
-    res.json(data);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
 
 
 

@@ -13,9 +13,9 @@ class StocksService {
     //this.httpClient = axios.create();
   }
 
-  static async getStockTrackinglist(userID) {
+  static async getStockTrackinglist(userID,is_blocked) {
     try {
-      const _trackinglist = await StockRepository.getStockTrackinglist(userID);
+      const _trackinglist = await StockRepository.getStockTrackinglist(userID,is_blocked);
 
       if (_trackinglist) {
         const modifiedStocks = _trackinglist.map((stock) => {
@@ -32,7 +32,7 @@ class StocksService {
     }
   }
 
-  static async aListOf_ETF_NotTrackedByTheUser(userID,percentage,value) {
+  static async listOf_ETF_NotTrackedByTheUser(userID,percentage,value) {
     try {
 
       //const _ETFlist = await this.ETF_DividendYieldRanking();

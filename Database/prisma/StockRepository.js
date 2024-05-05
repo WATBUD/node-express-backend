@@ -9,19 +9,34 @@ class StockRepository {
     return StockRepository.instance;
   }
 
-  async getStockTrackinglist(userId) {
+  async getStockTrackinglist(userId, is_blocked=false) {
     try {
+      const startTime = new Date(); // 记录查询开始时间
+  
       const _userId = BigInt(userId).toString();
-      return await this.prisma.user_stock.findMany({
-        where: { user_id: _userId },
+      const isBlockedBoolean = is_blocked === 'true';
+  
+      const result = await this.prisma.user_stock.findMany({
+        where: {
+          user_id: _userId,
+          is_blocked: isBlockedBoolean,
+        },
       });
+  
+      const endTime = new Date(); // 记录查询结束时间
+      const executionTime = endTime - startTime; // 计算查询执行时间，单位为毫秒
+  
+      console.log("DB query execution time:", executionTime, "milliseconds");
+  
+      return result;
     } catch (error) {
       console.error("Error getStockTrackinglist:", error);
-      throw error; // 重新拋出錯誤以便上層處理
+      throw error; // 重新抛出错误以便上层处理
     }
   }
+  
 
-  async createStockTrackinglist(userID, stockID,note) {
+  async createStockTrackinglist(userID, stockID, note) {
     try {
       const createdUserStock = await this.prisma.user_stock.create({
         data: {
