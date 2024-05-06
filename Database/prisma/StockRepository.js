@@ -9,18 +9,23 @@ class StockRepository {
     return StockRepository.instance;
   }
 
-  async getStockTrackinglist(userId, is_blocked=false) {
+  async getStockTrackinglist(userId, contains_is_blocked='true') {
     try {
       const startTime = new Date(); // 记录查询开始时间
   
       const _userId = BigInt(userId).toString();
-      const isBlockedBoolean = is_blocked === 'true';
+      const isBlockedBoolean = contains_is_blocked === 'true';
   
+      const whereClause = {
+        user_id: _userId,
+      };
+      
+      if (isBlockedBoolean==false) {
+        whereClause.is_blocked = false;
+      }
+      
       const result = await this.prisma.user_stock.findMany({
-        where: {
-          user_id: _userId,
-          is_blocked: isBlockedBoolean,
-        },
+        where: whereClause,
       });
   
       const endTime = new Date(); // 记录查询结束时间

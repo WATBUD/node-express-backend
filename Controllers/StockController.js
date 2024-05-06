@@ -71,9 +71,9 @@ appRouter.get("/stock/ETF_DividendYieldRanking", async (req, res) => {
  *         schema:
  *           type: string
  *       - in: query
- *         name: is_blocked
+ *         name: contains_is_blocked
  *         required: true
- *         description: 是否封鎖
+ *         description: 包含封鎖的股票
  *         schema:
  *           type: string
  *           enum: [true,false]
@@ -88,7 +88,7 @@ appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
   console.log('req.params=>>>', req.params);
   console.log('req.query=>>>', req.query);
   try {
-    const _trackinglist = await StocksService.getStockTrackinglist(userId,req.query?.is_blocked);
+    const _trackinglist = await StocksService.getStockTrackinglist(userId,req.query?.contains_is_blocked);
     //console.log('_trackinglist=>>>', _trackinglist);
     res.json(_trackinglist);
   } catch (error) {
