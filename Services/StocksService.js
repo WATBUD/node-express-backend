@@ -13,9 +13,9 @@ class StocksService {
     //this.httpClient = axios.create();
   }
 
-  static async getStockTrackinglist(userID,is_blocked) {
+  static async getStockTrackinglist(userID,contains_is_blocked) {
     try {
-      const _trackinglist = await StockRepository.getStockTrackinglist(userID,is_blocked);
+      const _trackinglist = await StockRepository.getStockTrackinglist(userID,contains_is_blocked);
 
       if (_trackinglist) {
         const modifiedStocks = _trackinglist.map((stock) => {
