@@ -36,7 +36,7 @@ appRouter.get("/stock/TestStock", async (req, res) => {
  *     tags:
  *         - Stock
  *     summary: ETF殖利率排行
- *     description: Returns ETF殖利率排行 data.
+ *     description: Returns ETF Yield Ranking data.
  *     responses:
  *       200:
  *         description: Successful response data.
@@ -62,7 +62,7 @@ appRouter.get("/stock/ETF_DividendYieldRanking", async (req, res) => {
  *     tags:
  *       - Stock
  *     summary: 取得使用者追蹤股票名單
- *     description: 取得使用者追蹤股票資料。
+ *     description: Get user tracking stock data。
  *     parameters:
  *       - in: path
  *         name: userID
@@ -89,10 +89,7 @@ appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
   console.log('req.query=>>>', req.query);
   try {
     const _trackinglist = await StocksService.getStockTrackinglist(userId,req.query?.is_blocked);
-  
     //console.log('_trackinglist=>>>', _trackinglist);
-
-  
     res.json(_trackinglist);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -110,7 +107,7 @@ appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
  *     tags:
  *       - Stock
  *     summary: 取得使用者未追蹤股票比對ETF名單。
- *     description: 取得使用者未追蹤股票比對ETF名單。
+ *     description: Get a list of stock comparison ETFs not tracked by the user.。
  *     parameters:
  *       - in: path
  *         name: userID
@@ -136,9 +133,6 @@ appRouter.get("/stock/trackinglist/:userID", async (req, res) => {
  *       200:
  *         description: 成功取得資料。
  */
-
-
-
 appRouter.get("/stock/listOf_ETF_NotTrackedByTheUser/:userID", async (req, res) => {
   const userId = req.params.userID;
   const percentage = req.query.percentage; // 默认为 100%
@@ -156,35 +150,22 @@ appRouter.get("/stock/listOf_ETF_NotTrackedByTheUser/:userID", async (req, res) 
   
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * @swagger
- * /stock/trackinglist:
+ * /stock/trackinglist/{userID}:
  *   post:
  *     deprecated: false
  *     tags:
  *       - Stock
- *     summary: Add new stock to trackinglist
+ *     summary: 新增收藏股票
  *     description: Add a new stock to the user's trackinglist.
+ *     parameters:
+ *       - in: path
+ *         name: userID
+ *         required: true
+ *         description: User ID
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -192,17 +173,14 @@ appRouter.get("/stock/listOf_ETF_NotTrackedByTheUser/:userID", async (req, res) 
  *           schema:
  *             type: object
  *             properties:
- *               userID:
- *                 type: string
- *                 required: true
- *                 description: User ID
  *               stockID:
  *                 type: string
  *                 required: true
  *                 description: Stock ID
  *               note:
  *                 type: string
- *                 description: 備註
+ *                 description: Note
+ *                 default: ''
  *     responses:
  *       200:
  *         description: Success message indicating the stock was added to the trackinglist.
@@ -211,39 +189,40 @@ appRouter.get("/stock/listOf_ETF_NotTrackedByTheUser/:userID", async (req, res) 
  *       500:
  *         description: Internal server error.
  */
-
-appRouter.post("/stock/trackinglist",formData_Middlewares_multer.none(),async (req, res) => {
-  const { userID, stockID,note } = req.body;
+appRouter.post("/stock/trackinglist/:userID",formData_Middlewares_multer.none(),async (req, res) => {
+  const userID = req.params.userID;
+  const { stockID,note } = req.body;
   console.log(
     "%c /stock/trackinglist",
     "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
-    req.body,
+    req.body,userID
   );
-  if (!userID || !stockID) {
-    return res.status(400).json({ error: "Invalid userID or stockID" });
-  }
-
   try {
     const _trackinglist = await StocksService.createStockTrackinglist(userID,stockID,note);
-    //res.status(200).json(user); 
-
     res.send(_trackinglist);
-
-    _trackinglist
   } catch (error) {
     res.status(500).json({ error: error.message }); // 发送错误的响应
   }
 });
 
 
+
 /**
  * @swagger
- * /stock/trackinglist:
- *   delete:
+ * /stock/trackinglist/{userID}/updateSpecifiedStockNote:
+ *   patch:
+ *     deprecated: false
  *     tags:
  *       - Stock
- *     summary: Delete specified stock
- *     description: Delete the specified stock from the user's tracking list.
+ *     summary: 更新指定股票備註
+ *     description: Update specified stock remarks
+ *     parameters:
+ *       - in: path
+ *         name: userID
+ *         required: true
+ *         description: User ID
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -251,52 +230,88 @@ appRouter.post("/stock/trackinglist",formData_Middlewares_multer.none(),async (r
  *           schema:
  *             type: object
  *             properties:
- *               userID:
- *                 type: string
- *                 description: User ID
  *               stockID:
  *                 type: string
+ *                 required: true
  *                 description: Stock ID
+ *               note:
+ *                 type: string
+ *                 required: true
+ *                 description: 備註
  *     responses:
  *       200:
- *         description: Success message indicating the stock was added to the trackinglist.
- *       400:
- *         description: Invalid request body or missing required fields.
- *       500:
- *         description: Internal server error.
+ *         description: Success message indicating the stock was updated in the trackinglist.
  */
+appRouter.patch(
+  "/stock/trackinglist/:userID/updateSpecifiedStockNote",formData_Middlewares_multer.none(),async (req, res) => {
+    const userID = req.params.userID;
+    const { stockID, note } = req.body;
+    console.log(
+      "%c /stock/trackinglist",
+      "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
+      req.body
+    );
 
-appRouter.delete("/stock/trackinglist",formData_Middlewares_multer.none(),async (req, res) => {
-  const { userID, stockID } = req.body;
+    try {
+      const _trackinglist = await StocksService.updateSpecifiedStockNote(
+        userID,
+        stockID,
+        note
+      );
+      //res.status(200).json(user);
+
+      res.send(_trackinglist);
+
+      _trackinglist;
+    } catch (error) {
+      res.status(400).json({ error: error.message }); 
+    }
+  }
+);
+
+
+
+/**
+ * @swagger
+ * /stock/trackinglist/{userID}:
+ *   delete:
+ *     tags:
+ *       - Stock
+ *     summary: 刪除指定收藏的股票
+ *     description: Delete the specified stock from the user's tracking list.
+ *     parameters:
+ *       - in: path
+ *         name: userID
+ *         required: true
+ *         description: User ID
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: stockID
+ *         required: true
+ *         description: Stock ID
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Success message indicating the stock was updated in the trackinglist.
+ */
+appRouter.delete("/stock/trackinglist/:userID",formData_Middlewares_multer.none(),async (req, res) => {
+  const { userID } = req.params;
+  const { stockID } = req.query;
+  
   console.log(
     "%c /stock/trackinglist",
     "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
-    req.body,
+    req.params,
   );
-  if (!userID || !stockID) {
-    return res.status(400).json({ error: "Invalid userID or stockID" });
-  }
-
   try {
     const _trackinglist = await StocksService.deleteStockTrackinglist(userID,stockID);
-    //res.status(200).json(user); 
-
     res.send(_trackinglist);
-
-    _trackinglist
   } catch (error) {
     res.status(500).json({ error: error.message }); // 发送错误的响应
   }
 });
-
-
-
-
-
-
-
-
-
 
 /**
  * @swagger

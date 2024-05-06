@@ -32,6 +32,9 @@ class StocksService {
     }
   }
 
+
+
+
   static async listOf_ETF_NotTrackedByTheUser(userID,percentage,value) {
     try {
 
@@ -177,6 +180,9 @@ class StocksService {
 
   static async createStockTrackinglist(userID, stockID,note) {
     try {
+      if (!userID || !stockID) {
+        throw new Error("Invalid userID or stockID");
+      }
       const _trackinglist = await StockRepository.createStockTrackinglist(
         userID,
         stockID,
@@ -192,7 +198,29 @@ class StocksService {
       return "Error: " + error.message;
     }
   }
+
+  static async updateSpecifiedStockNote(userID, stockID,note) {
+    if (!userID || !stockID) {
+      throw new Error("Invalid userID or stockID");
+    }
+    const _trackinglist = await StockRepository.updateSpecifiedStockNote(
+      userID,
+      stockID,
+      note,
+    );
+
+    if (_trackinglist) {
+      return _trackinglist;
+    } else {
+      return "Unable to find data for userID: " + userID;
+    }
+  }
+
+
   static async deleteStockTrackinglist(userID, stockID) {
+    if (!userID || !stockID) {
+      throw new Error("Invalid userID or stockID");
+    }
     const _trackinglist = await StockRepository.deleteStockTrackinglist(
       userID,
       stockID
@@ -205,39 +233,14 @@ class StocksService {
     }
   }
 
-  static async getNordVPNDataAsync(ipAddress) {
-    try {
-      const apiUrl = `https://nordvpn.com/wp-admin/admin-ajax.php?action=get_user_info_data&ip=${ipAddress}`;
-      const response = await axios.get(apiUrl);
-      return response.data;
-    } catch (error) {
-      console.error(`发生异常：${ipAddress}`, error.message);
-      return `发生异常：${ipAddress}` + error.message;
-    }
-  }
-  static async getLocalPublicIpAddressAsync() {
-    try {
-      const apiUrl = "https://api64.ipify.org?format=text";
-      const response = await axios.get(apiUrl);
-
-      if (response.status === 200) {
-        return response.data;
-      } else {
-        return "Unable to retrieve public IP address";
-      }
-    } catch (error) {
-      return "Error: " + error.message;
-    }
-  }
-
-  static async getExDividendNoticeForm(limitDays, isCashDividend = false) {
-    try {
-      // 缺失的代码请自行补充
-    } catch (error) {
-      console.error("发生异常：", error.message);
-      return "发生异常：" + error.message;
-    }
-  }
+  // static async getExDividendNoticeForm(limitDays, isCashDividend = false) {
+  //   try {
+  //     // 缺失的代码请自行补充
+  //   } catch (error) {
+  //     console.error("发生异常：", error.message);
+  //     return "发生异常：" + error.message;
+  //   }
+  // }
 
   static async fiveLevelsOfStockInformation(stockCode) {
     try {

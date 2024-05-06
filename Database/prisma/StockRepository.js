@@ -48,8 +48,10 @@ class StockRepository {
       return createdUserStock;
     } catch (error) {
       // 在這裡處理錯誤
+      if (error.message.includes("stock_id_check")) {
+        throw new Error("股票ID不符合格式");
+      }
       if (error.message.includes("Unique constraint")) {
-        //console.error("Error creating stock tracking list:", error);
         console.error(
           "Error creating stock tracking list:",
           "使用者已收藏此股票"
@@ -61,6 +63,7 @@ class StockRepository {
     }
   }
 
+  
   async deleteStockTrackinglist(userID, stockID) {
     try {
       const deletedUserStock = await this.prisma.user_stock.delete({
@@ -72,6 +75,35 @@ class StockRepository {
         },
       });
       return deletedUserStock;
+    } catch (error) {
+      // 在這裡處理錯誤
+      if (error.code === "P2025") {
+        // P2025 是 Prisma 中唯一約束違規的錯誤碼
+        console.error(
+          "Error deleting stock tracking list:",
+          "使用者未收藏此股票"
+        );
+        throw new Error("使用者未收藏此股票");
+      }
+
+      throw error; // 重新拋出錯誤以便上層處理
+    }
+  }
+
+  async updateSpecifiedStockNote(userID, stockID,note) {
+    try {
+      const updatedUserStock = await this.prisma.user_stock.update({
+        where: {
+          stock_id_user_id: {
+            stock_id: stockID,
+            user_id: userID,
+          },
+        },
+        data: {
+          note: note, // 更新备注字段
+        },
+      });
+      return updatedUserStock;
     } catch (error) {
       // 在這裡處理錯誤
       if (error.code === "P2025") {
