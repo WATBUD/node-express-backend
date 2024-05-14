@@ -35,4 +35,28 @@ export const fetchTimeout = (url, options, timeout = 5000) => {
   ]);
 };
 
+export function dateToYYYYMMDD(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从 0 开始，所以要加 1
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}${month}${day}`;
+}
+
+export function getFirstDayOfMonth(month, year = new Date().getFullYear()) {
+  const firstDay = new Date(year, month - 1, 1); // 创建一个新日期对象，指定月份的第一天
+  return firstDay.toISOString().slice(0, 7).replace(/-/g, '') + '01'; // 返回 ISO 格式的日期字符串
+}
+export function getLastThreeMonthsDates(year, month) {
+  const dates = []; // 存储过去三个月的日期字符串
+  for (let i = 0; i < 3; i++) {
+    const currentDate = new Date(year, month - 1 - i, 1); // 创建一个新的日期对象，设置为倒数三个月的第一天
+    const yearStr = currentDate.getFullYear();
+    const monthStr = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const dayStr = "01";
+    dates.push(`${yearStr}${monthStr}${dayStr}`); // 转换为 YYYYMMDD 格式的日期字符串并添加到数组中
+  }
+  return dates;
+}
+
+
 export default UtilService;

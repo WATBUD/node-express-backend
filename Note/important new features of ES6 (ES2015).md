@@ -1,13 +1,7 @@
 # ES 模組（ECMAScript 模組）和 CommonJS 模組是 JavaScript 中兩種不同的模組系統，它們有一些重要的差異：
 # ECMAScript 模組
 - package.json文件加入  "type": "module",
-
-
 ```javascript
-
-
-
-
 # 1. let 和 const 關鍵字
 ES6 引入了 let 和 const，提供了更好的變數聲明方式。let 允許聲明塊級作用域變數，而 const 用於聲明常數。
 

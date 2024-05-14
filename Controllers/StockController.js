@@ -374,6 +374,76 @@ appRouter.get("/stock/theLatestOpeningDate", async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /stock/dailyTransactionInfoOfIndividualStock/{stockNo}:
+ *   get:
+ *     tags:
+ *         - Stock
+ *     summary: 個股日成交資訊
+ *     description: Returns data.
+ *     parameters:
+ *       - in: path
+ *         name: stockNo
+ *         required: true
+ *         description: Stock No
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: date
+ *         required: true
+ *         description: date_example:20240401
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successful response.
+ */
+appRouter.get("/stock/dailyTransactionInfoOfIndividualStock/:stockNo", async (req, res) => {
+  try {
+    const stockNo = req.params.stockNo;
+    const date = req.query.date;
+    const data = await timeoutPromise(StocksService.dailyTransactionInfoOfIndividualStock(stockNo,date), 8000);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+/**
+ * @swagger
+ * /stock/dailyTransactionInfoOfIndividualStockWithThreeMonths/{stockNo}:
+ *   get:
+ *     tags:
+ *         - Stock
+ *     summary: 個股近三個月日成交資訊
+ *     description: Returns data.
+ *     parameters:
+ *       - in: path
+ *         name: stockNo
+ *         required: true
+ *         description: Stock No
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successful response.
+ */
+appRouter.get("/stock/dailyTransactionInfoOfIndividualStockWithThreeMonths/:stockNo", async (req, res) => {
+  try {
+    const stockNo = req.params.stockNo;
+    const data = await timeoutPromise(StocksService.dailyTransactionInfoOfIndividualStockWithThreeMonths(stockNo), 8000);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
+
 
 /**
  * @swagger

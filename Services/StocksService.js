@@ -4,6 +4,7 @@ import iconv from 'iconv-lite';
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
 
+import {getFirstDayOfMonth,getLastThreeMonthsDates,dateToYYYYMMDD} from './CustomUtilService.js';
 
 import StockRepository from '../Database/prisma/StockRepository.js';
 
@@ -31,6 +32,8 @@ class StocksService {
       return "Error: " + error.message;
     }
   }
+
+
 
 
 
@@ -258,6 +261,50 @@ class StocksService {
     }
   }
 
+
+  static async dailyTransactionInfoOfIndividualStock(stockNo,date=dateToYYYYMMDD(new Date())) {
+    try {
+
+      //const firstDayOfMonth = getFirstDayOfMonth(month,year);
+      const apiUrl = `https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=${date}&stockNo=${stockNo}&response=json&_=1715672258016`;
+
+      
+      const response = await axios.get(apiUrl);
+      if(!response.data.data){
+        return '很抱歉，沒有符合條件代號與月份資料!';
+      }
+      if (response.status === 200 && response.data.data.length > 0) {
+        const responseBody = response.data;
+        return responseBody;
+      }
+    } 
+    catch (error) {
+      return `发生异常：${error.message}`;
+    }
+  }
+
+  static async dailyTransactionInfoOfIndividualStockWithThreeMonths(stockNo) {
+    try {
+      const threeMonthsDates=getLastThreeMonthsDates(2024,5);
+
+      let [_list1,_list2,_list3]=await Promise.all([
+        this.dailyTransactionInfoOfIndividualStock(stockNo,threeMonthsDates[0]),
+        this.dailyTransactionInfoOfIndividualStock(stockNo,threeMonthsDates[1]),
+        this.dailyTransactionInfoOfIndividualStock(stockNo,threeMonthsDates[2]),
+      ])
+      const combinedData = [..._list1.data, ..._list2.data, ..._list3.data].map(item => item || []);
+
+
+      return combinedData;
+      
+    } catch (error) {
+      return "Error: " + error.message;
+      //console.error('An error occurred:', error);
+
+    }
+  }
+
+
   static async dailyMarketTrading() {
     try {
       const apiUrl =
@@ -445,13 +492,6 @@ class StocksService {
       return error.message;
     }
   }
-
-
-
-
-
-
-
 
   static async theLatestOpeningDate() {
     try {
