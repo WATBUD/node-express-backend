@@ -433,12 +433,47 @@ appRouter.get("/stock/dailyTransactionInfoOfIndividualStock/:stockNo", async (re
 appRouter.get("/stock/dailyTransactionInfoOfIndividualStockWithThreeMonths/:stockNo", async (req, res) => {
   try {
     const stockNo = req.params.stockNo;
-    const data = await timeoutPromise(StocksService.dailyTransactionInfoOfIndividualStockWithThreeMonths(stockNo), 8000);
+    const data = await timeoutPromise(StocksService.dailyTransactionInfoOfIndividualStockWithMonths(stockNo), 8000);
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+/**
+ * @swagger
+ * /stock/simpleMovingAverage/{stockNo}:
+ *   get:
+ *     tags:
+ *         - Stock
+ *     summary: 取得股票5,10,20,60均線價
+ *     description: Returns data.
+ *     parameters:
+ *       - in: path
+ *         name: stockNo
+ *         required: true
+ *         description: Stock No
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successful response.
+ */
+appRouter.get("/stock/simpleMovingAverage/:stockNo", async (req, res) => {
+  try {
+    const stockNo = req.params.stockNo;
+    const data = await timeoutPromise(StocksService.simpleMovingAverage(stockNo), 8000);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
+
 
 
 

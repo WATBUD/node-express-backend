@@ -4,7 +4,7 @@ import iconv from 'iconv-lite';
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
 
-import {getFirstDayOfMonth,getLastThreeMonthsDates,dateToYYYYMMDD} from './CustomUtilService.js';
+import {getFirstDayOfMonth,getLastThreeMonthsDates as getLastMonthsDates,dateToYYYYMMDD} from './CustomUtilService.js';
 
 import StockRepository from '../Database/prisma/StockRepository.js';
 
@@ -14,9 +14,12 @@ class StocksService {
     //this.httpClient = axios.create();
   }
 
-  static async getStockTrackinglist(userID,contains_is_blocked) {
+  static async getStockTrackinglist(userID, contains_is_blocked) {
     try {
-      const _trackinglist = await StockRepository.getStockTrackinglist(userID,contains_is_blocked);
+      const _trackinglist = await StockRepository.getStockTrackinglist(
+        userID,
+        contains_is_blocked
+      );
 
       if (_trackinglist) {
         const modifiedStocks = _trackinglist.map((stock) => {
@@ -33,35 +36,28 @@ class StocksService {
     }
   }
 
-
-
-
-
-
-  static async listOf_ETF_NotTrackedByTheUser(userID,percentage,value) {
+  static async listOf_ETF_NotTrackedByTheUser(userID, percentage, value) {
     try {
-
       //const _ETFlist = await this.ETF_DividendYieldRanking();
-      let [_usertrackinglist,_ETFlist]=await Promise.all([
-        StockRepository.getStockTrackinglist(userID),this.ETF_DividendYieldRanking()
-      ])
+      let [_usertrackinglist, _ETFlist] = await Promise.all([
+        StockRepository.getStockTrackinglist(userID),
+        this.ETF_DividendYieldRanking(),
+      ]);
 
-      let filterlist=[];
-      if (_ETFlist && _usertrackinglist.length>0) {
+      let filterlist = [];
+      if (_ETFlist && _usertrackinglist.length > 0) {
         if (percentage != null) {
           _ETFlist = _ETFlist.filter(
             (etfElement) => etfElement.dividendYield >= percentage
           );
         }
         if (value != null) {
-          _ETFlist = _ETFlist.filter(
-            (etfElement) => etfElement.value >= value
-          );
+          _ETFlist = _ETFlist.filter((etfElement) => etfElement.value >= value);
         }
 
         for (let index = 0; index < _ETFlist.length; index++) {
           const etfElement = _ETFlist[index];
-          let found=false;
+          let found = false;
 
           for (let index2 = 0; index2 < _usertrackinglist.length; index2++) {
             const _userElement = _usertrackinglist[index2].stock_id;
@@ -70,10 +66,10 @@ class StocksService {
               break;
             }
           }
-          if(!found){
+          if (!found) {
             filterlist.push(etfElement);
           }
-        } 
+        }
 
         return filterlist;
       } else {
@@ -82,7 +78,6 @@ class StocksService {
     } catch (error) {
       return "Error: " + error.message;
       //console.error('An error occurred:', error);
-
     }
   }
 
@@ -91,7 +86,7 @@ class StocksService {
       //const stockNo = req.params.stockNo;
       console.log(
         "%c ETF_DividendYieldRanking",
-        "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold",
+        "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold"
         // "req.params",
         // req.params,
         // "req.query",
@@ -103,7 +98,7 @@ class StocksService {
         //'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
         // 'Accept-Encoding': 'gzip, deflate, br, zstd',
         // 'Accept-Language': 'zh-TW,zh;q=0.9,en;q=0.8',
-        'Cache-Control': 'no-cache',
+        "Cache-Control": "no-cache",
         //'Connection': 'keep-alive',
         //'Cookie': 'djaid=1.cfff769e-f4f2-43ee-b895-11b88688767b.1690828117.1039206186.0.0.32ce3; memlog=06dfd227-c4b1-46bc-abf8-db3c4903e021; _ss_pp_id=1f3f2486f4165202b8f1678011359496; _fbp=fb.2.1712889288530.173557996; _td=0a4d829a-85dd-4024-a9d1-c7dbfcb40eeb; USER=; ASP.NET_SessionId=fc0tyk55uqmpxr45udoa3e45; FI=FI_E:00690.TW^$^FI_E:00918.TW^$^FI_E:00733.TW',
         //'Host': 'www.moneydj.com',
@@ -116,22 +111,18 @@ class StocksService {
         // 'Sec-Fetch-Site': 'none',
         // 'Sec-Fetch-User': '?1',
         // 'Upgrade-Insecure-Requests': '1',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
       };
-      
+
       // 发起 GET 请求
-      const response=await axios.get(url, {
+      const response = await axios.get(url, {
         headers,
         responseType: "arraybuffer", // 将响应类型设置为 arraybuffer
-      })
-
-
-
-
-
+      });
 
       const htmlBuffer = response.data;
-      const html = iconv.decode(htmlBuffer, 'utf8'); 
+      const html = iconv.decode(htmlBuffer, "utf8");
       const $ = cheerio.load(html);
 
       const trElements = $("tr");
@@ -159,11 +150,17 @@ class StocksService {
         const establishmentAge = $element.find("td.col06").text();
         const dividendYield = $element.find("td.col07").text();
         const managementFee = $element.find("td.col09").text();
-        const itemData={ stockCode,stockName,dividendYield, latestDate,establishmentAge, value,managementFee }
-        if(stockCode.trim() !== '')
-        dataArray.push(itemData);
+        const itemData = {
+          stockCode,
+          stockName,
+          dividendYield,
+          latestDate,
+          establishmentAge,
+          value,
+          managementFee,
+        };
+        if (stockCode.trim() !== "") dataArray.push(itemData);
         // 在这里可以将提取到的数据存储到数组或对象中，或进行其他处理
-
       });
       //console.log(itemData);
       return dataArray;
@@ -177,11 +174,8 @@ class StocksService {
       return error.message;
     }
   }
-  
 
-
-
-  static async createStockTrackinglist(userID, stockID,note) {
+  static async createStockTrackinglist(userID, stockID, note) {
     try {
       if (!userID || !stockID) {
         throw new Error("Invalid userID or stockID");
@@ -189,7 +183,7 @@ class StocksService {
       const _trackinglist = await StockRepository.createStockTrackinglist(
         userID,
         stockID,
-        note,
+        note
       );
 
       if (_trackinglist) {
@@ -202,14 +196,14 @@ class StocksService {
     }
   }
 
-  static async updateSpecifiedStockNote(userID, stockID,note) {
+  static async updateSpecifiedStockNote(userID, stockID, note) {
     if (!userID || !stockID) {
       throw new Error("Invalid userID or stockID");
     }
     const _trackinglist = await StockRepository.updateSpecifiedStockNote(
       userID,
       stockID,
-      note,
+      note
     );
 
     if (_trackinglist) {
@@ -218,7 +212,6 @@ class StocksService {
       return "Unable to find data for userID: " + userID;
     }
   }
-
 
   static async deleteStockTrackinglist(userID, stockID) {
     if (!userID || !stockID) {
@@ -261,49 +254,77 @@ class StocksService {
     }
   }
 
-
-  static async dailyTransactionInfoOfIndividualStock(stockNo,date=dateToYYYYMMDD(new Date())) {
+  static async dailyTransactionInfoOfIndividualStock(
+    stockNo,
+    date = dateToYYYYMMDD(new Date())
+  ) {
     try {
-
       //const firstDayOfMonth = getFirstDayOfMonth(month,year);
       const apiUrl = `https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=${date}&stockNo=${stockNo}&response=json&_=1715672258016`;
 
-      
       const response = await axios.get(apiUrl);
-      if(!response.data.data){
-        return '很抱歉，沒有符合條件代號與月份資料!';
+      if (!response.data.data) {
+        return "很抱歉，沒有符合條件代號與月份資料!";
       }
       if (response.status === 200 && response.data.data.length > 0) {
-        const responseBody = response.data;
-        return responseBody;
+        const responseData = response.data;
+        response.data.data = response.data.data.reverse();
+        return responseData;
       }
-    } 
-    catch (error) {
+    } catch (error) {
       return `发生异常：${error.message}`;
     }
   }
 
-  static async dailyTransactionInfoOfIndividualStockWithThreeMonths(stockNo) {
+  static async dailyTransactionInfoOfIndividualStockWithMonths(stockNo,times=3) {
     try {
-      const threeMonthsDates=getLastThreeMonthsDates(2024,5);
 
-      let [_list1,_list2,_list3]=await Promise.all([
-        this.dailyTransactionInfoOfIndividualStock(stockNo,threeMonthsDates[0]),
-        this.dailyTransactionInfoOfIndividualStock(stockNo,threeMonthsDates[1]),
-        this.dailyTransactionInfoOfIndividualStock(stockNo,threeMonthsDates[2]),
-      ])
-      const combinedData = [..._list1.data, ..._list2.data, ..._list3.data].map(item => item || []);
-
-
-      return combinedData;
+      const currentDate = new Date(); 
+      const yearStr = currentDate.getFullYear();
+      const threeMonthsDates = getLastMonthsDates(yearStr, currentDate.getMonth() + 1,times);
       
+      const promises = [];
+
+      for (let i = 0; i < threeMonthsDates.length; i++) {
+          promises.push(this.dailyTransactionInfoOfIndividualStock(stockNo, threeMonthsDates[i]));
+      }
+
+      const results = await Promise.all(promises);
+      const combinedData = results.reduce((accumulated, current) => accumulated.concat(current.data), []);
+      return combinedData;
     } catch (error) {
       return "Error: " + error.message;
-      //console.error('An error occurred:', error);
-
     }
   }
 
+  static async simpleMovingAverage(stockNo) {
+    try {
+      function calculateAverage(closingPrices, days) {
+        if (closingPrices.length < days) return null;
+        const sum = closingPrices
+          .slice(0, days)
+          .reduce((total, price) => total + price, 0);
+        return sum / days;
+      }
+
+      const rawData =await this.dailyTransactionInfoOfIndividualStockWithMonths(stockNo,4);
+      const closingPrices = rawData.map((entry) => parseFloat(entry[6])); // 提取收盘价并转换为浮点数
+
+      const movingAverages = {
+        "5-day": calculateAverage(closingPrices, 5),
+        "10-day": calculateAverage(closingPrices, 10),
+        "20-day": calculateAverage(closingPrices, 20),
+        "60-day": calculateAverage(closingPrices, 60),
+      };
+
+      console.log(movingAverages);
+
+      return movingAverages;
+    } catch (error) {
+      return "Error: " + error.message;
+      //console.error('An error occurred:', error);
+    }
+  }
 
   static async dailyMarketTrading() {
     try {
