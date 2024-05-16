@@ -380,7 +380,7 @@ appRouter.get("/stock/theLatestOpeningDate", async (req, res) => {
  *   get:
  *     tags:
  *         - Stock
- *     summary: 個股日成交資訊
+ *     summary: 個股當月日成交資訊
  *     description: Returns data.
  *     parameters:
  *       - in: path
