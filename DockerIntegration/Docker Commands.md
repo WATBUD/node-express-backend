@@ -1,6 +1,10 @@
 - Start the specified images
 docker run -it --rm node:20.11.1-slim /bin/bash
 
+# 構建 Docker 映像：
+docker build -t mai_today .
+# 運行 Docker 容器：
+docker run -d -p 8080:8080 --name mai_today_container mai_today
 
 
 # Run the following command in Docker Quickstart Terminal or Windows PowerShell to execute the script:

@@ -2,6 +2,12 @@
 
 1. On Windows, you can use the netstat command:
 netstat -ano | findstr :<port>
+netstat -aon | findstr :8080
+
+taskkill /PID 38288 /F
+
+
+
 
 2. On Linux and macOS, you can use either netstat or ss command:
 netstat -tuln | grep <port> or ss -tuln | grep <port>
