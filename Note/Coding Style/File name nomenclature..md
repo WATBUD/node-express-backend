@@ -1,7 +1,6 @@
 # Pascal Case, Kebab Case, Camel Case, Snake Case
-
-在程式設計和軟體開發中，常常會遇到各種命名風格，這些風格決定了變數、函數、類和其他標識符的命名方式。以下是四種常見的命名風格：
-
+開發中常遇到變數、函數、類和其他標識符的各種命名風格（naming conventions）。
+四種常見的命名風格（naming conventions）：
 ## 1. Pascal Case (帕斯卡命名法)
 
 也稱為大駝峰命名法，Pascal Case 是一種命名約定，其中每個單詞的首字母都大寫，沒有空格或其他分隔符。通常用於命名類名或類型名。
