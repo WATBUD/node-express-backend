@@ -12,7 +12,7 @@ const options1 = {
       routePath:'/api/stock'
     },
   },
-  apis: ['./Controllers/StockController.js'],
+  apis: ['./adapters/http/stock_routes.js'],
 
 };
 const options2 = {
@@ -25,7 +25,7 @@ const options2 = {
       routePath:'/api/share'
     },
   },
-  apis: ['./Controllers/SharedAPI_Controller.js'],
+  apis: ['./adapters/http/share_api_routes.js'],
 
 };
 const options3 = {
@@ -38,7 +38,7 @@ const options3 = {
       routePath:'/api/user'
     },
   },
-  apis: ['./Controllers/User_Controller.js'],
+  apis: ['./adapters/http/UserRoutes.js'],
 
 };
 const SwaggerSpecs = [
