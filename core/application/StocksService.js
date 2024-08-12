@@ -6,7 +6,7 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
 import {getFirstDayOfMonth,getLastThreeMonthsDates as getLastMonthsDates,dateToYYYYMMDD} from './CustomUtilService.js';
 
-import StockRepository from '../Database/prisma/StockRepository.js';
+import StockRepository from '../../Database/prisma/StockRepository.js';
 
 class StocksService {
   //static httpClient = axios.create();
