@@ -2,21 +2,16 @@ import axios from "axios";
 import cheerio from "cheerio";
 import iconv from 'iconv-lite';
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
-
-
 import {getFirstDayOfMonth,getLastThreeMonthsDates as getLastMonthsDates,dateToYYYYMMDD} from './CustomUtilService.js';
 
-import StockRepository from '../../Database/prisma/StockRepository.js';
-
 class StocksService {
-  //static httpClient = axios.create();
-  constructor() {
-    //this.httpClient = axios.create();
+  constructor(stockRepository) {
+    this.StockRepository = stockRepository;
   }
 
-  static async getStockTrackinglist(userID, contains_is_blocked) {
+  async getStockTrackinglist(userID, contains_is_blocked) {
     try {
-      const _trackinglist = await StockRepository.getStockTrackinglist(
+      const _trackinglist = await this.StockRepository.getStockTrackinglist(
         userID,
         contains_is_blocked
       );
@@ -36,11 +31,11 @@ class StocksService {
     }
   }
 
-  static async listOf_ETF_NotTrackedByTheUser(userID, percentage, value) {
+  async listOf_ETF_NotTrackedByTheUser(userID, percentage, value) {
     try {
       //const _ETFlist = await this.ETF_DividendYieldRanking();
       let [_usertrackinglist, _ETFlist] = await Promise.all([
-        StockRepository.getStockTrackinglist(userID),
+        this.StockRepository.getStockTrackinglist(userID),
         this.ETF_DividendYieldRanking(),
       ]);
 
@@ -81,7 +76,7 @@ class StocksService {
     }
   }
 
-  static async ETF_DividendYieldRanking() {
+  async ETF_DividendYieldRanking() {
     try {
       //const stockNo = req.params.stockNo;
       console.log(
@@ -175,12 +170,12 @@ class StocksService {
     }
   }
 
-  static async createStockTrackinglist(userID, stockID, note) {
+  async createStockTrackinglist(userID, stockID, note) {
     try {
       if (!userID || !stockID) {
         throw new Error("Invalid userID or stockID");
       }
-      const _trackinglist = await StockRepository.createStockTrackinglist(
+      const _trackinglist = await this.StockRepository.createStockTrackinglist(
         userID,
         stockID,
         note
@@ -196,11 +191,11 @@ class StocksService {
     }
   }
 
-  static async updateSpecifiedStockNote(userID, stockID, note) {
+  async updateSpecifiedStockNote(userID, stockID, note) {
     if (!userID || !stockID) {
       throw new Error("Invalid userID or stockID");
     }
-    const _trackinglist = await StockRepository.updateSpecifiedStockNote(
+    const _trackinglist = await this.StockRepository.updateSpecifiedStockNote(
       userID,
       stockID,
       note
@@ -213,11 +208,11 @@ class StocksService {
     }
   }
 
-  static async deleteStockTrackinglist(userID, stockID) {
+  async deleteStockTrackinglist(userID, stockID) {
     if (!userID || !stockID) {
       throw new Error("Invalid userID or stockID");
     }
-    const _trackinglist = await StockRepository.deleteStockTrackinglist(
+    const _trackinglist = await this.StockRepository.deleteStockTrackinglist(
       userID,
       stockID
     );
@@ -229,7 +224,7 @@ class StocksService {
     }
   }
 
-  // static async getExDividendNoticeForm(limitDays, isCashDividend = false) {
+  // async getExDividendNoticeForm(limitDays, isCashDividend = false) {
   //   try {
   //     // 缺失的代码请自行补充
   //   } catch (error) {
@@ -238,7 +233,7 @@ class StocksService {
   //   }
   // }
 
-  static async fiveLevelsOfStockInformation(stockCode) {
+  async fiveLevelsOfStockInformation(stockCode) {
     try {
       const apiUrl = `https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_${stockCode}.tw&json=1&delay=0&_=1701445552510`;
 
@@ -254,7 +249,7 @@ class StocksService {
     }
   }
 
-  static async dailyTransactionInfoOfIndividualStock(
+  async dailyTransactionInfoOfIndividualStock(
     stockNo,
     date = dateToYYYYMMDD(new Date())
   ) {
@@ -276,7 +271,7 @@ class StocksService {
     }
   }
 
-  static async dailyTransactionInfoOfIndividualStockWithMonths(stockNo,times=3) {
+  async dailyTransactionInfoOfIndividualStockWithMonths(stockNo,times=3) {
     try {
 
       const currentDate = new Date(); 
@@ -297,7 +292,7 @@ class StocksService {
     }
   }
 
-  static async simpleMovingAverage(stockNo) {
+  async simpleMovingAverage(stockNo) {
     try {
       function calculateAverage(closingPrices, days) {
         if (closingPrices.length < days) return null;
@@ -326,7 +321,7 @@ class StocksService {
     }
   }
 
-  static async dailyMarketTrading() {
+  async dailyMarketTrading() {
     try {
       const apiUrl =
         "https://www.twse.com.tw/rwd/zh/afterTrading/FMTQIK?response=json&_=1709117440570";
@@ -347,7 +342,7 @@ class StocksService {
     }
   }
 
-  static async dailyClosingQuote() {
+  async dailyClosingQuote() {
     try {
       const apiUrl =
         "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?response=json&_=1709118194485";
@@ -374,7 +369,7 @@ class StocksService {
     }
   }
 
-  static async top20_SecuritiesByTradingVolume() {
+  async top20_SecuritiesByTradingVolume() {
     try {
       const latestOpeningDate = await this.theLatestOpeningDate();
       const apiUrl = `https://www.twse.com.tw/rwd/zh/fund/T86?date=${latestOpeningDate}&selectType=ALL&response=json`;
@@ -396,7 +391,7 @@ class StocksService {
     }
   }
 
-  static async threeMajorInstitutionalInvestors() {
+  async threeMajorInstitutionalInvestors() {
     try {
       const latestOpeningDate = await this.theLatestOpeningDate();
       console.log(
@@ -420,7 +415,7 @@ class StocksService {
     }
   }
 
-  static async securitiesCompanyTransactionRecords(req) {
+  async securitiesCompanyTransactionRecords(req) {
     try {
       const stockNo = req.params.stockNo;
       console.log(
@@ -514,7 +509,7 @@ class StocksService {
     }
   }
 
-  static async theLatestOpeningDate() {
+  async theLatestOpeningDate() {
     try {
       const responseClosingDates = await this.stockMarketOpeningAndClosingDates(
         false
@@ -551,7 +546,7 @@ class StocksService {
     }
   }
 
-  static async stockMarketOpeningAndClosingDates(requestAllData = false) {
+  async stockMarketOpeningAndClosingDates(requestAllData = false) {
     try {
       const apiUrl =
         "https://www.twse.com.tw/rwd/zh/holidaySchedule/holidaySchedule?response=json&_=" +
@@ -587,7 +582,7 @@ class StocksService {
     }
   }
 
-  static async getQuoteTimeSalesStore() {
+  async getQuoteTimeSalesStore() {
     try {
       // 缺失的代码请自行补充
     } catch (error) {

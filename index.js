@@ -3,11 +3,17 @@ import dotenv from 'dotenv';
 dotenv.config();
 //const express=require('express');
 import bodyParser from "body-parser";
-import StockController from "./Controllers/StockController.js"
 import IOC_Container from "./IOC_Container.js"
 import swaggerUiExpress from 'swagger-ui-express';
 import SwaggerSpecs from './SwaggerSpecs.js';
 import cors from 'cors';
+import userRouter from './adapters/http/user_routes.js';
+import stockRouter from './adapters/http/stock_routes.js';
+import share_api_routes from './adapters/http/share_api_routes.js';
+
+
+
+
 
 
 const corsOptions = {
@@ -40,10 +46,13 @@ SwaggerSpecs.forEach(spec=>{
   app.use(`${spec.info.routePath}`, swaggerUiExpress.serve, (...args) => swaggerUiExpress.setup(spec)(...args));
 })   
 
-app.use('/', StockController); 
+
 //Dependency Injection (依賴注入)
-app.use('/', IOC_Container.resolve("User_Controller"));
-app.use('/', IOC_Container.resolve("SharedAPI_Controller"));
+
+
+app.use('/', stockRouter);
+app.use('/', userRouter);
+app.use('/', share_api_routes);
 
 
 app.listen(PORT, HOST, () => {
