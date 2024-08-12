@@ -1,5 +1,5 @@
 import axios from "axios";
-import SharedRepositoryInstance from '../Database/prisma/SharedRepository.js';
+import SharedRepositoryInstance from '../../Database/prisma/SharedRepository.js';
 
 class SharedService {
   constructor() {}

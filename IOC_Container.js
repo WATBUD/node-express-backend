@@ -1,9 +1,9 @@
 // 創建一個簡單的容器類別
 import StockController from "./Controllers/StockController.js";
 import SharedAPI_Controller from "./Controllers/SharedAPI_Controller.js";
-import SharedService from "./Services/SharedService.js";
-import UserService from "./Services/UserService.js";
-import HttpClientService from "./Services/HttpClientService.js";
+import SharedService from "./core/application/SharedService.js";
+import UserService from "./core/application/UserService.js";
+import HttpClientService from "./core/application/HttpClientService.js";
 import User_Controller from "./Controllers/User_Controller.js";
 //控制反轉(Inversion of Control，簡稱 IoC)，IoC強調的是將依賴管理的責任從應用程式內部移出,透過依賴注入來實現
 class IOC_Container {
