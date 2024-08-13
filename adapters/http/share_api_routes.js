@@ -5,7 +5,11 @@ const express_router = express.Router();
 import SharedService from "../../core/application/SharedService.js";
 import HttpClientService from "../../core/application/HttpClientService.js";
 
-const sharedService = new SharedService();
+import SharedRepositoryInstance from '../../Database/prisma/SharedRepository.js';
+
+
+
+const sharedService = new SharedService(SharedRepositoryInstance);
 const SharedController = ShardController(sharedService, HttpClientService);
 
 /**
@@ -34,7 +38,7 @@ express_router.get("/getClientIP", SharedController.getClientIP);
  *       200:
  *         description: Successful response data.
  */
-express_router.post("/getRequestLogs", SharedController.getRequestLogs);
+express_router.get("/getRequestLogs", SharedController.getRequestLogs);
 
 express_router.get("/", SharedController.homePage);
 

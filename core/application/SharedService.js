@@ -1,8 +1,8 @@
 import axios from "axios";
-import SharedRepositoryInstance from '../../Database/prisma/SharedRepository.js';
-
 class SharedService {
-  constructor() {}
+  constructor(sharedRepository) {
+    this.SharedRepository = sharedRepository;
+  }
   async getLocalPublicIpAddressAsync() {
     try {
       const apiUrl = "https://api64.ipify.org?format=text";
@@ -19,7 +19,7 @@ class SharedService {
   }
   async getAssignViewTable(viewTablename,limit) {
     try {
-      const tableData = await SharedRepositoryInstance.getAssignViewTable(viewTablename,limit); // 等待 SharedRepositoryInstance.getAssignViewTable 完成
+      const tableData = await this.SharedRepository.getAssignViewTable(viewTablename,limit); // 等待 this.SharedRepository.getAssignViewTable 完成
   
       if (tableData) {
         return tableData;
