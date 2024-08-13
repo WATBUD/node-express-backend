@@ -15,7 +15,7 @@ const stockController = StockController(stockService);
 
 /**
  * @swagger
- * /stock/TestStock:
+ * /stock/test-stock:
  *   get:
  *     deprecated: true
  *     tags:
@@ -23,11 +23,11 @@ const stockController = StockController(stockService);
  *     summary: TestStock
  *     description:
  */
-express_router.get("/stock/TestStock", stockController.testStock);
+express_router.get("/stock/test-stock", stockController.testStock);
 
 /**
  * @swagger
- * /stock/ETF_DividendYieldRanking:
+ * /stock/etf-dividend-yield-ranking:
  *   get:
  *     tags:
  *         - Stock
@@ -37,7 +37,7 @@ express_router.get("/stock/TestStock", stockController.testStock);
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/ETF_DividendYieldRanking", stockController.etfDividendYieldRanking);
+express_router.get("/stock/etf-dividend-yield-ranking", stockController.etfDividendYieldRanking);
 
 /**
  * @swagger
@@ -70,7 +70,7 @@ express_router.get("/stock/trackinglist/:userID", stockController.getStockTracki
 
 /**
  * @swagger
- * /stock/listOf_ETF_NotTrackedByTheUser/{userID}:
+ * /stock/list-of-etf-not-tracked-by-the-user/{userID}:
  *   get:
  *     tags:
  *       - Stock
@@ -101,7 +101,7 @@ express_router.get("/stock/trackinglist/:userID", stockController.getStockTracki
  *       200:
  *         description: 成功取得資料。
  */
-express_router.get("/stock/listOf_ETF_NotTrackedByTheUser/:userID", stockController.listOfETFNotTrackedByTheUser);
+express_router.get("/stock/list-of-etf-not-tracked-by-the-user/:userID", stockController.listOfETFNotTrackedByTheUser);
 
 /**
  * @swagger
@@ -210,7 +210,7 @@ express_router.delete("/stock/trackinglist/:userID", stockController.deleteStock
 
 /**
  * @swagger
- * /stock/threeMajorInstitutionalInvestors:
+ * /stock/three-major-institutional-investors:
  *   get:
  *     tags:
  *         - Stock
@@ -220,7 +220,7 @@ express_router.delete("/stock/trackinglist/:userID", stockController.deleteStock
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/threeMajorInstitutionalInvestors", stockController.threeMajorInstitutionalInvestors);
+express_router.get("/stock/three-major-institutional-investors", stockController.threeMajorInstitutionalInvestors);
 
 /**
  * @swagger
@@ -235,7 +235,7 @@ express_router.get('/fake-api', stockController.fakeApi);
 
 /**
  * @swagger
- * /stock/testfakeApi:
+ * /stock/test-fake-api:
  *   get:
  *     tags:
  *       - Stock
@@ -245,11 +245,11 @@ express_router.get('/fake-api', stockController.fakeApi);
  *       200:
  *         description: Successful response data.
  */
-express_router.get('/testfakeApi', stockController.testFakeApi);
+express_router.get('/test-fake-api', stockController.testFakeApi);
 
 /**
  * @swagger
- * /stock/theLatestOpeningDate:
+ * /stock/the-latest-opening-date:
  *   get:
  *     tags:
  *         - Stock
@@ -259,11 +259,11 @@ express_router.get('/testfakeApi', stockController.testFakeApi);
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/theLatestOpeningDate", stockController.theLatestOpeningDate);
+express_router.get("/stock/the-latest-opening-date", stockController.theLatestOpeningDate);
 
 /**
  * @swagger
- * /stock/dailyTransactionInfoOfIndividualStock/{stockNo}:
+ * /stock/daily-transaction-info-of-individual-stock/{stockNo}:
  *   get:
  *     tags:
  *         - Stock
@@ -286,11 +286,11 @@ express_router.get("/stock/theLatestOpeningDate", stockController.theLatestOpeni
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/dailyTransactionInfoOfIndividualStock/:stockNo", stockController.dailyTransactionInfoOfIndividualStock);
+express_router.get("/stock/daily-transaction-info-of-individual-stock/:stockNo", stockController.dailyTransactionInfoOfIndividualStock);
 
 /**
  * @swagger
- * /stock/dailyTransactionInfoOfIndividualStockWithThreeMonths/{stockNo}:
+ * /stock/daily-transaction-info-of-individual-stock-with-three-months/{stockNo}:
  *   get:
  *     tags:
  *         - Stock
@@ -313,11 +313,11 @@ express_router.get("/stock/dailyTransactionInfoOfIndividualStock/:stockNo", stoc
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/dailyTransactionInfoOfIndividualStockWithThreeMonths/:stockNo", stockController.dailyTransactionInfoOfIndividualStockWithThreeMonths);
+express_router.get("/stock/daily-transaction-info-of-individual-stock-with-three-months/:stockNo", stockController.dailyTransactionInfoOfIndividualStockWithThreeMonths);
 
 /**
  * @swagger
- * /stock/simpleMovingAverage:
+ * /stock/simple-moving-average:
  *   get:
  *     tags:
  *         - Stock
@@ -327,11 +327,11 @@ express_router.get("/stock/dailyTransactionInfoOfIndividualStockWithThreeMonths/
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/simpleMovingAverage", stockController.simpleMovingAverage);
+express_router.get("/stock/simple-moving-average", stockController.simpleMovingAverage);
 
 /**
  * @swagger
- * /stock/dailyMarketTrading:
+ * /stock/daily-market-trading:
  *   get:
  *     tags:
  *         - Stock
@@ -341,11 +341,11 @@ express_router.get("/stock/simpleMovingAverage", stockController.simpleMovingAve
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/dailyMarketTrading", stockController.dailyMarketTrading);
+express_router.get("/stock/daily-market-trading", stockController.dailyMarketTrading);
 
 /**
  * @swagger
- * /stock/dailyClosingQuote:
+ * /stock/daily-closing-quote:
  *   get:
  *     tags:
  *         - Stock
@@ -355,11 +355,11 @@ express_router.get("/stock/dailyMarketTrading", stockController.dailyMarketTradi
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/dailyClosingQuote", stockController.dailyClosingQuote);
+express_router.get("/stock/daily-closing-quote", stockController.dailyClosingQuote);
 
 /**
  * @swagger
- * /stock/top20SecuritiesByTradingVolume:
+ * /stock/top20-securities-by-trading-volume:
  *   get:
  *     tags:
  *         - Stock
@@ -369,11 +369,11 @@ express_router.get("/stock/dailyClosingQuote", stockController.dailyClosingQuote
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/top20SecuritiesByTradingVolume", stockController.top20SecuritiesByTradingVolume);
+express_router.get("/stock/top20-securities-by-trading-volume", stockController.top20SecuritiesByTradingVolume);
 
 /**
  * @swagger
- * /stock/stockMarketOpeningAndClosingDates:
+ * /stock/stock-market-opening-and-closing-dates:
  *   get:
  *     tags:
  *         - Stock
@@ -383,11 +383,11 @@ express_router.get("/stock/top20SecuritiesByTradingVolume", stockController.top2
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/stockMarketOpeningAndClosingDates", stockController.stockMarketOpeningAndClosingDates);
+express_router.get("/stock/stock-market-opening-and-closing-dates", stockController.stockMarketOpeningAndClosingDates);
 
 /**
  * @swagger
- * /stock/fiveLevelsOfStockInformation/{stockNo}:
+ * /stock/five-levels-of-stock-information/{stockNo}:
  *   get:
  *     tags:
  *         - Stock
@@ -404,6 +404,6 @@ express_router.get("/stock/stockMarketOpeningAndClosingDates", stockController.s
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/fiveLevelsOfStockInformation/:stockNo", stockController.fiveLevelsOfStockInformation);
+express_router.get("/stock/five-levels-of-stock-information/:stockNo", stockController.fiveLevelsOfStockInformation);
 
 export default express_router;
