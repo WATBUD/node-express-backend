@@ -11,40 +11,12 @@ const stockService = new StocksService(StockRepositoryInstance);
 const stockController = StockController(stockService);
 
 
-
-
-/**
- * @swagger
- * /stock/test-stock:
- *   get:
- *     deprecated: true
- *     tags:
- *         - Stock
- *     summary: TestStock
- *     description:
- */
-express_router.get("/stock/test-stock", stockController.testStock);
-
-/**
- * @swagger
- * /stock/etf-dividend-yield-ranking:
- *   get:
- *     tags:
- *         - Stock
- *     summary: ETF殖利率排行
- *     description: Returns ETF Yield Ranking data.
- *     responses:
- *       200:
- *         description: Successful response data.
- */
-express_router.get("/stock/etf-dividend-yield-ranking", stockController.etfDividendYieldRanking);
-
 /**
  * @swagger
  * /stock/trackinglist/{userID}:
  *   get:
  *     tags:
- *       - Stock
+ *       - Database
  *     summary: 取得使用者追蹤股票名單
  *     description: Get user tracking stock data.
  *     parameters:
@@ -73,7 +45,7 @@ express_router.get("/stock/trackinglist/:userID", stockController.getStockTracki
  * /stock/list-of-etf-not-tracked-by-the-user/{userID}:
  *   get:
  *     tags:
- *       - Stock
+ *       - Database
  *     summary: 取得使用者未追蹤股票比對ETF名單。
  *     description: Get a list of stock comparison ETFs not tracked by the user.
  *     parameters:
@@ -109,7 +81,7 @@ express_router.get("/stock/list-of-etf-not-tracked-by-the-user/:userID", stockCo
  *   post:
  *     deprecated: false
  *     tags:
- *       - Stock
+ *       - Database
  *     summary: 新增收藏股票
  *     description: Add a new stock to the user's trackinglist.
  *     parameters:
@@ -150,7 +122,7 @@ express_router.post("/stock/trackinglist/:userID", stockController.addStockToTra
  *   patch:
  *     deprecated: false
  *     tags:
- *       - Stock
+ *       - Database
  *     summary: 更新指定股票備註
  *     description: Update specified stock remarks
  *     parameters:
@@ -186,7 +158,7 @@ express_router.patch("/stock/trackinglist/:userID/updateSpecifiedStockNote", sto
  * /stock/trackinglist/{userID}:
  *   delete:
  *     tags:
- *       - Stock
+ *       - Database
  *     summary: 刪除指定收藏的股票
  *     description: Delete the specified stock from the user's tracking list.
  *     parameters:
@@ -208,6 +180,39 @@ express_router.patch("/stock/trackinglist/:userID/updateSpecifiedStockNote", sto
  */
 express_router.delete("/stock/trackinglist/:userID", stockController.deleteStockTrackinglist);
 
+
+
+
+
+
+
+/**
+ * @swagger
+ * /stock/test-stock:
+ *   get:
+ *     deprecated: true
+ *     tags:
+ *         - Test
+ *     summary: TestStock
+ *     description:
+ */
+express_router.get("/stock/test-stock", stockController.testStock);
+
+/**
+ * @swagger
+ * /stock/etf-dividend-yield-ranking:
+ *   get:
+ *     tags:
+ *         - Stock
+ *     summary: ETF殖利率排行
+ *     description: Returns ETF Yield Ranking data.
+ *     responses:
+ *       200:
+ *         description: Successful response data.
+ */
+express_router.get("/stock/etf-dividend-yield-ranking", stockController.etfDividendYieldRanking);
+
+
 /**
  * @swagger
  * /stock/three-major-institutional-investors:
@@ -227,25 +232,13 @@ express_router.get("/stock/three-major-institutional-investors", stockController
  * /stock/fake-api:
  *   get:
  *     tags:
- *       - Stock
+ *       - Test
  *     summary: Fake API endpoint
  *     description: Returns fake API data.
  */
 express_router.get('/fake-api', stockController.fakeApi);
 
-/**
- * @swagger
- * /stock/test-fake-api:
- *   get:
- *     tags:
- *       - Stock
- *     summary: Test Fake API endpoint
- *     description: Returns test fake API data.
- *     responses:
- *       200:
- *         description: Successful response data.
- */
-express_router.get('/test-fake-api', stockController.testFakeApi);
+
 
 /**
  * @swagger
