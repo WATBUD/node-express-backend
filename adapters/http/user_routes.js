@@ -134,6 +134,6 @@ express_router.put("/users/:id/password", formData_Middlewares_multer.none(), us
  *       500:
  *         description: 內部伺服器錯誤。
  */
-express_router.post("/update-user-avatar", formData_Middlewares_multer.single('avatar'), userController.updateUserAvatar);
+express_router.post("/update-user-avatar", userController.updateUserAvatar);
 
 export default express_router;
