@@ -14,7 +14,7 @@ const SharedController = ShardController(sharedService, HttpClientService);
 
 /**
  * @swagger
- * /getClientIP:
+ * /get-client-ip:
  *   get:
  *     tags:
  *         - Shared
@@ -24,11 +24,11 @@ const SharedController = ShardController(sharedService, HttpClientService);
  *       200:
  *         description: Successful response with client IP and NordVPN data.
  */
-express_router.get("/getClientIP", SharedController.getClientIP);
+express_router.get("/get-client-ip", SharedController.getClientIP);
 
 /**
  * @swagger
- * /getRequestLogs:
+ * /get-request-logs:
  *   get:
  *     tags:
  *         - Shared
@@ -38,7 +38,7 @@ express_router.get("/getClientIP", SharedController.getClientIP);
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/getRequestLogs", SharedController.getRequestLogs);
+express_router.get("/get-request-logs", SharedController.getRequestLogs);
 
 express_router.get("/", SharedController.homePage);
 
