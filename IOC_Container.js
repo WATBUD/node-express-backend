@@ -1,9 +1,7 @@
 
-import SharedAPI_Controller from "./Controllers/SharedAPI_Controller.js";
 import SharedService from "./core/application/SharedService.js";
 import UserService from "./core/application/UserService.js";
 import HttpClientService from "./core/application/HttpClientService.js";
-import User_Controller from "./adapters/http/user_handler.js";
 //控制反轉(Inversion of Control，簡稱 IoC)，IoC強調的是將依賴管理的責任從應用程式內部移出,透過依賴注入來實現
 class IOC_Container {
   constructor() {
@@ -28,15 +26,7 @@ class IOC_Container {
 const container = new IOC_Container();
 container.register("SharedService", SharedService);
 container.register("HttpClientService", HttpClientService);
-container.register(
-  "SharedAPI_Controller",
-  SharedAPI_Controller(
-    container.resolve("SharedService"),
-    container.resolve("HttpClientService")
-  )
-);
 container.register("UserService", UserService);
-container.register("User_Controller", User_Controller(container.resolve("UserService")));
 
 
 //container.register("StockService", new StockService());

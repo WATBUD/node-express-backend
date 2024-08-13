@@ -11,7 +11,7 @@ import multer from 'multer';
 const formData_Middlewares_multer = multer(); 
 /**
  * @swagger
- * /tagGroupDetails:
+ * /tag-group-details:
  *   get:
  *     tags:
  *       - Users Api
@@ -21,11 +21,11 @@ const formData_Middlewares_multer = multer();
  *       200:
  *         description: Successful response with tag群組表 data.
  */
-express_router.get("/tagGroupDetails", userController.getTagGroupDetails);
+express_router.get("/tag-group-details", userController.getTagGroupDetails);
 
 /**
  * @swagger
- * /updateUserPassword:
+ * /update-user-password:
  *   post:
  *     tags:
  *       - Users Api
@@ -50,7 +50,7 @@ express_router.get("/tagGroupDetails", userController.getTagGroupDetails);
  *       200:
  *         description: 成功更新使用者密碼。
  */
-express_router.post("/updateUserPassword", formData_Middlewares_multer.none(), userController.updateUserPassword);
+express_router.post("/update-user-password", formData_Middlewares_multer.none(), userController.updateUserPassword);
 
 /**
  * @swagger
@@ -106,7 +106,7 @@ express_router.put("/users/:id/password", formData_Middlewares_multer.none(), us
 
 /**
  * @swagger
- * /updateUserAvatar:
+ * /update-user-avatar:
  *   post:
  *     tags:
  *       - Users Api
@@ -134,6 +134,6 @@ express_router.put("/users/:id/password", formData_Middlewares_multer.none(), us
  *       500:
  *         description: 內部伺服器錯誤。
  */
-express_router.post("/updateUserAvatar", formData_Middlewares_multer.single('avatar'), userController.updateUserAvatar);
+express_router.post("/update-user-avatar", formData_Middlewares_multer.single('avatar'), userController.updateUserAvatar);
 
 export default express_router;
