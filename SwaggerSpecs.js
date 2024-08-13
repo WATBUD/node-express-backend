@@ -38,7 +38,7 @@ const options3 = {
       routePath:'/api/user'
     },
   },
-  apis: ['./adapters/http/UserRoutes.js'],
+  apis: ['./adapters/http/user_routes.js'],
 
 };
 const SwaggerSpecs = [
