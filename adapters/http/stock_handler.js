@@ -93,14 +93,6 @@ const StockController = (StocksService) => {
       }
     },
 
-    testFakeApi: async (req, res) => {
-      try {
-        const fakeApiResponse = await fetchTimeout('http://localhost:9421/fake-api');
-        res.json(fakeApiResponse);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    },
 
     theLatestOpeningDate: async (req, res) => {
       try {
