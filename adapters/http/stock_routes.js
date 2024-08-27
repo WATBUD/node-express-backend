@@ -118,7 +118,7 @@ express_router.post("/stock/trackinglist/:userID", stockController.addStockToTra
 
 /**
  * @swagger
- * /stock/trackinglist/{userID}/updateSpecifiedStockNote:
+ * /stock/trackinglist/{userID}/update-specified-stock-note:
  *   patch:
  *     deprecated: false
  *     tags:
@@ -151,7 +151,7 @@ express_router.post("/stock/trackinglist/:userID", stockController.addStockToTra
  *       200:
  *         description: Success message indicating the stock was updated in the trackinglist.
  */
-express_router.patch("/stock/trackinglist/:userID/updateSpecifiedStockNote", stockController.updateSpecifiedStockNote);
+express_router.patch("/stock/trackinglist/:userID/update-specified-stock-note", stockController.updateSpecifiedStockNote);
 
 /**
  * @swagger
