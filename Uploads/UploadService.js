@@ -8,7 +8,9 @@ const avatarStorage = multer.diskStorage({
     },
     filename: async function (req, file, cb) {
       //console.log('filename',file);
-      const userId = req.body.userId; 
+      //const userId = req.body.userId; 
+      //const userId = req.params.id;
+      const userId = req.user.user_id
       const existingUser = await PrismaServiceInstance.prisma.users.findUnique({
         where: { user_id: parseInt(userId, 10) },
       });
