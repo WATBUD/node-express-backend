@@ -1,7 +1,5 @@
 import express from 'express';
 import UserController from './user_handler.js';
-
-
 const express_router = express.Router();
 import UserRepositoryInstance from '../../Database/prisma/UserRepository.js';
 import UserService from '../../core/application/UserService.js';
@@ -9,6 +7,70 @@ const userService = new UserService(UserRepositoryInstance);
 const userController = UserController(userService);
 import multer from 'multer';
 const formData_Middlewares_multer = multer(); 
+
+  /**
+ * @swagger
+ * /user-login:
+ *   post:
+ *     tags:
+ *       - Users Api
+ *     summary: User login
+ *     description: Allows a user to log in with email and password and receive a JWT token.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               account:
+ *                 type: string
+ *                 example: admin
+ *               password:
+ *                 type: string
+ *                 example: password123
+ *     responses:
+ *       200:
+ *         description: Login successful, returns JWT token.
+ *       401:
+ *         description: Login failed, invalid credentials.
+ */
+  express_router.post('/user-login', userController.checkUserlogin)
+  
+  // /**
+  //  * @swagger
+  //  * /register:
+  //  *   post:
+  //  *     tags:
+  //  *       - Users Api
+  //  *     summary: User registration
+  //  *     description: Allows a user to register a new account.
+  //  *     requestBody:
+  //  *       required: true
+  //  *       content:
+  //  *         application/json:
+  //  *           schema:
+  //  *             type: object
+  //  *             properties:
+  //  *               email:
+  //  *                 type: string
+  //  *                 example: newuser@example.com
+  //  *               password:
+  //  *                 type: string
+  //  *                 example: password123
+  //  *     responses:
+  //  *       201:
+  //  *         description: Registration successful, returns user information.
+  //  *       400:
+  //  *         description: Registration failed, possibly due to invalid input data.
+  //  */
+  // express_router.post('/register', (req, res) => {
+  //   // Registration logic
+  // });
+
+
+
+
 /**
  * @swagger
  * /tag-group-details:

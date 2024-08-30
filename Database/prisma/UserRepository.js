@@ -34,6 +34,18 @@ class UserRepository {
     }
   }
 
+  async checkUserlogin(user_data) {
+    try {
+      const user = await this.prisma.users.findUnique({
+        where: { 
+        account: user_data.account,
+        password: user_data.password,
+      }});
+      return user;
+    } catch (error) {
+      console.error("发生错误：", error.message);
+    }
+  }
 
 
   async getUserById(id) {

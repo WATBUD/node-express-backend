@@ -23,6 +23,24 @@ git rebase main
 
 This will re-apply the commits from the `feature` branch on top of the latest commit of the `main` branch, so the `feature` branch includes the latest changes from `main`.
 
+# After resolving conflicts, mark them as resolved
+git add <resolved files>
+
+# Continue the rebase process
+git rebase --continue
+
+# Start an interactive rebase
+git rebase -i HEAD~n
+
+# Force push the changes to the remote branch
+git push origin feature --force
+
+
+
+
+
+
+
 ### Example Scenario
 
 Suppose you have the following commit history:

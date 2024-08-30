@@ -3,6 +3,25 @@ class UserService {
   constructor(userRepository) {
     this.userRepository = userRepository;
   }
+  async checkUserlogin(account, password) {
+    try {
+      const user = await this.userRepository.checkUserlogin({
+        account: account,
+        password: password
+      });
+      if (user) {
+        if (user.password === password) {
+          return user;
+        } else {
+          return "密碼錯誤";
+        }
+      } else {
+        return "用戶不存在";
+      }
+    } catch (error) {
+      return `Error: ${error.message}`;
+    }
+  }
 
   async getUserById(ID) {
     try {
