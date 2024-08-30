@@ -10,7 +10,7 @@ const UserController = (UserService) => {
     }
       const user = await UserService.checkUserlogin(account, password);
       if (user?.account && user?.user_id) {
-        const token = generateToken(user,'1m');
+        const token = generateToken(user,'5m');
         res.json({ token });
       } else {
         res.status(401).json({ message: user });
@@ -37,7 +37,8 @@ const UserController = (UserService) => {
     },
 
     getUserById: async (req, res) => {
-      const userId = req.params.id;
+      //const userId = req.params.id;
+      const userId = req.user.user_id
       try {
         const user = await UserService.getUserById(userId);
         res.send(user);
@@ -47,7 +48,8 @@ const UserController = (UserService) => {
     },
 
     updateUserPasswordById: async (req, res) => {
-      const userId = req.params.id;
+      //const userId = req.params.id;
+      const userId = req.user.user_id
       const password = req.body.password;
       try {
         const updatedUser = await UserService.updateUserPassword(userId, password);

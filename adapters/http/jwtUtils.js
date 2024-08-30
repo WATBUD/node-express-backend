@@ -23,3 +23,28 @@ export const generateToken = (user, expiresIn = '1h') => {
         { expiresIn }
     );
 };
+
+
+/**
+ * Middleware to authenticate JWT tokens.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ */
+export const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Extract token from "Bearer <token>"
+
+    if (token == null) return res.sendStatus(401); // No token provided
+
+    const secret = process.env.JWT_SECRET;
+
+    if (!secret) return res.sendStatus(500); // Server error if secret is not defined
+
+    jwt.verify(token, secret, (err, user) => {
+        if (err) return res.sendStatus(403); // Invalid token
+
+        req.user = user; // Attach user to the request object
+        next(); // Proceed to the next middleware or route handler
+    });
+};

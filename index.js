@@ -55,7 +55,6 @@ app.use('/', share_api_routes);
 
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
-      // 如果是 JWT 错误，返回 JSON 格式的错误信息
       res.status(401).json({
           error: {
               message: 'No authorization token was found',
@@ -69,7 +68,6 @@ app.use((err, req, res, next) => {
           error: {
               message: 'Internal server error',
               details: err.message,
-              //stack: err.stack
           }
       });
   }
