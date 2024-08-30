@@ -34,8 +34,6 @@ class SharedRepository {
     }
   }
 
-
-
   async getUserById(id) {
     const userId = parseInt(id, 10);
 
