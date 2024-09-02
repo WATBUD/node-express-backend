@@ -7,7 +7,7 @@ const userService = new UserService(UserRepositoryInstance);
 const userController = UserController(userService);
 import multer from 'multer';
 const formData_Middlewares_multer = multer(); 
-import { authenticateToken } from './jwtUtils.js';
+import { authenticateToken } from '../../infrastructure/security/jwtUtils.js';
 
   /**
  * @swagger

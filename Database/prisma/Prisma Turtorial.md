@@ -18,7 +18,7 @@ select "window1252"
 
 
 
-# If you want to update to the latest dB architecture
+#  If you want to update to the latest database architecture, move to Prisma and make the necessary updates.
 npx prisma db pull
 npx prisma generate 
 

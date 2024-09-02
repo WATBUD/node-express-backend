@@ -1,20 +1,19 @@
 import { avatarUpload } from '../../Uploads/UploadService.js';
-import { generateToken } from './jwtUtils.js';
 
 const UserController = (UserService) => {
   return {
-    checkUserlogin : async (req, res) => {
+    checkUserlogin: async (req, res) => {
       const { account, password } = req.body;
       if (!account || !password) {
         return res.status(400).json({ message: 'Account and password are required' });
-    }
-      const user = await UserService.checkUserlogin(account, password);
-      if (user?.account && user?.user_id) {
-        const token = generateToken(user,'5m');
-        res.json({ token });
+      }
+
+      const result = await UserService.checkUserlogin(account, password);
+
+      if (typeof result === 'string') {
+        return res.status(401).json({ message: result });
       } else {
-        res.status(401).json({ message: user });
-        //res.status(401).json({ message: 'Invalid credentials' });
+        return res.json({ token: result.token });
       }
     },
     getTagGroupDetails: async (req, res) => {
