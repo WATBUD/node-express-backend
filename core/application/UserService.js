@@ -1,25 +1,26 @@
-
+import { generateToken } from '../../infrastructure/security/jwtUtils.js';
 class UserService {
   constructor(userRepository) {
     this.userRepository = userRepository;
   }
+
   async checkUserlogin(account, password) {
     try {
-      const user = await this.userRepository.checkUserlogin({
-        account: account,
-        password: password
-      });
+      const user = await this.userRepository.checkUserlogin({ account, password });
+
       if (user) {
         if (user.password === password) {
-          return user;
+          // Generate token if credentials are correct
+          const token = generateToken(user, '5m');
+          return { ...user, token };
         } else {
-          return "密碼錯誤";
+          return "密碼錯誤"; // Incorrect password
         }
       } else {
-        return "用戶不存在";
+        return "用戶不存在"; // User not found
       }
     } catch (error) {
-      return `Error: ${error.message}`;
+      return `Error: ${error.message}`; // Handle errors
     }
   }
 

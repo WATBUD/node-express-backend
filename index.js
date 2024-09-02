@@ -7,7 +7,20 @@ import expressJwt from 'express-jwt';
 import SwaggerSpecs from './SwaggerSpecs.js';
 import userRouter from './adapters/http/user_routes.js';
 import stockRouter from './adapters/http/stock_routes.js';
-import share_api_routes from './adapters/http/share_api_routes.js';
+import HttpClientService from "./core/application/HttpClientService.js";
+
+
+
+import shardHandler from "./adapters/http/share_api_handler.js";
+import shareApiRoutes from "./adapters/http/share_api_routes.js";
+
+import SharedService from "./core/application/SharedService.js";
+import SharedRepositoryInstance from './Database/prisma/SharedRepository.js';
+
+
+
+
+
 
 dotenv.config();
 
@@ -44,14 +57,26 @@ app.use(
   expressJwt({
     secret: process.env.JWT_SECRET,  // Make sure JWT_SECRET is set in your .env file
     algorithms: ['HS256'],
-  }).unless({ path: ['/user-login', 
-  '/register','/'] })  // Exclude routes from JWT verification
+  }).unless({ path: [
+  '/user-login', 
+  '/register',
+  '/',
+/^\/shared\/.*/] })  // Exclude routes from JWT verification
 );
+
+
+
+
 
 // Routes
 app.use('/', stockRouter);
 app.use('/', userRouter);
-app.use('/', share_api_routes);
+
+
+const sharedService = new SharedService(SharedRepositoryInstance);
+const SharedController = shardHandler(sharedService, HttpClientService);
+
+app.use('/', shareApiRoutes(SharedController));
 
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {

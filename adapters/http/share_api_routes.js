@@ -1,20 +1,10 @@
 import express from "express";
-import ShardController from "./share_api_handler.js";
-
 const express_router = express.Router();
-import SharedService from "../../core/application/SharedService.js";
-import HttpClientService from "../../core/application/HttpClientService.js";
-
-import SharedRepositoryInstance from '../../Database/prisma/SharedRepository.js';
-
-
-
-const sharedService = new SharedService(SharedRepositoryInstance);
-const SharedController = ShardController(sharedService, HttpClientService);
+export default function createSharedRoutes(SharedController) {
 
 /**
  * @swagger
- * /get-client-ip:
+ * /shared/get-client-ip:
  *   get:
  *     tags:
  *         - Shared
@@ -24,11 +14,11 @@ const SharedController = ShardController(sharedService, HttpClientService);
  *       200:
  *         description: Successful response with client IP and NordVPN data.
  */
-express_router.get("/get-client-ip", SharedController.getClientIP);
+express_router.get("/shared/get-client-ip", SharedController.getClientIP);
 
 /**
  * @swagger
- * /get-request-logs:
+ * /shared/get-request-logs:
  *   get:
  *     tags:
  *         - Shared
@@ -38,8 +28,9 @@ express_router.get("/get-client-ip", SharedController.getClientIP);
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/get-request-logs", SharedController.getRequestLogs);
+express_router.get("/shared/get-request-logs", SharedController.getRequestLogs);
 
 express_router.get("/", SharedController.homePage);
+return express_router;
 
-export default express_router;
+}

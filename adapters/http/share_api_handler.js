@@ -1,6 +1,6 @@
 import SwaggerSpecs from '../../SwaggerSpecs.js';
 
-const SharedAPI_Controller = (sharedService, httpClientService) => {
+const SharedAPI_Handler = (sharedService, httpClientService) => {
   return {
     getClientIP: async (req, res) => {
       try {
@@ -108,4 +108,4 @@ const SharedAPI_Controller = (sharedService, httpClientService) => {
   };
 };
 
-export default SharedAPI_Controller;
+export default SharedAPI_Handler;
