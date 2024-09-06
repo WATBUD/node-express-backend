@@ -82,8 +82,7 @@ app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
       res.status(401).json({
           error: {
-              message: 'No authorization token was found',
-              details: err.message,
+              message: err.message,
               //stack: err.stack
           }
       });
