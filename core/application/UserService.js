@@ -1,26 +1,31 @@
 import { generateToken } from '../../infrastructure/security/jwtUtils.js';
+import { avatarUpload } from '../../Uploads/UploadService.js';
+import path from 'path'; // 使用 ES6 模块导入
+
 class UserService {
   constructor(userRepository) {
     this.userRepository = userRepository;
   }
 
-  async checkUserlogin(account, password) {
+  async checkUserLogin(account, password) {
     try {
-      const user = await this.userRepository.checkUserlogin({ account, password });
+      // Use repository to find user by account
+      const user = await this.userRepository.findUserByAccount(account);
 
-      if (user) {
-        if (user.password === password) {
-          // Generate token if credentials are correct
-          const token = generateToken(user, '5m');
-          return { ...user, token };
-        } else {
-          return "密碼錯誤"; // Incorrect password
-        }
-      } else {
-        return "用戶不存在"; // User not found
+      if (!user) {
+        return { success: false, message: "User does not exist" };
       }
+
+      // Check if password matches
+      if (user.password !== password) {
+        return { success: false, message: "Incorrect password" };
+      }
+
+      // Generate token if credentials are correct
+      const token = generateToken(user, '5m');
+      return { success: true, user, token };
     } catch (error) {
-      return `Error: ${error.message}`; // Handle errors
+      return { success: false, message: `Error: ${error.message}` };
     }
   }
 
@@ -49,6 +54,33 @@ class UserService {
       return `Error: ${error.message}`;
     }
   }
+
+  async userUploadAvatar(req, res) {
+    try {
+      avatarUpload.single("avatar")(req, res, async (err) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+
+        // Handle further actions after successful upload
+        const userId = req.user.user_id;
+        const filePath = `/Uploads/${userId}_Avatar${path.extname(req.file.originalname)}`;
+
+        try {
+          // Update the user's avatar in the database
+          const updatedUser = await this.userRepository.updateUserAvatar(userId, filePath);
+          return res.status(200).json({ message: "Avatar updated successfully.", user: updatedUser.avatar });
+        } catch (error) {
+          return res.status(500).json({ error: error.message });
+        }
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: error.message });
+    }
+  }
+
+
 
   async updateUserPassword(userId, newPassword) {
     if (!userId || !newPassword) {

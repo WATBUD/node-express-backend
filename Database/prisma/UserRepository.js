@@ -8,7 +8,17 @@ class UserRepository {
     }
     return UserRepository.instance;
   }
-
+  async updateUserAvatar(userId, filePath) {
+    try {
+      return await this.prisma.users.update({
+        where: { user_id: parseInt(userId, 10) },
+        data: { avatar: filePath },
+      });
+    } catch (error) {
+      throw new Error(`Database update failed: ${error.message}`);
+    }
+  }
+  
   async getAssignViewTable(viewTablename,limit) {
     try {
       if (!viewTablename) {
@@ -33,20 +43,11 @@ class UserRepository {
       console.error("发生错误：", error.message);
     }
   }
-
-  async checkUserlogin(user_data) {
-    try {
-      const user = await this.prisma.users.findUnique({
-        where: { 
-        account: user_data.account,
-        password: user_data.password,
-      }});
-      return user;
-    } catch (error) {
-      console.error("发生错误：", error.message);
-    }
+  async findUserByAccount(account) {
+    return this.prisma.users.findUnique({
+      where: { account }
+    });
   }
-
 
   async getUserById(id) {
     const userId = parseInt(id, 10);

@@ -1,15 +1,16 @@
-import { avatarUpload } from '../../Uploads/UploadService.js';
 
-const UserController = (UserService) => {
-  return {
+const UserController = (UserService) => {  return {
     checkUserlogin: async (req, res) => {
       const { account, password } = req.body;
       if (!account || !password) {
         return res.status(400).json({ message: 'Account and password are required' });
       }
 
-      const result = await UserService.checkUserlogin(account, password);
+      const result = await UserService.checkUserLogin(account, password);
 
+      if(!result.success){
+        return res.json({ message: result.message });
+      }
       if (typeof result === 'string') {
         return res.status(401).json({ message: result });
       } else {
@@ -58,16 +59,13 @@ const UserController = (UserService) => {
       }
     },
 
-    updateUserAvatar: (req, res, next) => {
-      avatarUpload.single("avatar")(req, res, function (err) {
-        if (err) {
-          return res.status(500).json({ error: err.message });
-        } else {
-          return res.status(200).json({ message: "Avatar updated successfully." });
-        }
-        next();
-      });
-    }
+    updateUserAvatar: async (req, res) => {
+      try {
+        await UserService.userUploadAvatar(req, res);
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
+    },
   };
 };
 
