@@ -58,20 +58,19 @@ model user_detail {
   privacy_settings     Json?
   social_links         Json?
   is_banned            Boolean?                         @default(false)
+  avatar               String?                          @db.VarChar(255)
   users                users                            @relation(fields: [ud_user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_userdetail_user")
 }
 
 model users {
-  user_id          Int               @id @default(autoincrement())
-  account          String            @unique(map: "Account") @db.VarChar(100)
-  username         String            @db.VarChar(50)
-  password         String            @db.VarChar(100)
-  email            String            @db.VarChar(100)
-  created_at       DateTime?         @default(now()) @db.Timestamp(0)
-  updated_at       DateTime?         @default(now()) @db.Timestamp(0)
-  avatar           String?           @db.VarChar(255)
-  user_detail      user_detail?
-  user_stockBackup user_stockBackup?
+  user_id     Int          @id @default(autoincrement())
+  account     String       @unique(map: "Account") @db.VarChar(100)
+  username    String       @db.VarChar(50)
+  password    String       @db.VarChar(100)
+  email       String       @db.VarChar(100)
+  created_at  DateTime?    @default(now()) @db.Timestamp(0)
+  updated_at  DateTime?    @default(now()) @db.Timestamp(0)
+  user_detail user_detail?
 }
 
 model user_stock {
@@ -85,12 +84,14 @@ model user_stock {
   @@unique([stock_id, user_id], map: "user_stock_key")
 }
 
-model user_stockBackup {
-  stock_userid         Int     @id @default(autoincrement())
-  favorite_stocks_json Json?
-  favorite_stocks      String? @db.VarChar(2000)
-  favorite_blob        Bytes?  @db.Blob
-  users                users   @relation(fields: [stock_userid], references: [user_id], onUpdate: Restrict, map: "stock_user_fk")
+model permissions {
+  id              Int    @id @default(autoincrement())
+  permission_name String @db.VarChar(50)
+}
+
+model roles {
+  id        Int    @id @default(autoincrement())
+  role_name String @db.VarChar(50)
 }
 
 enum user_detail_relationship_status {

@@ -10,8 +10,8 @@ class UserRepository {
   }
   async updateUserAvatar(userId, filePath) {
     try {
-      return await this.prisma.users.update({
-        where: { user_id: parseInt(userId, 10) },
+      return await this.prisma.user_detail.update({
+        where: { ud_user_id: parseInt(userId, 10) },
         data: { avatar: filePath },
       });
     } catch (error) {
