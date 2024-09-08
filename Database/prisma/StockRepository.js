@@ -41,7 +41,7 @@ class StockRepository {
   }
   
 
-  async createStockTrackinglist(userID, stockID, note) {
+  async addStockToTrackinglist(userID, stockID, note) {
     try {
       const createdUserStock = await this.prisma.user_stock.create({
         data: {
