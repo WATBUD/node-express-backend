@@ -9,7 +9,8 @@ import StockRepositoryInstance from '../../Database/prisma/StockRepository.js';
 import StocksService from '../../core/application/StocksService.js';
 const stockService = new StocksService(StockRepositoryInstance);
 const stockController = StockController(stockService);
-
+import multer from 'multer';
+const formData_Middlewares_multer = multer(); 
 
 /**
  * @swagger
@@ -114,7 +115,7 @@ express_router.get("/stock/list-of-etf-not-tracked-by-the-user/:userID", stockCo
  *       500:
  *         description: Internal server error.
  */
-express_router.post("/stock/trackinglist/:userID", stockController.addStockToTrackinglist);
+express_router.post("/stock/trackinglist/:userID",formData_Middlewares_multer.none(), stockController.addStockToTrackinglist);
 
 /**
  * @swagger
@@ -151,7 +152,7 @@ express_router.post("/stock/trackinglist/:userID", stockController.addStockToTra
  *       200:
  *         description: Success message indicating the stock was updated in the trackinglist.
  */
-express_router.patch("/stock/trackinglist/:userID/update-specified-stock-note", stockController.updateSpecifiedStockNote);
+express_router.patch("/stock/trackinglist/:userID/update-specified-stock-note",formData_Middlewares_multer.none(), stockController.updateSpecifiedStockNote);
 
 /**
  * @swagger

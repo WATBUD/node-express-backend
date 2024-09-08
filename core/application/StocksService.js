@@ -170,12 +170,12 @@ class StocksService {
     }
   }
 
-  async createStockTrackinglist(userID, stockID, note) {
+  async addStockToTrackinglist(userID, stockID, note) {
     try {
       if (!userID || !stockID) {
         throw new Error("Invalid userID or stockID");
       }
-      const _trackinglist = await this.StockRepository.createStockTrackinglist(
+      const _trackinglist = await this.StockRepository.addStockToTrackinglist(
         userID,
         stockID,
         note

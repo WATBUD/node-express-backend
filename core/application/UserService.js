@@ -22,7 +22,7 @@ class UserService {
       }
 
       // Generate token if credentials are correct
-      const token = generateToken(user, '5m');
+      const token = generateToken(user, '15m');
       return { success: true, user, token };
     } catch (error) {
       return { success: false, message: `Error: ${error.message}` };
