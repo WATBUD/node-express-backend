@@ -1,7 +1,8 @@
 import express from 'express';
 import UserController from './user_handler.js';
 const express_router = express.Router();
-import UserRepositoryInstance from '../../Database/prisma/UserRepository.js';
+import UserRepositoryInstance from '../../adapters/repository/UserRepository.js';
+//import UserRepositoryInstance from '../../adapters/database/prisma/UserRepository.js';
 import UserService from '../../core/application/UserService.js';
 const userService = new UserService(UserRepositoryInstance);
 const userController = UserController(userService);

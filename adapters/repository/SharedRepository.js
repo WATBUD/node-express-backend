@@ -1,24 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 
-class UserRepository {
+class SharedRepository {
   constructor() {
-    if (!UserRepository.instance) {
-      UserRepository.instance = this;
+    if (!SharedRepository.instance) {
+      SharedRepository.instance = this;
       this.prisma = new PrismaClient();
     }
-    return UserRepository.instance;
+    return SharedRepository.instance;
   }
-  async updateUserAvatar(userId, filePath) {
-    try {
-      return await this.prisma.user_detail.update({
-        where: { ud_user_id: parseInt(userId, 10) },
-        data: { avatar: filePath },
-      });
-    } catch (error) {
-      throw new Error(`Database update failed: ${error.message}`);
-    }
-  }
-  
+
   async getAssignViewTable(viewTablename,limit) {
     try {
       if (!viewTablename) {
@@ -43,11 +33,6 @@ class UserRepository {
       console.error("发生错误：", error.message);
     }
   }
-  async findUserByAccount(account) {
-    return this.prisma.users.findUnique({
-      where: { account }
-    });
-  }
 
   async getUserById(id) {
     const userId = parseInt(id, 10);
@@ -57,6 +42,7 @@ class UserRepository {
       where: { user_id: userId },
     });
   }
+  
   async getAllUsers() {
     const allUsers = await this.prisma.user_detail.findMany();
     console.log(allUsers);
@@ -90,6 +76,6 @@ class UserRepository {
     console.dir(allUsers, { depth: null });
   }
 }
-const UserRepositoryInstance = new UserRepository();
+const SharedRepositoryInstance = new SharedRepository();
 
-export default UserRepositoryInstance;
+export default SharedRepositoryInstance;
