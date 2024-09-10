@@ -15,7 +15,7 @@ import shardHandler from "./adapters/http/share_api_handler.js";
 import shareApiRoutes from "./adapters/http/share_api_routes.js";
 
 import SharedService from "./core/application/SharedService.js";
-import SharedRepositoryInstance from './Database/prisma/SharedRepository.js';
+import SharedRepositoryInstance from './adapters/repository/SharedRepository.js';
 
 
 

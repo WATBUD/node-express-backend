@@ -37,11 +37,12 @@ model record_log_table {
 }
 
 model request_logs {
-  Id         Int      @id @default(autoincrement())
-  path       String   @db.VarChar(255)
-  method     String   @db.VarChar(10)
-  client_ip  String   @db.VarChar(45)
-  created_at DateTime @db.DateTime(0)
+  Id               Int      @id @default(autoincrement())
+  path             String   @db.VarChar(255)
+  method           String   @db.VarChar(10)
+  client_ip        String   @db.VarChar(45)
+  created_at       DateTime @db.DateTime(0)
+  backend_language String   @db.VarChar(50)
 }
 
 model user_detail {
@@ -71,6 +72,7 @@ model users {
   created_at  DateTime?    @default(now()) @db.Timestamp(0)
   updated_at  DateTime?    @default(now()) @db.Timestamp(0)
   user_detail user_detail?
+  user_roles  user_roles[]
 }
 
 model user_stock {
@@ -85,13 +87,36 @@ model user_stock {
 }
 
 model permissions {
-  id              Int    @id @default(autoincrement())
-  permission_name String @db.VarChar(50)
+  id               Int                @id @default(autoincrement())
+  permission_name  String             @db.VarChar(50)
+  role_permissions role_permissions[]
 }
 
 model roles {
-  id        Int    @id @default(autoincrement())
-  role_name String @db.VarChar(50)
+  id               Int                @id @default(autoincrement())
+  role_name        String             @db.VarChar(50)
+  role_permissions role_permissions[]
+  user_roles       user_roles[]
+}
+
+model role_permissions {
+  role_id       Int
+  permission_id Int
+  roles         roles       @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "role_permissions_ibfk_1")
+  permissions   permissions @relation(fields: [permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "role_permissions_ibfk_2")
+
+  @@id([role_id, permission_id])
+  @@index([permission_id], map: "permission_id")
+}
+
+model user_roles {
+  user_id Int
+  role_id Int
+  users   users @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "user_roles_ibfk_1")
+  roles   roles @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_roles_ibfk_2")
+
+  @@id([user_id, role_id])
+  @@index([role_id], map: "role_id")
 }
 
 enum user_detail_relationship_status {

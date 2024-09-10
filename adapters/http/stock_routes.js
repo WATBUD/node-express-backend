@@ -5,7 +5,7 @@ import StockController from './stock_handler.js';
 
 
 const express_router = express.Router();
-import StockRepositoryInstance from '../../Database/prisma/StockRepository.js';
+import StockRepositoryInstance from '../../adapters/repository/StockRepository.js';
 import StocksService from '../../core/application/StocksService.js';
 const stockService = new StocksService(StockRepositoryInstance);
 const stockController = StockController(stockService);
