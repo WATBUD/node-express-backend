@@ -228,8 +228,8 @@ class StocksService {
   //   try {
   //     // 缺失的代码请自行补充
   //   } catch (error) {
-  //     console.error("发生异常：", error.message);
-  //     return "发生异常：" + error.message;
+  //     console.error("Error：", error.message);
+  //     return "Error：" + error.message;
   //   }
   // }
 
@@ -245,7 +245,7 @@ class StocksService {
         return `HTTP请求失败，状态码：${response.status}`;
       }
     } catch (error) {
-      return `发生异常：${error.message}`;
+      return `Error：${error.message}`;
     }
   }
 
@@ -267,7 +267,7 @@ class StocksService {
         return responseData;
       }
     } catch (error) {
-      return `发生异常：${error.message}`;
+      return `Error：${error.message}`;
     }
   }
 
@@ -338,7 +338,7 @@ class StocksService {
         );
       }
     } catch (error) {
-      return `发生异常：${error.message}`;
+      return `Error：${error.message}`;
     }
   }
 
@@ -365,7 +365,7 @@ class StocksService {
         );
       }
     } catch (error) {
-      return `发生异常：${error.message}`;
+      return `Error：${error.message}`;
     }
   }
 
@@ -387,7 +387,7 @@ class StocksService {
         return response.data;
       }
     } catch (error) {
-      return `发生异常：${error.message}`;
+      return `Error：${error.message}`;
     }
   }
 
@@ -411,7 +411,7 @@ class StocksService {
         return `HTTP请求失败，状态码：${response.status}`;
       }
     } catch (error) {
-      return `发生异常：${error.message}`;
+      return `Error：${error.message}`;
     }
   }
 
@@ -542,7 +542,7 @@ class StocksService {
       const _yyyyMMdd = taiwanDate.toISOString().slice(0, 10).replace(/-/g, ""); // 格式化为 yyyyMMdd
       return _yyyyMMdd;
     } catch (error) {
-      return "发生异常：" + error.message;
+      return "Error：" + error.message;
     }
   }
 
@@ -578,7 +578,7 @@ class StocksService {
         );
       }
     } catch (error) {
-      return `发生异常：${error.message}`;
+      return `Error：${error.message}`;
     }
   }
 
@@ -586,8 +586,8 @@ class StocksService {
     try {
       // 缺失的代码请自行补充
     } catch (error) {
-      console.error("发生异常：", error.message);
-      return "发生异常：" + error.message;
+      console.error("Error：", error.message);
+      return "Error：" + error.message;
     }
   }
 }

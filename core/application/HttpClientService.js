@@ -23,8 +23,8 @@ class HttpClientService {
       const response = await axios.get(apiUrl);
       return response.data;
     } catch (error) {
-      console.error(`发生异常：${ipAddress}`, error.message);
-      return `发生异常：${ipAddress}` + error.message;
+      console.error(`Error：${ipAddress}`, error.message);
+      return `Error：${ipAddress}` + error.message;
     }
   }
 }
