@@ -17,6 +17,7 @@ import shareApiRoutes from "./adapters/http/share_api_routes.js";
 import SharedService from "./core/application/SharedService.js";
 import SharedRepositoryInstance from './adapters/repository/SharedRepository.js';
 
+import requestLogger from './adapters/middlewares/requestLogger.js';
 
 
 
@@ -28,6 +29,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = "0.0.0.0";
 
+const sharedService = new SharedService(SharedRepositoryInstance);
+const SharedController = shardHandler(sharedService, HttpClientService);
 // CORS options
 const corsOptions = {
   origin: [
@@ -44,6 +47,7 @@ app.use(express.json());
 app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 
+app.use(requestLogger(sharedService));
 
 
 
@@ -64,17 +68,10 @@ app.use(
 /^\/shared\/.*/] })  // Exclude routes from JWT verification
 );
 
-
-
-
-
 // Routes
 app.use('/', stockRouter);
 app.use('/', userRouter);
 
-
-const sharedService = new SharedService(SharedRepositoryInstance);
-const SharedController = shardHandler(sharedService, HttpClientService);
 
 app.use('/', shareApiRoutes(SharedController));
 
@@ -96,6 +93,7 @@ app.use((err, req, res, next) => {
       });
   }
 });
+
 
 
 app.listen(PORT, HOST, () => {

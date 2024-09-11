@@ -7,12 +7,9 @@ class UtilService {
 
 export const timeoutPromise = (promise, timeout) => {
   return new Promise((resolve, reject) => {
-    // 设置超时定时器
     const timer = setTimeout(() => {
       reject(new Error("Request timed out"));
     }, timeout);
-
-    // 等待原始 Promise 的解决或拒绝
     promise.then(
       (result) => {
         clearTimeout(timer);

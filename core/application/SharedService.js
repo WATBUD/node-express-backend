@@ -3,6 +3,21 @@ class SharedService {
   constructor(sharedRepository) {
     this.SharedRepository = sharedRepository;
   }
+  
+  async createRequestLog(logdata) {
+    try {
+      const result = await this.SharedRepository.createRequestLog(logdata);
+
+      if (result) {
+        return result;
+      } else {
+        return "Unable to create request log";
+      }
+    } catch (error) {
+      throw new Error("Error creating request log: " + error.message);
+    }
+  }
+  
   async getLocalPublicIpAddressAsync() {
     try {
       const apiUrl = "https://api64.ipify.org?format=text";
@@ -38,8 +53,8 @@ class SharedService {
       const response = await axios.get(apiUrl);
       return response.data;
     } catch (error) {
-      console.error(`发生异常：${ipAddress}`, error.message);
-      return `发生异常：${ipAddress}` + error.message;
+      console.error(`Error：${ipAddress}`, error.message);
+      return `Error：${ipAddress}` + error.message;
     }
   }
 

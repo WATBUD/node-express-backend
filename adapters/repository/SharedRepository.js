@@ -8,7 +8,11 @@ class SharedRepository {
     }
     return SharedRepository.instance;
   }
-
+  async createRequestLog(requestLog) {
+    return this.prisma.request_logs.create({
+      data: requestLog,
+    });
+  }
   async getAssignViewTable(viewTablename,limit) {
     try {
       if (!viewTablename) {
