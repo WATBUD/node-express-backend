@@ -1,12 +1,12 @@
 import axios from "axios";
 class SharedService {
   constructor(sharedRepository) {
-    this.SharedRepository = sharedRepository;
+    this.sharedRepository = sharedRepository;
   }
   
   async createRequestLog(logdata) {
     try {
-      const result = await this.SharedRepository.createRequestLog(logdata);
+      const result = await this.sharedRepository.createRequestLog(logdata);
 
       if (result) {
         return result;
@@ -34,7 +34,7 @@ class SharedService {
   }
   async getAssignViewTable(viewTablename,limit) {
     try {
-      const tableData = await this.SharedRepository.getAssignViewTable(viewTablename,limit); // 等待 this.SharedRepository.getAssignViewTable 完成
+      const tableData = await this.sharedRepository.getAssignViewTable(viewTablename,limit); 
   
       if (tableData) {
         return tableData;

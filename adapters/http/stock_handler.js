@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { fetchTimeout, timeoutPromise } from '../../core/application/CustomUtilService.js';
+import { fetchTimeout, timeoutPromise } from '../../core/application/custom_util_service.js';
 
-const StockController = (StocksService) => {
+const newStockHandler = (stocksService) => {
   return {
     testStock: async (req, res) => {
       try {
@@ -14,7 +14,10 @@ const StockController = (StocksService) => {
 
     etfDividendYieldRanking: async (req, res) => {
       try {
-        const data = await timeoutPromise(StocksService.ETF_DividendYieldRanking(), 8000);
+        const data = await timeoutPromise(
+          stocksService.ETF_DividendYieldRanking(),
+          8000
+        );
         res.json(data);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -24,7 +27,10 @@ const StockController = (StocksService) => {
     getStockTrackinglist: async (req, res) => {
       const userId = req.params.userID;
       try {
-        const trackinglist = await StocksService.getStockTrackinglist(userId, req.query?.contains_is_blocked);
+        const trackinglist = await stocksService.getStockTrackinglist(
+          userId,
+          req.query?.contains_is_blocked
+        );
         res.json(trackinglist);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -36,7 +42,11 @@ const StockController = (StocksService) => {
       const percentage = req.query.percentage;
       const value = req.query.value;
       try {
-        const filterlist = await StocksService.listOf_ETF_NotTrackedByTheUser(userId, percentage, value);
+        const filterlist = await stocksService.listOf_ETF_NotTrackedByTheUser(
+          userId,
+          percentage,
+          value
+        );
         res.json(filterlist);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -47,7 +57,11 @@ const StockController = (StocksService) => {
       const userID = req.params.userID;
       const { stockID, note } = req.body;
       try {
-        const trackinglist = await StocksService.addStockToTrackinglist(userID, stockID, note);
+        const trackinglist = await stocksService.addStockToTrackinglist(
+          userID,
+          stockID,
+          note
+        );
         res.json(trackinglist);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -58,7 +72,11 @@ const StockController = (StocksService) => {
       const userID = req.params.userID;
       const { stockID, note } = req.body;
       try {
-        const trackinglist = await StocksService.updateSpecifiedStockNote(userID, stockID, note);
+        const trackinglist = await stocksService.updateSpecifiedStockNote(
+          userID,
+          stockID,
+          note
+        );
         res.json(trackinglist);
       } catch (error) {
         res.status(400).json({ error: error.message });
@@ -69,7 +87,10 @@ const StockController = (StocksService) => {
       const userID = req.params.userID;
       const { stockID } = req.query;
       try {
-        const trackinglist = await StocksService.deleteStockTrackinglist(userID, stockID);
+        const trackinglist = await stocksService.deleteStockTrackinglist(
+          userID,
+          stockID
+        );
         res.json(trackinglist);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -78,7 +99,10 @@ const StockController = (StocksService) => {
 
     threeMajorInstitutionalInvestors: async (req, res) => {
       try {
-        const data = await timeoutPromise(StocksService.threeMajorInstitutionalInvestors(), 8000);
+        const data = await timeoutPromise(
+          stocksService.threeMajorInstitutionalInvestors(),
+          8000
+        );
         res.json(data);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -93,10 +117,12 @@ const StockController = (StocksService) => {
       }
     },
 
-
     theLatestOpeningDate: async (req, res) => {
       try {
-        const data = await timeoutPromise(StocksService.theLatestOpeningDate(), 8000);
+        const data = await timeoutPromise(
+          stocksService.theLatestOpeningDate(),
+          8000
+        );
         res.json(data);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -107,7 +133,10 @@ const StockController = (StocksService) => {
       const stockNo = req.params.stockNo;
       const date = req.query.date;
       try {
-        const data = await timeoutPromise(StocksService.dailyTransactionInfoOfIndividualStock(stockNo, date), 8000);
+        const data = await timeoutPromise(
+          stocksService.dailyTransactionInfoOfIndividualStock(stockNo, date),
+          8000
+        );
         res.json(data);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -117,7 +146,12 @@ const StockController = (StocksService) => {
     dailyTransactionInfoOfIndividualStockWithThreeMonths: async (req, res) => {
       const stockNo = req.params.stockNo;
       try {
-        const data = await timeoutPromise(StocksService.dailyTransactionInfoOfIndividualStockWithMonths(stockNo), 8000);
+        const data = await timeoutPromise(
+          stocksService.dailyTransactionInfoOfIndividualStockWithMonths(
+            stockNo
+          ),
+          8000
+        );
         res.json(data);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -126,17 +160,26 @@ const StockController = (StocksService) => {
 
     simpleMovingAverage: async (req, res) => {
       const stockNo = req.params.stockNo;
-      try {
-        const data = await timeoutPromise(StocksService.simpleMovingAverage(stockNo), 8000);
-        res.json(data);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
+      if (!stockNo) {
+        return res.status(400).json({ error: "Stock number is required" });
       }
+
+      const data = await timeoutPromise(
+        stocksService.simpleMovingAverage(stockNo),
+        8000
+      );
+      if (typeof data === 'string' && data.includes('Cannot read properties of undefined')) {
+        return res.status(400).json({ error: '股票代號有誤' });
+      }
+      res.json(data);
     },
 
     dailyMarketTrading: async (req, res) => {
       try {
-        const data = await timeoutPromise(StocksService.dailyMarketTrading(), 8000);
+        const data = await timeoutPromise(
+          stocksService.dailyMarketTrading(),
+          8000
+        );
         res.json(data);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -145,7 +188,10 @@ const StockController = (StocksService) => {
 
     dailyClosingQuote: async (req, res) => {
       try {
-        const data = await timeoutPromise(StocksService.dailyClosingQuote(), 8000);
+        const data = await timeoutPromise(
+          stocksService.dailyClosingQuote(),
+          8000
+        );
         res.json(data);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -154,7 +200,10 @@ const StockController = (StocksService) => {
 
     top20SecuritiesByTradingVolume: async (req, res) => {
       try {
-        const data = await timeoutPromise(StocksService.top20_SecuritiesByTradingVolume(), 8000);
+        const data = await timeoutPromise(
+          stocksService.top20_SecuritiesByTradingVolume(),
+          8000
+        );
         res.json(data);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -162,9 +211,12 @@ const StockController = (StocksService) => {
     },
 
     stockMarketOpeningAndClosingDates: async (req, res) => {
-      const requestAllData = req.query.requestAllData === 'true';
+      const requestAllData = req.query.requestAllData === "true";
       try {
-        const data = await timeoutPromise(StocksService.stockMarketOpeningAndClosingDates(requestAllData), 8000);
+        const data = await timeoutPromise(
+          stocksService.stockMarketOpeningAndClosingDates(requestAllData),
+          8000
+        );
         res.json(data);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -174,7 +226,10 @@ const StockController = (StocksService) => {
     fiveLevelsOfStockInformation: async (req, res) => {
       const stockNo = req.params.stockNo;
       try {
-        const data = await timeoutPromise(StocksService.fiveLevelsOfStockInformation(stockNo), 8000);
+        const data = await timeoutPromise(
+          stocksService.fiveLevelsOfStockInformation(stockNo),
+          8000
+        );
         res.json(data);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -183,4 +238,4 @@ const StockController = (StocksService) => {
   };
 };
 
-export default StockController;
+export default newStockHandler;
