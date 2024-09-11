@@ -1,4 +1,4 @@
-import SwaggerSpecs from '../../SwaggerSpecs.js';
+import SwaggerSpecs from '../../swagger-specs.js';
 
 const SharedAPI_Handler = (sharedService, httpClientService) => {
   return {

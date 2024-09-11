@@ -42,6 +42,21 @@ class UserService {
     }
   }
 
+
+  
+  async getV_TagGroupDetail() {
+    try {
+      const tableData = await this.userRepository.getAssignViewTable("V_TagGroupDetail");
+      if (tableData) {
+        return tableData;
+      } else {
+        return `Unable to retrieve data for table: ${tableName}`;
+      }
+    } catch (error) {
+      return `V_TagGroupDetail Error: ${error.message}`;
+    }
+  }
+
   async getAssignViewTable(tableName) {
     try {
       const tableData = await this.userRepository.getAssignViewTable(tableName);

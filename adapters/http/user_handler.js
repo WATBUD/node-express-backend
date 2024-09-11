@@ -1,5 +1,5 @@
 
-const UserController = (UserService) => {  return {
+const NewUserHandler = (UserService) => {  return {
     checkUserlogin: async (req, res) => {
       const { account, password } = req.body;
       if (!account || !password) {
@@ -19,7 +19,7 @@ const UserController = (UserService) => {  return {
     },
     getTagGroupDetails: async (req, res) => {
       try {
-        const tableData = await UserService.getAssignViewTable("V_TagGroupDetail");
+        const tableData = await UserService.getV_TagGroupDetail();
         res.json(tableData);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -69,4 +69,4 @@ const UserController = (UserService) => {  return {
   };
 };
 
-export default UserController;
+export default NewUserHandler;
