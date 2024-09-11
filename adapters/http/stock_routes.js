@@ -1,16 +1,10 @@
 import express from 'express';
-import StockController from './stock_handler.js';
-
-
-
-
 const express_router = express.Router();
-import StockRepositoryInstance from '../../adapters/repository/StockRepository.js';
-import StocksService from '../../core/application/stocks_service.js';
-const stockService = new StocksService(StockRepositoryInstance);
-const stockController = StockController(stockService);
 import multer from 'multer';
 const formData_Middlewares_multer = multer(); 
+
+
+export default function createRoutes(stockHandler) {
 
 /**
  * @swagger
@@ -39,7 +33,7 @@ const formData_Middlewares_multer = multer();
  *       200:
  *         description: 成功取得使用者資料。
  */
-express_router.get("/stock/trackinglist/:userID", stockController.getStockTrackinglist);
+express_router.get("/stock/trackinglist/:userID", stockHandler.getStockTrackinglist);
 
 /**
  * @swagger
@@ -74,7 +68,7 @@ express_router.get("/stock/trackinglist/:userID", stockController.getStockTracki
  *       200:
  *         description: 成功取得資料。
  */
-express_router.get("/stock/list-of-etf-not-tracked-by-the-user/:userID", stockController.listOfETFNotTrackedByTheUser);
+express_router.get("/stock/list-of-etf-not-tracked-by-the-user/:userID", stockHandler.listOfETFNotTrackedByTheUser);
 
 /**
  * @swagger
@@ -115,7 +109,7 @@ express_router.get("/stock/list-of-etf-not-tracked-by-the-user/:userID", stockCo
  *       500:
  *         description: Internal server error.
  */
-express_router.post("/stock/trackinglist/:userID",formData_Middlewares_multer.none(), stockController.addStockToTrackinglist);
+express_router.post("/stock/trackinglist/:userID",formData_Middlewares_multer.none(), stockHandler.addStockToTrackinglist);
 
 /**
  * @swagger
@@ -152,7 +146,7 @@ express_router.post("/stock/trackinglist/:userID",formData_Middlewares_multer.no
  *       200:
  *         description: Success message indicating the stock was updated in the trackinglist.
  */
-express_router.patch("/stock/trackinglist/:userID/update-specified-stock-note",formData_Middlewares_multer.none(), stockController.updateSpecifiedStockNote);
+express_router.patch("/stock/trackinglist/:userID/update-specified-stock-note",formData_Middlewares_multer.none(), stockHandler.updateSpecifiedStockNote);
 
 /**
  * @swagger
@@ -179,13 +173,7 @@ express_router.patch("/stock/trackinglist/:userID/update-specified-stock-note",f
  *       200:
  *         description: Success message indicating the stock was updated in the trackinglist.
  */
-express_router.delete("/stock/trackinglist/:userID", stockController.deleteStockTrackinglist);
-
-
-
-
-
-
+express_router.delete("/stock/trackinglist/:userID", stockHandler.deleteStockTrackinglist);
 
 /**
  * @swagger
@@ -197,7 +185,7 @@ express_router.delete("/stock/trackinglist/:userID", stockController.deleteStock
  *     summary: TestStock
  *     description:
  */
-express_router.get("/stock/test-stock", stockController.testStock);
+express_router.get("/stock/test-stock", stockHandler.testStock);
 
 /**
  * @swagger
@@ -211,8 +199,7 @@ express_router.get("/stock/test-stock", stockController.testStock);
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/etf-dividend-yield-ranking", stockController.etfDividendYieldRanking);
-
+express_router.get("/stock/etf-dividend-yield-ranking", stockHandler.etfDividendYieldRanking);
 
 /**
  * @swagger
@@ -226,7 +213,7 @@ express_router.get("/stock/etf-dividend-yield-ranking", stockController.etfDivid
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/three-major-institutional-investors", stockController.threeMajorInstitutionalInvestors);
+express_router.get("/stock/three-major-institutional-investors", stockHandler.threeMajorInstitutionalInvestors);
 
 /**
  * @swagger
@@ -237,9 +224,7 @@ express_router.get("/stock/three-major-institutional-investors", stockController
  *     summary: Fake API endpoint
  *     description: Returns fake API data.
  */
-express_router.get('/fake-api', stockController.fakeApi);
-
-
+express_router.get('/fake-api', stockHandler.fakeApi);
 
 /**
  * @swagger
@@ -253,7 +238,7 @@ express_router.get('/fake-api', stockController.fakeApi);
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/the-latest-opening-date", stockController.theLatestOpeningDate);
+express_router.get("/stock/the-latest-opening-date", stockHandler.theLatestOpeningDate);
 
 /**
  * @swagger
@@ -280,7 +265,7 @@ express_router.get("/stock/the-latest-opening-date", stockController.theLatestOp
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/daily-transaction-info-of-individual-stock/:stockNo", stockController.dailyTransactionInfoOfIndividualStock);
+express_router.get("/stock/daily-transaction-info-of-individual-stock/:stockNo", stockHandler.dailyTransactionInfoOfIndividualStock);
 
 /**
  * @swagger
@@ -307,21 +292,28 @@ express_router.get("/stock/daily-transaction-info-of-individual-stock/:stockNo",
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/daily-transaction-info-of-individual-stock-with-three-months/:stockNo", stockController.dailyTransactionInfoOfIndividualStockWithThreeMonths);
+express_router.get("/stock/daily-transaction-info-of-individual-stock-with-three-months/:stockNo", stockHandler.dailyTransactionInfoOfIndividualStockWithThreeMonths);
 
 /**
  * @swagger
- * /stock/simple-moving-average:
+ * /stock/simple-moving-average/{stockNo}:
  *   get:
  *     tags:
  *         - Stock
  *     summary: 簡單移動平均線
  *     description: Returns 簡單移動平均線 data.
+ *     parameters:
+ *       - in: path
+ *         name: stockNo
+ *         required: true
+ *         description: Stock No
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/simple-moving-average", stockController.simpleMovingAverage);
+express_router.get("/stock/simple-moving-average/:stockNo", stockHandler.simpleMovingAverage);
 
 /**
  * @swagger
@@ -335,7 +327,7 @@ express_router.get("/stock/simple-moving-average", stockController.simpleMovingA
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/daily-market-trading", stockController.dailyMarketTrading);
+express_router.get("/stock/daily-market-trading", stockHandler.dailyMarketTrading);
 
 /**
  * @swagger
@@ -349,7 +341,7 @@ express_router.get("/stock/daily-market-trading", stockController.dailyMarketTra
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/daily-closing-quote", stockController.dailyClosingQuote);
+express_router.get("/stock/daily-closing-quote", stockHandler.dailyClosingQuote);
 
 /**
  * @swagger
@@ -363,7 +355,7 @@ express_router.get("/stock/daily-closing-quote", stockController.dailyClosingQuo
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/top20-securities-by-trading-volume", stockController.top20SecuritiesByTradingVolume);
+express_router.get("/stock/top20-securities-by-trading-volume", stockHandler.top20SecuritiesByTradingVolume);
 
 /**
  * @swagger
@@ -377,7 +369,7 @@ express_router.get("/stock/top20-securities-by-trading-volume", stockController.
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/stock-market-opening-and-closing-dates", stockController.stockMarketOpeningAndClosingDates);
+express_router.get("/stock/stock-market-opening-and-closing-dates", stockHandler.stockMarketOpeningAndClosingDates);
 
 /**
  * @swagger
@@ -398,6 +390,8 @@ express_router.get("/stock/stock-market-opening-and-closing-dates", stockControl
  *       200:
  *         description: Successful response data.
  */
-express_router.get("/stock/five-levels-of-stock-information/:stockNo", stockController.fiveLevelsOfStockInformation);
+express_router.get("/stock/five-levels-of-stock-information/:stockNo", stockHandler.fiveLevelsOfStockInformation);
 
-export default express_router;
+return express_router;
+
+}

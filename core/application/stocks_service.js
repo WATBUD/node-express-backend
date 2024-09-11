@@ -2,7 +2,7 @@ import axios from "axios";
 import cheerio from "cheerio";
 import iconv from 'iconv-lite';
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
-import {getFirstDayOfMonth,getLastThreeMonthsDates as getLastMonthsDates,dateToYYYYMMDD} from './CustomUtilService.js';
+import {getFirstDayOfMonth,getLastThreeMonthsDates as getLastMonthsDates,dateToYYYYMMDD} from './custom_util_service.js';
 
 class StocksService {
   constructor(stockRepository) {
