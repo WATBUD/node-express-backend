@@ -1,14 +1,13 @@
 import express from 'express';
-import UserController from './user_handler.js';
 const express_router = express.Router();
-import UserRepositoryInstance from '../../adapters/repository/UserRepository.js';
-//import UserRepositoryInstance from '../../adapters/database/prisma/UserRepository.js';
-import UserService from '../../core/application/UserService.js';
-const userService = new UserService(UserRepositoryInstance);
-const userController = UserController(userService);
+
 import multer from 'multer';
 const formData_Middlewares_multer = multer(); 
 import { authenticateToken } from '../../infrastructure/security/jwtUtils.js';
+
+
+export default function createRoutes(userController) {
+
 
   /**
  * @swagger
@@ -37,7 +36,7 @@ import { authenticateToken } from '../../infrastructure/security/jwtUtils.js';
  *       401:
  *         description: Login failed, invalid credentials.
  */
-  express_router.post('/user-login', userController.checkUserlogin)
+express_router.post('/user-login', userController.checkUserlogin)
   
   // /**
   //  * @swagger
@@ -182,4 +181,6 @@ express_router.put("/users/password",authenticateToken, formData_Middlewares_mul
  */
 express_router.put("/update-user-avatar", authenticateToken,userController.updateUserAvatar);
 
-export default express_router;
+return express_router;
+
+}

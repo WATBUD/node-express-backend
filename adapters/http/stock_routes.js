@@ -6,7 +6,7 @@ import StockController from './stock_handler.js';
 
 const express_router = express.Router();
 import StockRepositoryInstance from '../../adapters/repository/StockRepository.js';
-import StocksService from '../../core/application/StocksService.js';
+import StocksService from '../../core/application/stocks_service.js';
 const stockService = new StocksService(StockRepositoryInstance);
 const stockController = StockController(stockService);
 import multer from 'multer';

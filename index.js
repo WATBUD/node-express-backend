@@ -4,22 +4,35 @@ import dotenv from 'dotenv';
 import swaggerUiExpress from 'swagger-ui-express';
 import cors from 'cors';
 import expressJwt from 'express-jwt';
-import SwaggerSpecs from './SwaggerSpecs.js';
-import userRouter from './adapters/http/user_routes.js';
-import stockRouter from './adapters/http/stock_routes.js';
-import HttpClientService from "./core/application/HttpClientService.js";
-
-
-
-import shardHandler from "./adapters/http/share_api_handler.js";
-import shareApiRoutes from "./adapters/http/share_api_routes.js";
-
-import SharedService from "./core/application/SharedService.js";
-import SharedRepositoryInstance from './adapters/repository/SharedRepository.js';
-
+import swaggerSpecs from './swagger-specs.js';
 import requestLogger from './adapters/middlewares/requestLogger.js';
 
 
+
+import HttpClientService from "./core/application/http_client_service.js";
+import StockRouter from './adapters/http/stock_routes.js';
+
+
+
+import newUserHandler from "./adapters/http/user_handler.js";
+import userRoutes from './adapters/http/user_routes.js';
+import UserService from './core/application/user_service.js';
+import userRepository from './adapters/repository/UserRepository.js';
+
+
+import newShardHandler from "./adapters/http/share_api_handler.js";
+import shareApiRoutes from "./adapters/http/share_api_routes.js";
+import SharedService from "./core/application/shared_service.js";
+import sharedRepository from './adapters/repository/SharedRepository.js';
+
+
+
+const userService = new UserService(userRepository);
+const userHandler = newUserHandler(userService);
+
+
+const sharedService = new SharedService(sharedRepository);
+const sharedHandler = newShardHandler(sharedService, HttpClientService);
 
 
 
@@ -29,8 +42,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = "0.0.0.0";
 
-const sharedService = new SharedService(SharedRepositoryInstance);
-const SharedController = shardHandler(sharedService, HttpClientService);
 // CORS options
 const corsOptions = {
   origin: [
@@ -53,7 +64,7 @@ app.use(requestLogger(sharedService));
 
 
 // Swagger documentation
-SwaggerSpecs.forEach(spec => {
+swaggerSpecs.forEach(spec => {
   app.use(`${spec.info.routePath}`, swaggerUiExpress.serve, (...args) => swaggerUiExpress.setup(spec)(...args));
 });
 
@@ -69,11 +80,9 @@ app.use(
 );
 
 // Routes
-app.use('/', stockRouter);
-app.use('/', userRouter);
-
-
-app.use('/', shareApiRoutes(SharedController));
+app.use('/', StockRouter);
+app.use('/', userRoutes(userHandler));
+app.use('/', shareApiRoutes(sharedHandler));
 
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
