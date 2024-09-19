@@ -47,7 +47,7 @@ class StocksService {
           );
         }
         if (value != null) {
-          _ETFlist = _ETFlist.filter((etfElement) => etfElement.value >= value);
+          _ETFlist = _ETFlist.filter((etfElement) => etfElement.value <= value);
         }
 
         for (let index = 0; index < _ETFlist.length; index++) {
