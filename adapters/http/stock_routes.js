@@ -61,7 +61,8 @@ express_router.get("/stock/trackinglist/:userID", stockHandler.getStockTrackingl
  *       - in: query
  *         name: value
  *         required: false
- *         description: 指定股價價格多少以上。
+ *         default: 30
+ *         description: 指定股價價格多少以下。
  *         schema:
  *           type: string
  *     responses:
