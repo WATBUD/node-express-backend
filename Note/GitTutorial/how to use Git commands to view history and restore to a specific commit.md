@@ -8,7 +8,7 @@ In Git, you might need to view the history of a branch or restore your working d
    `git reflog --date=iso`
 2. View a Specific Branch's Operation History
    `git reflog show feature/folder_API_louis --date=iso`
-3. Create a New Branch from a Specific Commit
-   `git branch beaab92`
-4. Switch to a Specific Commit
+3. Switch to a Specific Commit
    `git checkout beaab92`
+4. Create a New Branch from a Specific Commit
+   `git checkout -b 20241031`
