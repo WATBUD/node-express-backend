@@ -24,10 +24,10 @@ export default function createRoutes(userController) {
  *           schema:
  *             type: object
  *             properties:
- *               account:
+ *               UserAccount:
  *                 type: string
  *                 example: admin
- *               password:
+ *               Password:
  *                 type: string
  *                 example: password123
  *     responses:

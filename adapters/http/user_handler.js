@@ -1,12 +1,12 @@
 
 const NewUserHandler = (UserService) => {  return {
     checkUserlogin: async (req, res) => {
-      const { account, password } = req.body;
-      if (!account || !password) {
+      const { UserAccount, Password } = req.body;
+      if (!UserAccount || !Password) {
         return res.status(400).json({ message: 'Account and password are required' });
       }
 
-      const result = await UserService.checkUserLogin(account, password);
+      const result = await UserService.checkUserLogin(UserAccount, Password);
 
       if(!result.success){
         return res.json({ message: result.message });

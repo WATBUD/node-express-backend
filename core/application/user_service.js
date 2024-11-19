@@ -15,12 +15,9 @@ class UserService {
       if (!user) {
         return { success: false, message: "User does not exist" };
       }
-
-      // Check if password matches
-      if (user.password !== password) {
+      if (user.password_hash !== password) {
         return { success: false, message: "Incorrect password" };
       }
-
       // Generate token if credentials are correct
       const token = generateToken(user, '15m');
       return { success: true, user, token };

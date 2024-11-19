@@ -54,7 +54,7 @@ class UserRepository {
   }
   async findUserByAccount(account) {
     return this.prisma.users.findUnique({
-      where: { account }
+      where: { user_account:account }
     });
   }
 

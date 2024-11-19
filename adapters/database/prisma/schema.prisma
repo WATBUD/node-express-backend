@@ -45,34 +45,28 @@ model request_logs {
   backend_language String   @db.VarChar(50)
 }
 
-model user_detail {
-  ud_user_id           Int                              @id @default(autoincrement())
-  gender               String?                          @db.VarChar(10)
-  birthday             DateTime?                        @db.Date
+model users {
+  user_id              Int                        @id @default(autoincrement())
+  user_account         String                     @unique(map: "Account") @db.VarChar(100)
+  username             String                     @db.VarChar(50)
+  password_hash        String                     @db.VarChar(256)
+  email                String                     @db.VarChar(100)
+  created_at           DateTime?                  @default(now()) @db.Timestamp(0)
+  updated_at           DateTime?                  @default(now()) @db.Timestamp(0)
+  gender               String?                    @db.VarChar(10)
+  birthday             DateTime?                  @db.Date
   user_has_tag         Json?
-  profile_picture      String?                          @db.VarChar(255)
-  interests            String?                          @db.Text
-  personal_description String?                          @db.Text
-  location             String?                          @db.VarChar(100)
-  relationship_status  user_detail_relationship_status?
-  looking_for          user_detail_looking_for?
+  profile_picture      String?                    @db.VarChar(255)
+  interests            String?                    @db.Text
+  personal_description String?                    @db.Text
+  location             String?                    @db.VarChar(100)
+  relationship_status  users_relationship_status?
+  looking_for          users_looking_for?
   privacy_settings     Json?
   social_links         Json?
-  is_banned            Boolean?                         @default(false)
-  avatar               String?                          @db.VarChar(255)
-  users                users                            @relation(fields: [ud_user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_userdetail_user")
-}
-
-model users {
-  user_id     Int          @id @default(autoincrement())
-  account     String       @unique(map: "Account") @db.VarChar(100)
-  username    String       @db.VarChar(50)
-  password    String       @db.VarChar(100)
-  email       String       @db.VarChar(100)
-  created_at  DateTime?    @default(now()) @db.Timestamp(0)
-  updated_at  DateTime?    @default(now()) @db.Timestamp(0)
-  user_detail user_detail?
-  user_roles  user_roles[]
+  is_banned            Boolean?                   @default(false)
+  avatar               String?                    @db.VarChar(255)
+  user_roles           user_roles[]
 }
 
 model user_stock {
@@ -119,14 +113,14 @@ model user_roles {
   @@index([role_id], map: "role_id")
 }
 
-enum user_detail_relationship_status {
+enum users_relationship_status {
   Single
   Married
   Divorced
   Other
 }
 
-enum user_detail_looking_for {
+enum users_looking_for {
   Friendship
   Dating
   Long_term_Relationship @map("Long-term Relationship")
