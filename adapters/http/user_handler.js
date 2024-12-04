@@ -1,72 +1,98 @@
 
+import ResponseDTO from './responseDTO.js';
+
 const NewUserHandler = (UserService) => {  return {
-    checkUserlogin: async (req, res) => {
-      const { UserAccount, Password } = req.body;
-      if (!UserAccount || !Password) {
-        return res.status(400).json({ message: 'Account and password are required' });
-      }
+  checkUserlogin: async (req, res) => {
+    const { UserAccount, Password } = req.body;
 
-      const result = await UserService.checkUserLogin(UserAccount, Password);
+    // Validate that both UserAccount and Password are provided
+    if (!UserAccount || !Password) {
+      return res
+        .status(400)
+        .json(
+          ResponseDTO.errorResponse(
+            "MISSING_CREDENTIALS",
+            "Account and password are required"
+          )
+        );
+    }
 
-      if(!result.success){
-        return res.json({ message: result.message });
-      }
-      if (typeof result === 'string') {
-        return res.status(401).json({ message: result });
-      } else {
-        return res.json({ token: result.token });
-      }
-    },
-    getTagGroupDetails: async (req, res) => {
-      try {
-        const tableData = await UserService.getV_TagGroupDetail();
-        res.json(tableData);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    },
+    // Call the UserService to check the login credentials
+    const result = await UserService.checkUserLogin(UserAccount, Password);
 
-    updateUserPassword: async (req, res) => {
-      const { userId, password } = req.body;
-      try {
-        const updatedUser = await UserService.updateUserPassword(userId, password);
-        res.send(updatedUser);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    },
+    // Handle unsuccessful login (when `result.success` is false)
+    if (!result.success) {
+      return res.json(
+        ResponseDTO.errorResponse("LOGIN_FAILED", result.message)
+      );
+    }
 
-    getUserById: async (req, res) => {
-      //const userId = req.params.id;
-      const userId = req.user.user_id
-      try {
-        const user = await UserService.getUserById(userId);
-        res.send(user);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    },
+    // Handle case when `result` is a string (e.g., error message)
+    if (typeof result === "string") {
+      return res
+        .status(401)
+        .json(ResponseDTO.errorResponse("INVALID_CREDENTIALS", result));
+    }
 
-    updateUserPasswordById: async (req, res) => {
-      //const userId = req.params.id;
-      const userId = req.user.user_id
-      const password = req.body.password;
-      try {
-        const updatedUser = await UserService.updateUserPassword(userId, password);
-        res.send(updatedUser);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    },
+    // Successful login, return the token
+    return res.json(ResponseDTO.successResponse({ Token: result.token }));
+  },
+  getTagGroupDetails: async (req, res) => {
+    try {
+      const tableData = await UserService.getV_TagGroupDetail();
+      res.json(tableData);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
 
-    updateUserAvatar: async (req, res) => {
-      try {
-        await UserService.userUploadAvatar(req, res);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    },
-  };
+  updateUserPassword: async (req, res) => {
+    const { userId, password } = req.body;
+    try {
+      const updatedUser = await UserService.updateUserPassword(
+        userId,
+        password
+      );
+      res.send(updatedUser);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  getUserById: async (req, res) => {
+    //const userId = req.params.id;
+    const userId = req.user.user_id;
+    try {
+      const user = await UserService.getUserById(userId);
+      res.send(user);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  updateUserPasswordById: async (req, res) => {
+    //const userId = req.params.id;
+    const userId = req.user.user_id;
+    const password = req.body.password;
+    try {
+      const updatedUser = await UserService.updateUserPassword(
+        userId,
+        password
+      );
+      res.send(updatedUser);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  updateUserAvatar: async (req, res) => {
+    try {
+      await UserService.userUploadAvatar(req, res);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+};
 };
 
 export default NewUserHandler;

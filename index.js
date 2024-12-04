@@ -8,13 +8,13 @@ import swaggerSpecs from './swagger-specs.js';
 import requestLogger from './adapters/middlewares/requestLogger.js';
 
 
-import HttpClientService from "./core/application/http_client_service.js";
+import HttpClientService from "./application/http_client_service.js";
 
 
 import stockRoutes from './adapters/http/stock_routes.js';
 import newStockHandler from './adapters/http/stock_handler.js';
 import stockRepository from './adapters/repository/StockRepository.js';
-import StocksService from './core/application/stocks_service.js';
+import StocksService from './application/stocks_service.js';
 
 const stockService = new StocksService(stockRepository);
 const stockHandler = newStockHandler(stockService);
@@ -22,7 +22,7 @@ const stockHandler = newStockHandler(stockService);
 
 import userRoutes from './adapters/http/user_routes.js';
 import newUserHandler from "./adapters/http/user_handler.js";
-import UserService from './core/application/user_service.js';
+import UserService from './application/user_service.js';
 import userRepository from './adapters/repository/UserRepository.js';
 
 const userService = new UserService(userRepository);
@@ -31,7 +31,7 @@ const userHandler = newUserHandler(userService);
 
 import newShardHandler from "./adapters/http/share_api_handler.js";
 import shareApiRoutes from "./adapters/http/share_api_routes.js";
-import SharedService from "./core/application/shared_service.js";
+import SharedService from "./application/shared_service.js";
 import sharedRepository from './adapters/repository/SharedRepository.js';
 
 const sharedService = new SharedService(sharedRepository);

@@ -5,7 +5,6 @@ import multer from 'multer';
 const formData_Middlewares_multer = multer(); 
 import { authenticateToken } from '../../infrastructure/security/jwtUtils.js';
 
-
 export default function createRoutes(userController) {
 
 

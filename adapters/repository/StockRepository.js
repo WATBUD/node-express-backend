@@ -41,32 +41,32 @@ class StockRepository {
   }
   
 
-  async addStockToTrackinglist(userID, stockID, note) {
+  async addStockToTrackinglist(userID, stockID, note="", isBlocked = false) {
     try {
+      // Create a new user stock with the given data, including is_blocked
       const createdUserStock = await this.prisma.user_stock.create({
         data: {
           user_id: userID,
           stock_id: stockID,
-          note: note,
+          note: note || '',  // Default note to an empty string if not provided
+          is_blocked: isBlocked, // Use the isBlocked parameter
         },
       });
       return createdUserStock;
     } catch (error) {
-      // 在這裡處理錯誤
+      // Handle errors
       if (error.message.includes("stock_id_check")) {
         throw new Error("股票ID不符合格式");
       }
       if (error.message.includes("Unique constraint")) {
-        console.error(
-          "Error creating stock tracking list:",
-          "使用者已收藏此股票"
-        );
+        console.error("Error creating stock tracking list:", "使用者已收藏此股票");
         throw new Error("使用者已收藏此股票");
       }
-
-      throw error; // 重新拋出錯誤以便上層處理
+  
+      throw error; // Rethrow the error for upper layers to handle
     }
   }
+  
 
   
   async deleteStockTrackinglist(userID, stockID) {
