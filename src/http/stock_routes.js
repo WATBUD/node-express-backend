@@ -10,7 +10,7 @@ export default function createRoutes(stockHandler) {
    * /stock/trackinglist/{userID}:
    *   get:
    *     tags:
-   *       - Database
+   *       - Stock
    *     summary: 取得使用者追蹤股票名單
    *     description: Get user tracking stock data.
    *     parameters:
@@ -42,7 +42,7 @@ export default function createRoutes(stockHandler) {
    * /stock/list-of-etf-not-tracked-by-the-user/{userID}:
    *   get:
    *     tags:
-   *       - Database
+   *       - Stock
    *     summary: 取得使用者未追蹤股票比對ETF名單。
    *     description: Get a list of stock comparison ETFs not tracked by the user.
    *     parameters:
@@ -82,7 +82,7 @@ export default function createRoutes(stockHandler) {
  *   post:
  *     deprecated: false
  *     tags:
- *       - Database
+ *       - Stock
  *     summary: 新增收藏股票
  *     description: Add a new stock to the user's trackinglist.
  *     parameters:
@@ -129,7 +129,7 @@ export default function createRoutes(stockHandler) {
    *   patch:
    *     deprecated: false
    *     tags:
-   *       - Database
+   *       - Stock
    *     summary: 更新指定股票備註
    *     description: Update specified stock remarks
    *     parameters:
@@ -169,7 +169,7 @@ export default function createRoutes(stockHandler) {
    * /stock/trackinglist/{userID}:
    *   delete:
    *     tags:
-   *       - Database
+   *       - Stock
    *     summary: 刪除指定收藏的股票
    *     description: Delete the specified stock from the user's tracking list.
    *     parameters:

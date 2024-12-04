@@ -124,6 +124,5 @@ class StockRepository {
     }
   }
 }
-const StockRepositoryInstance = new StockRepository();
 
-export default StockRepositoryInstance;
+export default new StockRepository();
