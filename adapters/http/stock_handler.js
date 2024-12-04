@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { fetchTimeout, timeoutPromise } from '../../core/application/custom_util_service.js';
+import { fetchTimeout, timeoutPromise } from '../../application/custom_util_service.js';
 
 const newStockHandler = (stocksService) => {
   return {
@@ -55,12 +55,13 @@ const newStockHandler = (stocksService) => {
 
     addStockToTrackinglist: async (req, res) => {
       const userID = req.params.userID;
-      const { stockID, note } = req.body;
+      const { stockID, note,is_blocked } = req.body;
       try {
         const trackinglist = await stocksService.addStockToTrackinglist(
           userID,
           stockID,
-          note
+          note,
+          is_blocked
         );
         res.json(trackinglist);
       } catch (error) {

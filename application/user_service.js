@@ -1,5 +1,5 @@
-import { generateToken } from '../../infrastructure/security/jwtUtils.js';
-import { avatarUpload } from '../../Uploads/UploadService.js';
+import { generateToken } from '../infrastructure/security/jwtUtils.js';
+import { avatarUpload } from '../Uploads/UploadService.js';
 import path from 'path'; // 使用 ES6 模块导入
 
 class UserService {

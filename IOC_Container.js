@@ -1,7 +1,7 @@
 
-import SharedService from "./core/application/shared_service.js";
-import UserService from "./core/application/user_service.js";
-import HttpClientService from "./core/application/HttpClientService.js";
+import SharedService from "./application/shared_service.js";
+import UserService from "./application/user_service.js";
+import HttpClientService from "./application/HttpClientService.js";
 //控制反轉(Inversion of Control，簡稱 IoC)，IoC強調的是將依賴管理的責任從應用程式內部移出,透過依賴注入來實現
 class IOC_Container {
   constructor() {
