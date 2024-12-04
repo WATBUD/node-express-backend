@@ -3,7 +3,7 @@ const express_router = express.Router();
 
 import multer from 'multer';
 const formData_Middlewares_multer = multer(); 
-import { authenticateToken } from '../../infrastructure/security/jwtUtils.js';
+import { authenticateToken } from '../utilities/jwt-helper.js';
 
 export default function createRoutes(userController) {
 

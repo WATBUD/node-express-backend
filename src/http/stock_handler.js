@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { fetchTimeout, timeoutPromise } from '../../application/custom_util_service.js';
+import { fetchTimeout, timeoutPromise } from '../services/custom-util-service.js';
 
 const newStockHandler = (stocksService) => {
   return {

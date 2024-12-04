@@ -2,7 +2,7 @@ import axios from "axios";
 import cheerio from "cheerio";
 import iconv from 'iconv-lite';
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
-import {getFirstDayOfMonth,getLastThreeMonthsDates as getLastMonthsDates,dateToYYYYMMDD} from './custom_util_service.js';
+import {getFirstDayOfMonth,getLastThreeMonthsDates as getLastMonthsDates,dateToYYYYMMDD} from './custom-util-service.js';
 
 class StocksService {
   constructor(stockRepository) {
@@ -110,10 +110,9 @@ class StocksService {
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
       };
 
-      // 发起 GET 请求
       const response = await axios.get(url, {
         headers,
-        responseType: "arraybuffer", // 将响应类型设置为 arraybuffer
+        responseType: "arraybuffer", 
       });
 
       const htmlBuffer = response.data;
@@ -155,7 +154,6 @@ class StocksService {
           managementFee,
         };
         if (stockCode.trim() !== "") dataArray.push(itemData);
-        // 在这里可以将提取到的数据存储到数组或对象中，或进行其他处理
       });
       //console.log(itemData);
       return dataArray;
@@ -225,14 +223,6 @@ class StocksService {
     }
   }
 
-  // async getExDividendNoticeForm(limitDays, isCashDividend = false) {
-  //   try {
-  //     // 缺失的代码请自行补充
-  //   } catch (error) {
-  //     console.error("Error：", error.message);
-  //     return "Error：" + error.message;
-  //   }
-  // }
 
   async fiveLevelsOfStockInformation(stockCode) {
     try {
@@ -553,10 +543,8 @@ class StocksService {
         "https://www.twse.com.tw/rwd/zh/holidaySchedule/holidaySchedule?response=json&_=" +
         Date.now();
 
-      // // 使用 Promise 封装等待函数
       // const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-      // // 强制等待 3 秒
       // await wait(3000);
 
       const response = await axios.get(apiUrl);
