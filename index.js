@@ -6,44 +6,8 @@ import cors from 'cors';
 import expressJwt from 'express-jwt';
 import swaggerSpecs from './swagger-specs.js';
 import requestLogger from './src/middlewares/request-logger.js';
-
-
 import HttpClientService from "./src/services/http-client-service.js";
-
-
-import stockRoutes from './src/http/stock-routes.js';
-import newStockHandler from './src/http/stock-handler.js';
-import stockRepository from './src/repositories/stock-repository.js';
-import StocksService from './src/services/stocks-service.js';
-const stockService = new StocksService(stockRepository);
-const stockHandler = newStockHandler(stockService);
-
-
-import userRoutes from './src/http/user-routes.js';
-import newUserHandler from "./src/http/user-handler.js";
-import UserService from './src/services/user-service.js';
-import userRepository from './src/repositories/user-repository.js';
-
-const userService = new UserService(userRepository);
-const userHandler = newUserHandler(userService);
-
-
-import newShardHandler from "./src/http/share-api-handler.js";
-import shareApiRoutes from "./src/http/share-api-routes.js";
-import SharedService from "./src/services/shared-service.js";
-import sharedRepository from './src/repositories/shared-repository.js';
-
-const sharedService = new SharedService(sharedRepository);
-const sharedHandler = newShardHandler(sharedService, HttpClientService);
-
-
-
-
-
-
-
 dotenv.config();
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = "0.0.0.0";
@@ -64,7 +28,6 @@ app.use(express.json());
 app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 
-app.use(requestLogger(sharedService));
 
 
 
@@ -86,9 +49,33 @@ app.use(
 );
 
 // Routes
-app.use('/', stockRoutes(stockHandler));
-app.use('/', userRoutes(userHandler));
-app.use('/', shareApiRoutes(sharedHandler));
+import stockRoutes from './src/http/stock-routes.js';
+import stockHandler from './src/http/stock-handler.js';
+import stockRepository from './src/repositories/stock-repository.js';
+import StocksService from './src/services/stocks-service.js';
+
+const stockService = new StocksService(stockRepository);
+app.use('/', stockRoutes(stockHandler(stockService)));
+/*------------------ */;
+
+import userRoutes from './src/http/user-routes.js';
+import userHandler from "./src/http/user-handler.js";
+import userRepository from './src/repositories/user-repository.js';
+import UserService from './src/services/user-service.js';
+
+const userService = new UserService(userRepository);
+const _userHandler = userHandler(userService);
+app.use('/', userRoutes(_userHandler));
+/*------------------ */;
+import shardApiHandler from "./src/http/share-api-handler.js";
+import shareApiRoutes from "./src/http/share-api-routes.js";
+import sharedRepository from './src/repositories/shared-repository.js';
+import SharedService from "./src/services/shared-service.js";
+
+const sharedService = new SharedService(sharedRepository);
+const _sharedHandler = shardApiHandler(sharedService, HttpClientService);
+app.use('/', shareApiRoutes(_sharedHandler));
+app.use(requestLogger(sharedService));
 
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
