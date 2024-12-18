@@ -1,5 +1,5 @@
 
-import ResponseDTO from './responseDTO.js';
+import ResponseDTO from './api-response-dto.js';
 
 const NewUserHandler = (UserService) => {  return {
   checkUserlogin: async (req, res) => {

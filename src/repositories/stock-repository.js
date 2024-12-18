@@ -9,7 +9,7 @@ class StockRepository {
     return StockRepository.instance;
   }
 
-  async getStockTrackinglist(userId, contains_is_blocked='true') {
+  async getStockTrackingList(userId, contains_is_blocked='true') {
     try {
       const startTime = new Date(); // 记录查询开始时间
   
@@ -28,15 +28,15 @@ class StockRepository {
         where: whereClause,
       });
   
-      const endTime = new Date(); // 记录查询结束时间
+      const endTime = new Date();
       const executionTime = endTime - startTime; // 计算查询执行时间，单位为毫秒
   
       console.log("DB query execution time:", executionTime, "milliseconds");
   
       return result;
     } catch (error) {
-      console.error("Error getStockTrackinglist:", error);
-      throw error; // 重新抛出错误以便上层处理
+      console.error("Error getStockTrackingList:", error);
+      throw error; 
     }
   }
   

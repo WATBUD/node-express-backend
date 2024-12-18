@@ -25,7 +25,7 @@ const options1 = {
       bearerAuth: [],
     }],
   },
-  apis: ['./adapters/http/stock_routes.js'],
+  apis: ['./src/http/stock-routes.js'],
 };
 
 const options2 = {
@@ -46,7 +46,7 @@ const options2 = {
       bearerAuth: [],
     }],
   },
-  apis: ['./adapters/http/share_api_routes.js'],
+  apis: ['./src/http/share-api-routes.js'],
 };
 
 const options3 = {
@@ -67,7 +67,7 @@ const options3 = {
       bearerAuth: [],
     }],
   },
-  apis: ['./adapters/http/user_routes.js'],
+  apis: ['./src/http/user-routes.js'],
 };
 
 const SwaggerSpecs = [

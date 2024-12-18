@@ -24,10 +24,10 @@ const newStockHandler = (stocksService) => {
       }
     },
 
-    getStockTrackinglist: async (req, res) => {
+    getStockTrackingList: async (req, res) => {
       const userId = req.params.userID;
       try {
-        const trackinglist = await stocksService.getStockTrackinglist(
+        const trackinglist = await stocksService.getStockTrackingList(
           userId,
           req.query?.contains_is_blocked
         );
