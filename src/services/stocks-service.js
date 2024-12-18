@@ -9,9 +9,9 @@ class StocksService {
     this.StockRepository = stockRepository;
   }
 
-  async getStockTrackinglist(userID, contains_is_blocked) {
+  async getStockTrackingList(userID, contains_is_blocked) {
     try {
-      const _trackinglist = await this.StockRepository.getStockTrackinglist(
+      const _trackinglist = await this.StockRepository.getStockTrackingList(
         userID,
         contains_is_blocked
       );
@@ -35,7 +35,7 @@ class StocksService {
     try {
       //const _ETFlist = await this.ETF_DividendYieldRanking();
       let [_usertrackinglist, _ETFlist] = await Promise.all([
-        this.StockRepository.getStockTrackinglist(userID),
+        this.StockRepository.getStockTrackingList(userID),
         this.ETF_DividendYieldRanking(),
       ]);
 

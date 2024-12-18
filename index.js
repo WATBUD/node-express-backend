@@ -11,16 +11,16 @@ import requestLogger from './src/middlewares/request-logger.js';
 import HttpClientService from "./src/services/http-client-service.js";
 
 
-import stockRoutes from './src/http/stock_routes.js';
-import newStockHandler from './src/http/stock_handler.js';
+import stockRoutes from './src/http/stock-routes.js';
+import newStockHandler from './src/http/stock-handler.js';
 import stockRepository from './src/repositories/stock-repository.js';
 import StocksService from './src/services/stocks-service.js';
 const stockService = new StocksService(stockRepository);
 const stockHandler = newStockHandler(stockService);
 
 
-import userRoutes from './src/http/user_routes.js';
-import newUserHandler from "./src/http/user_handler.js";
+import userRoutes from './src/http/user-routes.js';
+import newUserHandler from "./src/http/user-handler.js";
 import UserService from './src/services/user-service.js';
 import userRepository from './src/repositories/user-repository.js';
 
@@ -28,8 +28,8 @@ const userService = new UserService(userRepository);
 const userHandler = newUserHandler(userService);
 
 
-import newShardHandler from "./src/http/share_api_handler.js";
-import shareApiRoutes from "./src/http/share_api_routes.js";
+import newShardHandler from "./src/http/share-api-handler.js";
+import shareApiRoutes from "./src/http/share-api-routes.js";
 import SharedService from "./src/services/shared-service.js";
 import sharedRepository from './src/repositories/shared-repository.js';
 
@@ -99,7 +99,6 @@ app.use((err, req, res, next) => {
           }
       });
   } else {
-      // 其他错误处理
       res.status(500).json({
           error: {
               message: 'Internal server error',

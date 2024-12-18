@@ -3,6 +3,8 @@ const express_router = express.Router();
 import multer from 'multer';
 const formData_Middlewares_multer = multer(); 
 
+/** @param {{ getStockTrackingList: (str: string) => Array }} stockHandler */
+
 
 export default function createRoutes(stockHandler) {
   /**
@@ -34,7 +36,7 @@ export default function createRoutes(stockHandler) {
    */
   express_router.get(
     "/stock/trackinglist/:userID",
-    stockHandler.getStockTrackinglist
+    stockHandler.getStockTrackingList
   );
 
   /**
