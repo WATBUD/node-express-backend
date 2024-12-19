@@ -29,7 +29,7 @@ class StockRepository {
       });
   
       const endTime = new Date();
-      const executionTime = endTime - startTime; // 计算查询执行时间，单位为毫秒
+      const executionTime = endTime - startTime; 
   
       console.log("DB query execution time:", executionTime, "milliseconds");
   

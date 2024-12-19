@@ -1,7 +1,7 @@
 
 import ResponseDTO from './api-response-dto.js';
 
-const NewUserHandler = (UserService) => {  return {
+const userHandler = (UserService) => {  return {
   checkUserlogin: async (req, res) => {
     const { UserAccount, Password } = req.body;
 
@@ -95,4 +95,4 @@ const NewUserHandler = (UserService) => {  return {
 };
 };
 
-export default NewUserHandler;
+export default userHandler;
