@@ -5,7 +5,7 @@ import multer from 'multer';
 const formData_Middlewares_multer = multer(); 
 import { authenticateToken } from '../utilities/jwt-helper.js';
 
-export default function createRoutes(userController) {
+export default function createRoutes(userHandler) {
 
 
   /**
@@ -35,7 +35,7 @@ export default function createRoutes(userController) {
  *       401:
  *         description: Login failed, invalid credentials.
  */
-express_router.post('/user-login', userController.checkUserlogin)
+express_router.post('/user-login', userHandler.checkUserlogin)
   
   // /**
   //  * @swagger
@@ -83,7 +83,7 @@ express_router.post('/user-login', userController.checkUserlogin)
  *       200:
  *         description: Successful response with tag群組表 data.
  */
-express_router.get("/tag-group-details", userController.getTagGroupDetails);
+express_router.get("/tag-group-details", userHandler.getTagGroupDetails);
 
 // /**
 //  * @swagger
@@ -125,7 +125,7 @@ express_router.get("/tag-group-details", userController.getTagGroupDetails);
  *       200:
  *         description: 成功取得使用者資料。
  */
-express_router.get("/users", authenticateToken,userController.getUserById);
+express_router.get("/users", authenticateToken,userHandler.getUserById);
 
 /**
  * @swagger
@@ -150,7 +150,7 @@ express_router.get("/users", authenticateToken,userController.getUserById);
  *       200:
  *         description: 成功更新使用者密碼。
  */
-express_router.put("/users/password",authenticateToken, formData_Middlewares_multer.none(), userController.updateUserPasswordById);
+express_router.put("/users/password",authenticateToken, formData_Middlewares_multer.none(), userHandler.updateUserPasswordById);
 
 /**
  * @swagger
@@ -178,7 +178,7 @@ express_router.put("/users/password",authenticateToken, formData_Middlewares_mul
  *       500:
  *         description: 內部伺服器錯誤。
  */
-express_router.put("/update-user-avatar", authenticateToken,userController.updateUserAvatar);
+express_router.put("/update-user-avatar", authenticateToken,userHandler.updateUserAvatar);
 
 return express_router;
 

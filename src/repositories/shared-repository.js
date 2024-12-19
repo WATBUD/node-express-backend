@@ -16,7 +16,7 @@ class SharedRepository {
   async getAssignViewTable(viewTablename,limit) {
     try {
       if (!viewTablename) {
-        throw new Error("viewTablename 不能是空字符串");
+        throw new Error("The table name cannot be an empty string");
       }
       //console.log(customViewData);
       console.log(viewTablename);
@@ -34,7 +34,7 @@ class SharedRepository {
 
       return customQueryCallbackData;
     } catch (error) {
-      console.error("发生错误：", error.message);
+      console.error("error：", error.message);
     }
   }
 }
