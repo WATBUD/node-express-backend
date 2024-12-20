@@ -48,7 +48,7 @@ export default function createRoutes(stockHandler) {
    *   get:
    *     tags:
    *       - Stock
-   *     summary: 取得使用者未追蹤股票比對ETF名單。
+   *     summary: 取得ETF名單列出使用者未追蹤股票名單。
    *     description: Get a list of stock comparison ETFs not tracked by the user.
    *     parameters:
    *       - in: path
@@ -130,13 +130,13 @@ export default function createRoutes(stockHandler) {
 
   /**
    * @swagger
-   * /stock/trackinglist/{userID}:
+   * /stock/trackinglist:
    *   put:
    *     deprecated: false
    *     tags:
    *       - Stock
-   *     summary: 更新指定股票備註
-   *     description: Update specified stock remarks
+   *     summary: 更新指定追蹤的股票資料
+   *     description: Update User Tracking Stock
    *     parameters:
    *       - in: path
    *         name: userID
