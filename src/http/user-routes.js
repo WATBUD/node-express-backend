@@ -4,6 +4,8 @@ const express_router = express.Router();
 import multer from 'multer';
 const formData_Middlewares_multer = multer(); 
 import { authenticateToken } from '../utilities/jwt-helper.js';
+import { dtoUserCredentials } from '../dto/user-request-dto.js'; 
+import { validateRequestBody } from '../dto/joi-help.js';
 
 export default function createRoutes(userHandler) {
 
@@ -35,7 +37,9 @@ export default function createRoutes(userHandler) {
  *       401:
  *         description: Login failed, invalid credentials.
  */
-express_router.post('/user-login', userHandler.checkUserlogin)
+express_router.post('/user-login',
+validateRequestBody(dtoUserCredentials),
+userHandler.checkUserlogin)
   
   // /**
   //  * @swagger

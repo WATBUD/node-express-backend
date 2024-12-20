@@ -7,15 +7,15 @@ class UserService {
     this.userRepository = userRepository;
   }
 
-  async checkUserLogin(account, password) {
+  async checkUserLogin(input) {
     try {
       // Use repository to find user by account
-      const user = await this.userRepository.findUserByAccount(account);
+      const user = await this.userRepository.findUserByAccount(input.user_account);
 
       if (!user) {
         return { success: false, message: "User does not exist" };
       }
-      if (user.password_hash !== password) {
+      if (user.password_hash !== input.password) {
         return { success: false, message: "Incorrect password" };
       }
       // Generate token if credentials are correct
