@@ -11,13 +11,8 @@ const userHandler = (UserService) => {  return {
     const result = await UserService.checkUserLogin(input);
     if (!result.success) {
       return res.json(
-        ResponseDTO.errorResponse("LOGIN_FAILED", result.message)
+        ResponseDTO.errorResponse(result.message, null)
       );
-    }
-    if (typeof result === "string") {
-      return res
-        .status(401)
-        .json(ResponseDTO.errorResponse("INVALID_CREDENTIALS", result));
     }
     return res.json(ResponseDTO.successResponse({ token: result.token }));
   },
