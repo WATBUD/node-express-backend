@@ -3,7 +3,7 @@ import path from 'path';
 
 const avatarStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './Uploads'); // Set the destination folder
+    cb(null, './uploads'); // Set the destination folder
   },
   filename: function (req, file, cb) {
     // Generate the filename
