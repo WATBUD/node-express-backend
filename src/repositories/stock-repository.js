@@ -9,89 +9,74 @@ class StockRepository {
     return StockRepository.instance;
   }
 
-  async getStockTrackingList(userId, contains_is_blocked='true') {
+  async getStockTrackingList(userId, contains_is_blocked = "true") {
     try {
       const startTime = new Date(); // 记录查询开始时间
-  
+
       const _userId = BigInt(userId).toString();
-      const isBlockedBoolean = contains_is_blocked === 'true';
-  
+      const isBlockedBoolean = contains_is_blocked === "true";
+
       const whereClause = {
         user_id: _userId,
       };
-      
-      if (isBlockedBoolean==false) {
+
+      if (isBlockedBoolean == false) {
         whereClause.is_blocked = false;
       }
-      
+
       const result = await this.prisma.user_stock.findMany({
         where: whereClause,
       });
-  
+
       const endTime = new Date();
-      const executionTime = endTime - startTime; 
-  
+      const executionTime = endTime - startTime;
+
       console.log("DB query execution time:", executionTime, "milliseconds");
-  
+
       return result;
     } catch (error) {
       console.error("Error getStockTrackingList:", error);
-      throw error; 
-    }
-  }
-  
-
-  async addStockToTrackinglist(stockData) {
-      const createdUserStock = await this.prisma.user_stock.create({
-        data: {
-          user_id: String(stockData.user_id),
-          stock_id: stockData.stock_id,
-          note: stockData.note || '',  // Default note to an empty string if not provided
-          is_blocked: stockData.is_blocked, // Use the isBlocked parameter
-        },
-      });
-      return createdUserStock;
-  }
-  
-
-  
-  async deleteStockTrackinglist(userID, stockID) {
-    try {
-      const deletedUserStock = await this.prisma.user_stock.delete({
-        where: {
-          stock_id_user_id: {
-            stock_id: stockID,
-            user_id: userID,
-          },
-        },
-      });
-      return deletedUserStock;
-    } catch (error) {
-      if (error.code === "P2025") {
-        // P2025 是 Prisma 中唯一約束違規的錯誤碼
-        console.error(
-          "Error deleting stock tracking list:",
-          "使用者未收藏此股票"
-        );
-        throw new Error("使用者未收藏此股票");
-      }
-
-      throw error; 
+      throw error;
     }
   }
 
-  async updateSpecifiedStockTrackingData(updateStockData) {
+  async addStockToTrackinglist(inputData) {
+    const createdUserStock = await this.prisma.user_stock.create({
+      data: {
+        user_id: String(inputData.user_id),
+        stock_id: inputData.stock_id,
+        note: inputData.note || "", // Default note to an empty string if not provided
+        is_blocked: inputData.is_blocked, // Use the isBlocked parameter
+      },
+    });
+    return createdUserStock;
+  }
+
+  async deleteStockTrackinglist(inputData) {
+    const deletedUserStock = await this.prisma.user_stock.delete({
+      where: {
+        stock_id_user_id: {
+          user_id: String(inputData.user_id),
+          stock_id: inputData.stock_id,
+        },
+      },
+    });
+    return deletedUserStock;
+  }
+
+  async updateSpecifiedStockTrackingData(inputData) {
     try {
       const updatedUserStock = await this.prisma.user_stock.update({
         where: {
           stock_id_user_id: {
-            stock_id: updateStockData.stock_id,
-            user_id: String(updateStockData.user_id)
+            user_id: String(inputData.user_id),
+            stock_id: inputData.stock_id,
           },
         },
         data: {
-          note: updateStockData.note, 
-          is_blocked: updateStockData.is_blocked,
+          note: inputData.note,
+          is_blocked: inputData.is_blocked,
+          updated_at: new Date(),
         },
       });
       return updatedUserStock;
@@ -105,7 +90,7 @@ class StockRepository {
         throw new Error("使用者未收藏此股票");
       }
 
-      throw error; 
+      throw error;
     }
   }
 }
