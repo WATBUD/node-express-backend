@@ -12,19 +12,13 @@ import { validateCreateTrackingStockRequest,validateTrackingStockRequest } from 
 export default function createRoutes(stockHandler) {
   /**
    * @swagger
-   * /stock/trackinglist/{userID}:
+   * /stock/trackinglist:
    *   get:
    *     tags:
    *       - Stock
    *     summary: 取得使用者追蹤股票名單
    *     description: Get user tracking stock data.
    *     parameters:
-   *       - in: path
-   *         name: userID
-   *         required: true
-   *         description: 使用者ID
-   *         schema:
-   *           type: string
    *       - in: query
    *         name: contains_is_blocked
    *         required: true
@@ -38,26 +32,19 @@ export default function createRoutes(stockHandler) {
    *         description: 成功取得使用者資料。
    */
   express_router.get(
-    "/stock/trackinglist/:userID",
+    "/stock/trackinglist",
     stockHandler.getStockTrackingList
   );
 
   /**
    * @swagger
-   * /stock/list-of-etf-not-tracked-by-the-user/{userID}:
+   * /stock/list-of-etf-not-tracked-by-the-user:
    *   get:
    *     tags:
    *       - Stock
    *     summary: 取得ETF名單列出使用者未追蹤股票名單。
    *     description: Get a list of stock comparison ETFs not tracked by the user.
    *     parameters:
-   *       - in: path
-   *         name: userID
-   *         required: true
-   *         description: 使用者ID
-   *         schema:
-   *           type: string
-   *         default: "111"
    *       - in: query
    *         name: percentage
    *         required: false
@@ -77,7 +64,7 @@ export default function createRoutes(stockHandler) {
    *         description: 成功取得資料。
    */
   express_router.get(
-    "/stock/list-of-etf-not-tracked-by-the-user/:userID",
+    "/stock/list-of-etf-not-tracked-by-the-user",
     stockHandler.listOfETFNotTrackedByTheUser
   );
 
@@ -90,13 +77,6 @@ export default function createRoutes(stockHandler) {
  *       - Stock
  *     summary: 新增收藏股票
  *     description: Add a new stock to the user's trackinglist.
- *     parameters:
- *       - in: path
- *         name: userID
- *         required: true
- *         description: User ID
- *         schema:
- *           type: string
  *     requestBody:
  *         required: true
  *         content:
