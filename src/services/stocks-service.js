@@ -168,25 +168,23 @@ class StocksService {
     }
   }
 
-  async addStockToTrackinglist(userID, stockID, note,is_blocked) {
+  async addStockToTrackinglist(stockData) {
     try {
-      if (!userID || !stockID) {
-        throw new Error("Invalid userID or stockID");
-      }
-      const _trackinglist = await this.StockRepository.addStockToTrackinglist(
-        userID,
-        stockID,
-        note,
-        is_blocked
-      );
+      const trackingStockData = await this.StockRepository.addStockToTrackinglist(stockData);
 
-      if (_trackinglist) {
-        return _trackinglist;
+      if (trackingStockData) {
+        return trackingStockData;
       } else {
-        return "Unable to find data for userID: " + userID;
+        return { success: false, message: "Unable to find data for userID: " + userID };
       }
     } catch (error) {
-      return "Error: " + error.message;
+      if (error.message.includes("stock_id_check")) {
+        return { success: false, message: "股票ID不符合格式" };
+      }
+      if (error.message.includes("Unique constraint")) {
+        return { success: false, message: "You have saved this stock to your favorites." };
+      }
+      return { success: false, message: "Error: " + error.message };
     }
   }
 

@@ -104,7 +104,7 @@ export default function createRoutes(stockHandler) {
  *             schema:
  *               type: object
  *               properties:
- *                 stockID:
+ *                 stock_id:
  *                   type: string
  *                   required: true
  *                   description: Stock ID
@@ -125,7 +125,7 @@ export default function createRoutes(stockHandler) {
  *         description: Internal server error.
  */
   express_router.post(
-    "/stock/trackinglist/:userID",stockHandler.addStockToTrackinglist
+    "/stock/trackinglist/:userID",validateRequestBody(dtoTrackingStockRequest),stockHandler.addStockToTrackinglist
   );
 
   /**

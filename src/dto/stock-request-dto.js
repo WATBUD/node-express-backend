@@ -1,14 +1,4 @@
 import Joi from 'joi';
-// class dtoTrackingStockRequest {
-//     constructor(id, stockId, userId, note = '', isBlocked = false, updatedAt = new Date()) {
-//       this.id = id;
-//       this.stockId = stockId;
-//       this.userId = userId;
-//       this.note = note;
-//       this.isBlocked = isBlocked;
-//       this.updatedAt = updatedAt;
-//     }
-//   }
 export const dtoTrackingStockRequest = Joi.object({
   // userID: Joi.string().required().messages({
   //   'string.base': 'userID should be a string',

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { fetchTimeout, timeoutPromise } from '../services/custom-util-service.js';
-import { dtoTrackingStockRequest } from '../dto/stock-request-dto.js'; 
+import ResponseDTO from './api-response-dto.js';
 
 const stockHandler = (stocksService) => {
   return {
@@ -55,19 +55,18 @@ const stockHandler = (stocksService) => {
     },
 
     addStockToTrackinglist: async (req, res) => {
-      const userID = req.params.userID;
-      const { stockID, note,is_blocked } = req.body;
-      try {
-        const trackinglist = await stocksService.addStockToTrackinglist(
-          userID,
-          stockID,
-          note,
-          is_blocked
+      const input = {
+        ...req.params,
+        ...req.body,
+        ...req.user,
+      };
+      const result = await stocksService.addStockToTrackinglist(input);
+      if (!result.success) {
+        return res.json(
+          ResponseDTO.errorResponse(result.message, null)
         );
-        res.json(trackinglist);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
       }
+      return res.json(ResponseDTO.successRseponse({ result: result }));
     },
 
     updateSpecifiedStockTrackingData: async (req, res) => {
@@ -77,12 +76,12 @@ const stockHandler = (stocksService) => {
         ...req.user,
       };
       try {
-        const trackinglist = await stocksService.updateSpecifiedStockTrackingData(input);
+        const trackinglist =
+          await stocksService.updateSpecifiedStockTrackingData(input);
         res.json(trackinglist);
       } catch (error) {
         res.status(400).json({ error: error.message });
       }
-
     },
 
     deleteStockTrackinglist: async (req, res) => {
@@ -170,8 +169,11 @@ const stockHandler = (stocksService) => {
         stocksService.simpleMovingAverage(stockNo),
         8000
       );
-      if (typeof data === 'string' && data.includes('Cannot read properties of undefined')) {
-        return res.status(400).json({ error: '股票代號有誤' });
+      if (
+        typeof data === "string" &&
+        data.includes("Cannot read properties of undefined")
+      ) {
+        return res.status(400).json({ error: "股票代號有誤" });
       }
       res.json(data);
     },
