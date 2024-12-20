@@ -178,7 +178,7 @@ class StocksService {
         return { success: false, message: "Unable to find data for userID: " + userID };
       }
     } catch (error) {
-      if (error.message.includes("stock_id_check")) {
+      if (error.message.includes("too long")) {
         return { success: false, message: "股票ID不符合格式" };
       }
       if (error.message.includes("Unique constraint")) {
