@@ -190,14 +190,9 @@ class StocksService {
     }
   }
 
-  async updateSpecifiedStockNote(userID, stockID, note) {
-    if (!userID || !stockID) {
-      throw new Error("Invalid userID or stockID");
-    }
-    const _trackinglist = await this.StockRepository.updateSpecifiedStockNote(
-      userID,
-      stockID,
-      note
+  async updateSpecifiedStockTrackingData(updateStockData) {
+    const _trackinglist = await this.StockRepository.updateSpecifiedStockTrackingData(
+      updateStockData
     );
 
     if (_trackinglist) {

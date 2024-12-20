@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
 --
--- Host: localhost    Database: RNDatingDB
+-- Host: localhost    Database: stock_sphere
 -- ------------------------------------------------------
 -- Server version	8.1.0
 
@@ -16,14 +16,14 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Temporary view structure for view `V_TagGroupDetail`
+-- Temporary view structure for view `v_tag_group_detail`
 --
 
-DROP TABLE IF EXISTS `V_TagGroupDetail`;
-/*!50001 DROP VIEW IF EXISTS `V_TagGroupDetail`*/;
+DROP TABLE IF EXISTS `v_tag_group_detail`;
+/*!50001 DROP VIEW IF EXISTS `v_tag_group_detail`*/;
 SET @saved_cs_client     = @@character_set_client;
 /*!50503 SET character_set_client = utf8mb4 */;
-/*!50001 CREATE VIEW `V_TagGroupDetail` AS SELECT 
+/*!50001 CREATE VIEW `v_tag_group_detail` AS SELECT 
  1 AS `tag_id`,
  1 AS `tag_Name`,
  1 AS `tag_group_id`,
@@ -352,15 +352,17 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`louis`@`%`*/ /*!50003 TRIGGER `T_AfterInsertUser` AFTER INSERT ON `users` FOR EACH ROW BEGIN
-    INSERT INTO user_detail (ud_user_id) VALUES (NEW.user_id);
+/*!50003 CREATE*/ /*!50017 DEFINER=`louis`@`%`*/ /*!50003 TRIGGER `T_AfterInsertUser` AFTER INSERT ON `users` FOR EACH ROW BEGIN
+
+    INSERT INTO user_detail (ud_user_id) VALUES (NEW.user_id);
+
 END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-
+stock_sphere
 --
 -- Dumping routines for database 'RNDatingDB'
 --
@@ -375,12 +377,17 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`louis`@`%` PROCEDURE `P_InsertUsers`()
-BEGIN
+BEGIN
+
     DECLARE i INT DEFAULT 3;  
-    WHILE i <= 6 DO
-        INSERT INTO Users (username, password) VALUES (CONCAT('Test', i), '123456');
-        SET i = i + 1;
-    END WHILE;
+    WHILE i <= 6 DO
+
+        INSERT INTO Users (username, password) VALUES (CONCAT('Test', i), '123456');
+
+        SET i = i + 1;
+
+    END WHILE;
+
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -389,10 +396,10 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
--- Final view structure for view `V_TagGroupDetail`
+-- Final view structure for view `v_tag_group_detail`
 --
 
-/*!50001 DROP VIEW IF EXISTS `V_TagGroupDetail`*/;
+/*!50001 DROP VIEW IF EXISTS `v_tag_group_detail`*/;
 /*!50001 SET @saved_cs_client          = @@character_set_client */;
 /*!50001 SET @saved_cs_results         = @@character_set_results */;
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
@@ -401,7 +408,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`louis`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `V_TagGroupDetail` AS select `a`.`tag_id` AS `tag_id`,`a`.`tag_Name` AS `tag_Name`,`b`.`tag_group_id` AS `tag_group_id`,`b`.`tag_group_name` AS `tag_group_name` from (`all_tags` `a` join `all_tags_group` `b` on((`a`.`tag_group_id` = `b`.`tag_group_id`))) */;
+/*!50001 VIEW `v_tag_group_detail` AS select `a`.`tag_id` AS `tag_id`,`a`.`tag_Name` AS `tag_Name`,`b`.`tag_group_id` AS `tag_group_id`,`b`.`tag_group_name` AS `tag_group_name` from (`all_tags` `a` join `all_tags_group` `b` on((`a`.`tag_group_id` = `b`.`tag_group_id`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;

@@ -1,8 +1,8 @@
 class ResponseDTO {
   constructor(status, result = null, success) {
-    this.Status = status;
-    this.Result = result;
-    this.Success = success;
+    this.status = status;
+    this.result = result;
+    this.success = success;
   }
 
   // Static method for successful response
@@ -11,8 +11,8 @@ class ResponseDTO {
   }
 
   // Static method for error response
-  static errorResponse(errorCode, result = null) {
-    return new ResponseDTO(errorCode, result, false);
+  static errorResponse(error_code, result = null) {
+    return new ResponseDTO(error_code, result, false);
   }
 }
 

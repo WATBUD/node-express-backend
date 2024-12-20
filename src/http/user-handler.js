@@ -35,11 +35,11 @@ const userHandler = (UserService) => {  return {
     }
 
     // Successful login, return the token
-    return res.json(ResponseDTO.successResponse({ Token: result.token }));
+    return res.json(ResponseDTO.successResponse({ token: result.token }));
   },
   getTagGroupDetails: async (req, res) => {
     try {
-      const tableData = await UserService.getV_TagGroupDetail();
+      const tableData = await UserService.getAssignViewTable("v_tag_group_detail");
       res.json(tableData);
     } catch (error) {
       res.status(500).json({ error: error.message });

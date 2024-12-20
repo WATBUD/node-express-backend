@@ -1,7 +1,10 @@
 import express from 'express';
 const express_router = express.Router();
 import multer from 'multer';
-const formData_Middlewares_multer = multer(); 
+//const formData_Middlewares_multer = multer(); 
+import { validateRequestBody } from '../dto/joi-help.js';
+
+import { dtoTrackingStockRequest } from '../dto/stock-request-dto.js'; 
 
 /** @param {{ getStockTrackingList: (str: string) => Array }} stockHandler */
 
@@ -127,8 +130,8 @@ export default function createRoutes(stockHandler) {
 
   /**
    * @swagger
-   * /stock/trackinglist/{userID}/update-specified-stock-note:
-   *   patch:
+   * /stock/trackinglist/{userID}:
+   *   put:
    *     deprecated: false
    *     tags:
    *       - Stock
@@ -144,7 +147,7 @@ export default function createRoutes(stockHandler) {
    *     requestBody:
    *       required: true
    *       content:
-   *         multipart/form-data:
+   *         application/json:
    *           schema:
    *             type: object
    *             properties:
@@ -156,14 +159,18 @@ export default function createRoutes(stockHandler) {
    *                 type: string
    *                 required: true
    *                 description: 備註
+   *               is_blocked:
+   *                 type: boolean
+   *                 required: true
+   *                 description: 是否封鎖
    *     responses:
    *       200:
    *         description: Success message indicating the stock was updated in the trackinglist.
    */
-  express_router.patch(
-    "/stock/trackinglist/:userID/update-specified-stock-note",
-    formData_Middlewares_multer.none(),
-    stockHandler.updateSpecifiedStockNote
+  express_router.put(
+    "/stock/trackinglist",
+    validateRequestBody(dtoTrackingStockRequest),
+    stockHandler.updateSpecifiedStockTrackingData
   );
 
   /**
