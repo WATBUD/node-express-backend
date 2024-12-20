@@ -1,5 +1,5 @@
 import { generateToken } from '../utilities/jwt-helper.js';
-import { avatarUpload } from '../../Uploads/UploadService.js';
+import { avatarUpload } from '../../uploads/upload-service.js';
 import path from 'path'; // 使用 ES6 模块导入
 
 class UserService {
@@ -60,7 +60,7 @@ class UserService {
 
         // Handle further actions after successful upload
         const userId = req.user.user_id;
-        const filePath = `/Uploads/${userId}_Avatar${path.extname(req.file.originalname)}`;
+        const filePath = `/uploads/${userId}_Avatar${path.extname(req.file.originalname)}`;
 
         try {
           // Update the user's avatar in the database
