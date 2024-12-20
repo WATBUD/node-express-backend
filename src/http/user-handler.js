@@ -3,38 +3,22 @@ import ResponseDTO from './api-response-dto.js';
 
 const userHandler = (UserService) => {  return {
   checkUserlogin: async (req, res) => {
-    const { UserAccount, Password } = req.body;
-
-    // Validate that both UserAccount and Password are provided
-    if (!UserAccount || !Password) {
-      return res
-        .status(400)
-        .json(
-          ResponseDTO.errorResponse(
-            "MISSING_CREDENTIALS",
-            "Account and password are required"
-          )
-        );
-    }
-
-    // Call the UserService to check the login credentials
-    const result = await UserService.checkUserLogin(UserAccount, Password);
-
-    // Handle unsuccessful login (when `result.success` is false)
+    const input = {
+      ...req.params,
+      ...req.body,
+      ...req.user,
+    };
+    const result = await UserService.checkUserLogin(input);
     if (!result.success) {
       return res.json(
         ResponseDTO.errorResponse("LOGIN_FAILED", result.message)
       );
     }
-
-    // Handle case when `result` is a string (e.g., error message)
     if (typeof result === "string") {
       return res
         .status(401)
         .json(ResponseDTO.errorResponse("INVALID_CREDENTIALS", result));
     }
-
-    // Successful login, return the token
     return res.json(ResponseDTO.successResponse({ token: result.token }));
   },
   getTagGroupDetails: async (req, res) => {
