@@ -10,13 +10,13 @@ class StockRepository {
   }
 
   async getStockTrackingList(inputData) {
-      const startTime = new Date(); // 记录查询开始时间
-      const isBlockedBoolean = inputData.contains_is_blocked === "true";
+      const startTime = new Date();
       const whereClause = {
         user_id: String(inputData.user_id),
       };
-      if (isBlockedBoolean == false) {
-        whereClause.is_blocked = false;
+      if (inputData.contains_is_blocked) {
+        const isBlockedBoolean = inputData.contains_is_blocked === "true";
+        whereClause.is_blocked = isBlockedBoolean;
       }
       const result = await this.prisma.user_stock.findMany({
         where: whereClause,

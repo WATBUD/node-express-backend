@@ -31,28 +31,29 @@ class StocksService {
   async listOf_ETF_NotTrackedByTheUser(inputData) {
     try {
       //const _ETFlist = await this.ETF_DividendYieldRanking();
-      let [_usertrackinglist, _ETFlist] = await Promise.all([
+      //inputData.contains_is_blocked=true;
+      let [_usertrackinglist, etfList] = await Promise.all([
         this.StockRepository.getStockTrackingList(inputData),
         this.ETF_DividendYieldRanking(),
       ]);
 
       let filterlist = [];
-      if (_ETFlist && _usertrackinglist.length > 0) {
+      if (etfList && _usertrackinglist.length > 0) {
         if (inputData.percentage != null) {
-          _ETFlist = _ETFlist.filter(
+          etfList = etfList.filter(
             (etfElement) => etfElement.dividendYield >= inputData.percentage
           );
         }
         if (inputData.value != null) {
-          _ETFlist = _ETFlist.filter((etfElement) => etfElement.value <= inputData.value);
+          etfList = etfList.filter((etfElement) => etfElement.value <= inputData.value);
         }
 
-        for (let index = 0; index < _ETFlist.length; index++) {
-          const etfElement = _ETFlist[index];
+        for (let index = 0; index < etfList.length; index++) {
+          const etfElement = etfList[index];
           let found = false;
 
-          for (let index2 = 0; index2 < _usertrackinglist.length; index2++) {
-            const _userElement = _usertrackinglist[index2].stock_id;
+          for (let trackingItem = 0; trackingItem < _usertrackinglist.length; trackingItem++) {
+            const _userElement = _usertrackinglist[trackingItem].stock_id;
             if (_userElement == etfElement.stockCode) {
               found = true;
               break;
