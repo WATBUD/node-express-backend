@@ -61,12 +61,7 @@ const stockHandler = (stocksService) => {
         ...req.user,
       };
       const result = await stocksService.addStockToTrackinglist(input);
-      if (!result.success) {
-        return res.json(
-          ResponseDTO.errorResponse(result.message, null)
-        );
-      }
-      return res.json(ResponseDTO.successRseponse({ result: result }));
+      return res.json(result);
     },
 
     updateSpecifiedStockTrackingData: async (req, res) => {
@@ -75,13 +70,8 @@ const stockHandler = (stocksService) => {
         ...req.body,
         ...req.user,
       };
-      try {
-        const trackinglist =
-          await stocksService.updateSpecifiedStockTrackingData(input);
-        res.json(trackinglist);
-      } catch (error) {
-        res.status(400).json({ error: error.message });
-      }
+      const result = await stocksService.updateSpecifiedStockTrackingData(input);
+      return res.json(result);
     },
 
     deleteStockTrackinglist: async (req, res) => {
@@ -90,13 +80,8 @@ const stockHandler = (stocksService) => {
         ...req.body,
         ...req.user,
       };
-      const result = await stocksService.addStockToTrackinglist(input);
-      if (!result.success) {
-        return res.json(
-          ResponseDTO.errorResponse(result.message, null)
-        );
-      }
-      return res.json(ResponseDTO.successRseponse({ result: result }));
+      const result = await stocksService.deleteStockTrackinglist(input);
+      return res.json(result);
     },
 
     threeMajorInstitutionalInvestors: async (req, res) => {

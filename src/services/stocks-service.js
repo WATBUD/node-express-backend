@@ -3,6 +3,7 @@ import cheerio from "cheerio";
 import iconv from 'iconv-lite';
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 import {getFirstDayOfMonth,getLastThreeMonthsDates as getLastMonthsDates,dateToYYYYMMDD} from './custom-util-service.js';
+import ResponseDTO from '../http/api-response-dto.js';
 
 class StocksService {
   constructor(stockRepository) {
@@ -170,55 +171,39 @@ class StocksService {
 
   async addStockToTrackinglist(stockData) {
     try {
-      const trackingStockData =
-        await this.StockRepository.addStockToTrackinglist(stockData);
-
-      if (trackingStockData) {
-        return trackingStockData;
-      } else {
-        return {
-          success: false,
-          message: "Unable to find data for userID: " + userID,
-        };
-      }
+      const trackingStockData = await this.StockRepository.addStockToTrackinglist(stockData);     
+      return trackingStockData;
     } catch (error) {
       const errorMessages = ["too long", "stock_id_check"];
       if (errorMessages.some((msg) => error.message.includes(msg))) {
-        return { success: false, message: "股票ID不符合格式" };
+        return  ResponseDTO.errorResponse("股票ID不符合格式", null);
       }
       if (error.message.includes("Unique constraint")) {
-        return {
-          success: false,
-          message: "You have saved this stock to your favorites.",
-        };
-      }
-      return { success: false, message: "Error: " + error.message };
+        return ResponseDTO.errorResponse("You have saved this stock to your favorites.");
+      }   
+
+      return ResponseDTO.errorResponse("Error: " + error.message);   
     }
   }
 
-  async updateSpecifiedStockTrackingData(updateStockData) {
-    const _trackinglist = await this.StockRepository.updateSpecifiedStockTrackingData(
-      updateStockData
-    );
-
-    if (_trackinglist) {
-      return _trackinglist;
-    } else {
-      return "Unable to find data for userID: " + userID;
+  async updateSpecifiedStockTrackingData(inputData) {
+    try {
+      const _result = await this.StockRepository.updateSpecifiedStockTrackingData(inputData);     
+      return ResponseDTO.successResponse(_result);
+    } catch (error) {
+      return ResponseDTO.errorResponse("Error: " + error.message);   
     }
   }
 
   async deleteStockTrackinglist(inputData) {
     try {
       const _result = await this.StockRepository.deleteStockTrackinglist(inputData);
-      if (_result) {
-        return _result;
-      } 
+      return ResponseDTO.successResponse(_result);
     } catch (error) {
       if (error.code === "P2025") {// P2025 是 Prisma 中唯一約束違規的錯誤碼
-        return { success: false, message: "使用者未收藏此股票" };
+        return ResponseDTO.errorResponse("使用者未收藏此股票");   
       }
-      return { success: false, message: "Error: " + error.message };
+      return ResponseDTO.errorResponse("Error: " + error.message);   
     }
   }
 
