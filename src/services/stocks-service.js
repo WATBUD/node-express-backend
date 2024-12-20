@@ -10,45 +10,40 @@ class StocksService {
     this.StockRepository = stockRepository;
   }
 
-  async getStockTrackingList(userID, contains_is_blocked) {
+  async getStockTrackingList(inputData) {
     try {
-      const _trackinglist = await this.StockRepository.getStockTrackingList(
-        userID,
-        contains_is_blocked
-      );
+      const _trackinglist = await this.StockRepository.getStockTrackingList(inputData);
 
       if (_trackinglist) {
         const modifiedStocks = _trackinglist.map((stock) => {
           const { index, user_id, ...rest } = stock;
           return rest;
         });
-
-        return modifiedStocks;
+        return ResponseDTO.successResponse(modifiedStocks);
       } else {
-        return "Unable to find data for userID: " + userID;
-      }
+        return ResponseDTO.successResponse([]);      }
     } catch (error) {
-      return "Error: " + error.message;
+      return ResponseDTO.errorResponse("Error: " + error.message);   
     }
   }
 
-  async listOf_ETF_NotTrackedByTheUser(userID, percentage, value) {
+  async listOf_ETF_NotTrackedByTheUser(inputData) {
     try {
       //const _ETFlist = await this.ETF_DividendYieldRanking();
       let [_usertrackinglist, _ETFlist] = await Promise.all([
-        this.StockRepository.getStockTrackingList(userID),
+        this.StockRepository.getStockTrackingList(inputData),
         this.ETF_DividendYieldRanking(),
       ]);
 
       let filterlist = [];
       if (_ETFlist && _usertrackinglist.length > 0) {
-        if (percentage != null) {
+        if (inputData.percentage != null) {
           _ETFlist = _ETFlist.filter(
-            (etfElement) => etfElement.dividendYield >= percentage
+            (etfElement) => etfElement.dividendYield >= inputData.percentage
           );
         }
-        if (value != null) {
-          _ETFlist = _ETFlist.filter((etfElement) => etfElement.value <= value);
+        if (inputData.value != null) {
+          _ETFlist = _ETFlist.filter((etfElement) => etfElement.value <= inputData.value);
         }
 
         for (let index = 0; index < _ETFlist.length; index++) {
@@ -66,14 +61,12 @@ class StocksService {
             filterlist.push(etfElement);
           }
         }
-
-        return filterlist;
+        return ResponseDTO.successResponse(filterlist);
       } else {
-        return "Unable to find user tracking list for userID: " + userID;
+        return ResponseDTO.successResponse([]);
       }
     } catch (error) {
-      return "Error: " + error.message;
-      //console.error('An error occurred:', error);
+      return ResponseDTO.errorResponse("Error: " + error.message);   
     }
   }
 
@@ -169,10 +162,10 @@ class StocksService {
     }
   }
 
-  async addStockToTrackinglist(stockData) {
+  async addStockToTrackinglist(inputData) {
     try {
-      const trackingStockData = await this.StockRepository.addStockToTrackinglist(stockData);     
-      return trackingStockData;
+      const _result = await this.StockRepository.addStockToTrackinglist(inputData);     
+      return ResponseDTO.successResponse(_result);
     } catch (error) {
       const errorMessages = ["too long", "stock_id_check"];
       if (errorMessages.some((msg) => error.message.includes(msg))) {
@@ -200,7 +193,7 @@ class StocksService {
       const _result = await this.StockRepository.deleteStockTrackinglist(inputData);
       return ResponseDTO.successResponse(_result);
     } catch (error) {
-      if (error.code === "P2025") {// P2025 是 Prisma 中唯一約束違規的錯誤碼
+      if (error.code === "P2025") {// P2025 is Prisma 唯一約束的錯誤碼
         return ResponseDTO.errorResponse("使用者未收藏此股票");   
       }
       return ResponseDTO.errorResponse("Error: " + error.message);   

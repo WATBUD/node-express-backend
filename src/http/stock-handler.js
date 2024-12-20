@@ -26,32 +26,25 @@ const stockHandler = (stocksService) => {
     },
 
     getStockTrackingList: async (req, res) => {
-      const userId = req.params.userID;
-      try {
-        const trackinglist = await stocksService.getStockTrackingList(
-          userId,
-          req.query?.contains_is_blocked
-        );
-        res.json(trackinglist);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
+      const input = {
+        ...req.params,
+        ...req.body,
+        ...req.user,
+        ...req.query,
+      };
+      const result = await stocksService.getStockTrackingList(input);
+      return res.json(result);
     },
 
     listOfETFNotTrackedByTheUser: async (req, res) => {
-      const userId = req.params.userID;
-      const percentage = req.query.percentage;
-      const value = req.query.value;
-      try {
-        const filterlist = await stocksService.listOf_ETF_NotTrackedByTheUser(
-          userId,
-          percentage,
-          value
-        );
-        res.json(filterlist);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
+      const input = {
+        ...req.params,
+        ...req.body,
+        ...req.user,
+        ...req.query,
+      };
+      const result = await stocksService.listOf_ETF_NotTrackedByTheUser(input);
+      return res.json(result);
     },
 
     addStockToTrackinglist: async (req, res) => {
