@@ -4,7 +4,7 @@ import multer from 'multer';
 //const formData_Middlewares_multer = multer(); 
 import { validateRequestBody } from '../dto/joi-help.js';
 
-import { dtoTrackingStockRequest } from '../dto/stock-request-dto.js'; 
+import { validateCreateTrackingStockRequest,validateTrackingStockRequest } from '../dto/stock-request-dto.js'; 
 
 /** @param {{ getStockTrackingList: (str: string) => Array }} stockHandler */
 
@@ -83,7 +83,7 @@ export default function createRoutes(stockHandler) {
 
   /**
  * @swagger
- * /stock/trackinglist/{userID}:
+ * /stock/trackinglist:
  *   post:
  *     deprecated: false
  *     tags:
@@ -125,12 +125,14 @@ export default function createRoutes(stockHandler) {
  *         description: Internal server error.
  */
   express_router.post(
-    "/stock/trackinglist/:userID",validateRequestBody(dtoTrackingStockRequest),stockHandler.addStockToTrackinglist
+    "/stock/trackinglist",
+    validateRequestBody(validateCreateTrackingStockRequest),
+    stockHandler.addStockToTrackinglist
   );
 
   /**
    * @swagger
-   * /stock/trackinglist:
+   * /stock/trackinglist/{stock_id}:
    *   put:
    *     deprecated: false
    *     tags:
@@ -139,11 +141,9 @@ export default function createRoutes(stockHandler) {
    *     description: Update User Tracking Stock
    *     parameters:
    *       - in: path
-   *         name: userID
+   *         name: stock_id
    *         required: true
-   *         description: User ID
-   *         schema:
-   *           type: string
+   *         description: Stock ID
    *     requestBody:
    *       required: true
    *       content:
@@ -151,10 +151,6 @@ export default function createRoutes(stockHandler) {
    *           schema:
    *             type: object
    *             properties:
-   *               stockID:
-   *                 type: string
-   *                 required: true
-   *                 description: Stock ID
    *               note:
    *                 type: string
    *                 required: true
@@ -168,14 +164,14 @@ export default function createRoutes(stockHandler) {
    *         description: Success message indicating the stock was updated in the trackinglist.
    */
   express_router.put(
-    "/stock/trackinglist",
-    validateRequestBody(dtoTrackingStockRequest),
+    "/stock/trackinglist/:stock_id",
+    validateRequestBody(validateTrackingStockRequest),
     stockHandler.updateSpecifiedStockTrackingData
   );
 
   /**
    * @swagger
-   * /stock/trackinglist/{userID}:
+   * /stock/trackinglist/{stock_id}:
    *   delete:
    *     tags:
    *       - Stock
@@ -183,13 +179,7 @@ export default function createRoutes(stockHandler) {
    *     description: Delete the specified stock from the user's tracking list.
    *     parameters:
    *       - in: path
-   *         name: userID
-   *         required: true
-   *         description: User ID
-   *         schema:
-   *           type: string
-   *       - in: query
-   *         name: stockID
+   *         name: stock_id
    *         required: true
    *         description: Stock ID
    *         schema:
@@ -199,7 +189,7 @@ export default function createRoutes(stockHandler) {
    *         description: Success message indicating the stock was updated in the trackinglist.
    */
   express_router.delete(
-    "/stock/trackinglist/:userID",
+    "/stock/trackinglist/:stock_id",
     stockHandler.deleteStockTrackinglist
   );
 

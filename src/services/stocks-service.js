@@ -170,19 +170,27 @@ class StocksService {
 
   async addStockToTrackinglist(stockData) {
     try {
-      const trackingStockData = await this.StockRepository.addStockToTrackinglist(stockData);
+      const trackingStockData =
+        await this.StockRepository.addStockToTrackinglist(stockData);
 
       if (trackingStockData) {
         return trackingStockData;
       } else {
-        return { success: false, message: "Unable to find data for userID: " + userID };
+        return {
+          success: false,
+          message: "Unable to find data for userID: " + userID,
+        };
       }
     } catch (error) {
-      if (error.message.includes("too long")) {
+      const errorMessages = ["too long", "stock_id_check"];
+      if (errorMessages.some((msg) => error.message.includes(msg))) {
         return { success: false, message: "股票ID不符合格式" };
       }
       if (error.message.includes("Unique constraint")) {
-        return { success: false, message: "You have saved this stock to your favorites." };
+        return {
+          success: false,
+          message: "You have saved this stock to your favorites.",
+        };
       }
       return { success: false, message: "Error: " + error.message };
     }
@@ -200,19 +208,17 @@ class StocksService {
     }
   }
 
-  async deleteStockTrackinglist(userID, stockID) {
-    if (!userID || !stockID) {
-      throw new Error("Invalid userID or stockID");
-    }
-    const _trackinglist = await this.StockRepository.deleteStockTrackinglist(
-      userID,
-      stockID
-    );
-
-    if (_trackinglist) {
-      return _trackinglist;
-    } else {
-      return "Unable to find data for userID: " + userID;
+  async deleteStockTrackinglist(inputData) {
+    try {
+      const _result = await this.StockRepository.deleteStockTrackinglist(inputData);
+      if (_result) {
+        return _result;
+      } 
+    } catch (error) {
+      if (error.code === "P2025") {// P2025 是 Prisma 中唯一約束違規的錯誤碼
+        return { success: false, message: "使用者未收藏此股票" };
+      }
+      return { success: false, message: "Error: " + error.message };
     }
   }
 
