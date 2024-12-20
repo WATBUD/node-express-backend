@@ -90,11 +90,8 @@ const stockHandler = (stocksService) => {
     },
 
     fakeApi: async (req, res) => {
-      try {
-        res.send("Fake API endpoint.");
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
+      return res.json(ResponseDTO.successResponse("Fake API endpoint.",[]));
+
     },
 
     theLatestOpeningDate: async (req, res) => {
