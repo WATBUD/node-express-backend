@@ -8,22 +8,24 @@ class UserService {
     this.userRepository = userRepository;
   }
 
-  async checkUserLogin(input) {
+  async checkUserLogin(inputData) {
     try {
-      // Use repository to find user by account
-      const user = await this.userRepository.findUserByAccount(input.user_account);
-
-      if (!user) {
-        return { success: false, message: "User does not exist" };
+      const user = await this.userRepository.findUserByAccount(inputData.user_account);
+        if (!user) {
+        return ResponseDTO.errorResponse("User does not exist");
       }
-      if (user.password_hash !== input.password) {
-        return { success: false, message: "Incorrect password" };
+        if (user.password_hash !== inputData.password) {
+        return ResponseDTO.errorResponse("Incorrect password");
       }
-      // Generate token if credentials are correct
-      const token = generateToken(user, '15m');
-      return { success: true, user, token };
+        const token = generateToken(user, '15m');
+      const responsePayload = {
+        // user_id: user.user_id,
+        // user_name: user.user_name,
+        token,
+      };
+      return ResponseDTO.successResponse(responsePayload);
     } catch (error) {
-      return { success: false, message: `Error: ${error.message}` };
+      return ResponseDTO.errorResponse("Error: " + error.message);
     }
   }
 
