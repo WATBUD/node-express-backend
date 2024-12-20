@@ -26,13 +26,13 @@ class UserService {
     }
   }
 
-  async getUserById(ID) {
+  async getUserById(id) {
     try {
-      const tableData = await this.userRepository.getUserById(ID);
+      const tableData = await this.userRepository.getUserById(id);
       if (tableData) {
         return tableData;
       } else {
-        return `Unable to retrieve data for ID: ${ID}`;
+        return `Unable to retrieve data for ID: ${id}`;
       }
     } catch (error) {
       return `Error: ${error.message}`;

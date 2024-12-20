@@ -9,7 +9,6 @@ import { validateRequestBody } from '../dto/joi-help.js';
 
 export default function createRoutes(userHandler) {
 
-
   /**
  * @swagger
  * /user-login:
