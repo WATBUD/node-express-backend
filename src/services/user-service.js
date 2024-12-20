@@ -1,6 +1,7 @@
 import { generateToken } from '../utilities/jwt-helper.js';
 import { avatarUpload } from '../../uploads/upload-service.js';
 import path from 'path'; // 使用 ES6 模块导入
+import ResponseDTO from '../http/api-response-dto.js';
 
 class UserService {
   constructor(userRepository) {

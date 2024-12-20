@@ -11,8 +11,8 @@ class ResponseDTO {
   }
 
   // Static method for error response
-  static errorResponse(error_code, result = null) {
-    return new ResponseDTO(error_code, result, false);
+  static errorResponse(status, result = null) {
+    return new ResponseDTO(status, result, false);
   }
 }
 
