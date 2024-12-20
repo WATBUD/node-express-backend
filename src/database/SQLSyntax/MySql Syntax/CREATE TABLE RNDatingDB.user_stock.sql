@@ -1,4 +1,4 @@
-CREATE TABLE RNDatingDB.user_stock (
+CREATE TABLE stock_sphere.user_stock (
 	ud_user_id int auto_increment NOT NULL,
 	gender varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
 	birthday date NULL,
@@ -13,7 +13,7 @@ CREATE TABLE RNDatingDB.user_stock (
 	social_links json NULL,
 	is_banned tinyint(1) DEFAULT 0 NULL,
 	CONSTRAINT `PRIMARY` PRIMARY KEY (ud_user_id),
-	CONSTRAINT stock_user_fk FOREIGN KEY (ud_user_id) REFERENCES RNDatingDB.users(user_id) ON DELETE RESTRICT ON UPDATE RESTRICT
+	CONSTRAINT stock_user_fk FOREIGN KEY (ud_user_id) REFERENCES stock_sphere.users(user_id) ON DELETE RESTRICT ON UPDATE RESTRICT
 )
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4

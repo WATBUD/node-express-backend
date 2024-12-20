@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { fetchTimeout, timeoutPromise } from '../services/custom-util-service.js';
+import { dtoTrackingStockRequest } from '../dto/stock-request-dto.js'; 
 
-const newStockHandler = (stocksService) => {
+const stockHandler = (stocksService) => {
   return {
     testStock: async (req, res) => {
       try {
@@ -69,19 +70,19 @@ const newStockHandler = (stocksService) => {
       }
     },
 
-    updateSpecifiedStockNote: async (req, res) => {
-      const userID = req.params.userID;
-      const { stockID, note } = req.body;
+    updateSpecifiedStockTrackingData: async (req, res) => {
+      const input = {
+        ...req.params,
+        ...req.body,
+        ...req.user,
+      };
       try {
-        const trackinglist = await stocksService.updateSpecifiedStockNote(
-          userID,
-          stockID,
-          note
-        );
+        const trackinglist = await stocksService.updateSpecifiedStockTrackingData(input);
         res.json(trackinglist);
       } catch (error) {
         res.status(400).json({ error: error.message });
       }
+
     },
 
     deleteStockTrackinglist: async (req, res) => {
@@ -239,4 +240,4 @@ const newStockHandler = (stocksService) => {
   };
 };
 
-export default newStockHandler;
+export default stockHandler;

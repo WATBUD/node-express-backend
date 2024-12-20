@@ -81,7 +81,6 @@ class StockRepository {
       });
       return deletedUserStock;
     } catch (error) {
-      // 在這裡處理錯誤
       if (error.code === "P2025") {
         // P2025 是 Prisma 中唯一約束違規的錯誤碼
         console.error(
@@ -91,26 +90,26 @@ class StockRepository {
         throw new Error("使用者未收藏此股票");
       }
 
-      throw error; // 重新拋出錯誤以便上層處理
+      throw error; 
     }
   }
 
-  async updateSpecifiedStockNote(userID, stockID,note) {
+  async updateSpecifiedStockTrackingData(updateStockData) {
     try {
       const updatedUserStock = await this.prisma.user_stock.update({
         where: {
           stock_id_user_id: {
-            stock_id: stockID,
-            user_id: userID,
+            stock_id: updateStockData.stock_id,
+            user_id: String(updateStockData.user_id)
           },
         },
         data: {
-          note: note, // 更新备注字段
+          note: updateStockData.note, 
+          is_blocked: updateStockData.is_blocked,
         },
       });
       return updatedUserStock;
     } catch (error) {
-      // 在這裡處理錯誤
       if (error.code === "P2025") {
         // P2025 是 Prisma 中唯一約束違規的錯誤碼
         console.error(
@@ -120,7 +119,7 @@ class StockRepository {
         throw new Error("使用者未收藏此股票");
       }
 
-      throw error; // 重新拋出錯誤以便上層處理
+      throw error; 
     }
   }
 }

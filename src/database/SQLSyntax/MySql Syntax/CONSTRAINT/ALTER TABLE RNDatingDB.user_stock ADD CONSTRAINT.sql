@@ -1,1 +1,1 @@
-ALTER TABLE RNDatingDB.user_stock ADD CONSTRAINT user_stock_Unique UNIQUE KEY (stock_id,user_id);
+ALTER TABLE stock_sphere.user_stock ADD CONSTRAINT user_stock_Unique UNIQUE KEY (stock_id,user_id);

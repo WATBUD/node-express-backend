@@ -1,5 +1,5 @@
 
-USE RNDatingDB;
+USE stock_sphere;
 
 CREATE TABLE all_tags (
     tag_id INT,
