@@ -169,7 +169,7 @@ class StocksService {
     } catch (error) {
       const errorMessages = ["too long", "stock_id_check"];
       if (errorMessages.some((msg) => error.message.includes(msg))) {
-        return  ResponseDTO.errorResponse("股票ID不符合格式", null);
+        return  ResponseDTO.errorResponse("The stock ID is not in the correct format.", null);
       }
       if (error.message.includes("Unique constraint")) {
         return ResponseDTO.errorResponse("You have saved this stock to your favorites.");

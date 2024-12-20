@@ -9,12 +9,7 @@ const userHandler = (UserService) => {  return {
       ...req.user,
     };
     const result = await UserService.checkUserLogin(input);
-    if (!result.success) {
-      return res.json(
-        ResponseDTO.errorResponse(result.message, null)
-      );
-    }
-    return res.json(ResponseDTO.successResponse({ token: result.token }));
+    return res.json(result);
   },
   getTagGroupDetails: async (req, res) => {
     try {
