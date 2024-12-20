@@ -23,7 +23,7 @@ class UserService {
         // user_name: user.user_name,
         token,
       };
-      return ResponseDTO.successResponse(responsePayload);
+      return ResponseDTO.successResponse(undefined,responsePayload);
     } catch (error) {
       return ResponseDTO.errorResponse("Error: " + error.message);
     }

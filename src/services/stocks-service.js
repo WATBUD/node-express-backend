@@ -19,9 +19,10 @@ class StocksService {
           const { index, user_id, ...rest } = stock;
           return rest;
         });
-        return ResponseDTO.successResponse(modifiedStocks);
+        return ResponseDTO.successResponse(undefined,modifiedStocks);
       } else {
-        return ResponseDTO.successResponse([]);      }
+        return ResponseDTO.successResponse(undefined,[]);     
+      }
     } catch (error) {
       return ResponseDTO.errorResponse("Error: " + error.message);   
     }
@@ -61,9 +62,9 @@ class StocksService {
             filterlist.push(etfElement);
           }
         }
-        return ResponseDTO.successResponse(filterlist);
+        return ResponseDTO.successResponse(undefined,filterlist);
       } else {
-        return ResponseDTO.successResponse([]);
+        return ResponseDTO.successResponse(undefined,[]);
       }
     } catch (error) {
       return ResponseDTO.errorResponse("Error: " + error.message);   
@@ -165,7 +166,7 @@ class StocksService {
   async addStockToTrackinglist(inputData) {
     try {
       const _result = await this.StockRepository.addStockToTrackinglist(inputData);     
-      return ResponseDTO.successResponse(_result);
+      return ResponseDTO.successResponse(undefined,_result);
     } catch (error) {
       const errorMessages = ["too long", "stock_id_check"];
       if (errorMessages.some((msg) => error.message.includes(msg))) {
@@ -182,7 +183,7 @@ class StocksService {
   async updateSpecifiedStockTrackingData(inputData) {
     try {
       const _result = await this.StockRepository.updateSpecifiedStockTrackingData(inputData);     
-      return ResponseDTO.successResponse(_result);
+      return ResponseDTO.successResponse(undefined,_result);
     } catch (error) {
       return ResponseDTO.errorResponse("Error: " + error.message);   
     }
@@ -191,7 +192,7 @@ class StocksService {
   async deleteStockTrackinglist(inputData) {
     try {
       const _result = await this.StockRepository.deleteStockTrackinglist(inputData);
-      return ResponseDTO.successResponse(_result);
+      return ResponseDTO.successResponse(undefined,_result);
     } catch (error) {
       if (error.code === "P2025") {// P2025 is Prisma 唯一約束的錯誤碼
         return ResponseDTO.errorResponse("使用者未收藏此股票");   

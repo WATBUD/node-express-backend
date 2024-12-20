@@ -44,6 +44,7 @@ app.use(
   }).unless({ path: [
   '/user-login', 
   '/register',
+  '/fake-api',
   '/',
 /^\/shared\/.*/] })  // Exclude routes from JWT verification
 );

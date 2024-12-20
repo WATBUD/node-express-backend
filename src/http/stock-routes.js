@@ -226,9 +226,11 @@ export default function createRoutes(stockHandler) {
    *     tags:
    *       - Test
    *     summary: Fake API endpoint
-   *     description: Returns fake API data.
+   *     responses:
+   *       200:
+   *         description: Successful response data.
    */
-  express_router.get("/fake-api", stockHandler.fakeApi);
+  express_router.get("/stock/fake-api", stockHandler.fakeApi);
 
   /**
    * @swagger

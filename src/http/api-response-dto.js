@@ -6,8 +6,8 @@ class ResponseDTO {
   }
 
   // Static method for successful response
-  static successResponse(result = null) {
-    return new ResponseDTO("OK", result, true);
+  static successResponse(status = "OK",result = null) {
+    return new ResponseDTO(status, result, true);
   }
 
   // Static method for error response
