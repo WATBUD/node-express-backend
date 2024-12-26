@@ -80,12 +80,13 @@ app.use(requestLogger(sharedService));
 
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
-      res.status(401).json({
-          error: {
-              message: err.message,
-              //stack: err.stack
-          }
-      });
+      res.status(401).send('');
+      // res.status(401).json({
+      //     error: {
+      //         message: err.message,
+      //         //stack: err.stack
+      //     }
+      // });
   } else {
       res.status(500).json({
           error: {
