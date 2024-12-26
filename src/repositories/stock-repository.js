@@ -14,9 +14,12 @@ class StockRepository {
       const whereClause = {
         user_id: String(inputData.user_id),
       };
-      if (inputData.contains_is_blocked) {
-        const isBlockedBoolean = inputData.contains_is_blocked === "true";
-        whereClause.is_blocked = isBlockedBoolean;
+
+      if (inputData.contains_is_blocked!=undefined) {
+        const _containsBlocked = inputData.contains_is_blocked === "true" ;
+
+        if(!_containsBlocked)
+        whereClause.is_blocked = false;
       }
       const result = await this.prisma.user_stock.findMany({
         where: whereClause,
@@ -25,11 +28,11 @@ class StockRepository {
       const executionTime = endTime - startTime;
       console.log("getStockTrackingList query execution time:", executionTime, "milliseconds");
       return result;
-  }
+  }     
 
   async addStockToTrackinglist(inputData) {
     const createdUserStock = await this.prisma.user_stock.create({
-      data: {
+      data: {   
         user_id: String(inputData.user_id),
         stock_id: inputData.stock_id,
         note: inputData.note || "", // Default note to an empty string if not provided

@@ -31,7 +31,6 @@ class StocksService {
   async listOf_ETF_NotTrackedByTheUser(inputData) {
     try {
       //const _ETFlist = await this.ETF_DividendYieldRanking();
-      //inputData.contains_is_blocked=true;
       let [_usertrackinglist, etfList] = await Promise.all([
         this.StockRepository.getStockTrackingList(inputData),
         this.ETF_DividendYieldRanking(),
