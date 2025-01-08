@@ -51,12 +51,12 @@ app.use(
 
 // Routes
 import stockRoutes from './src/http/stock-routes.js';
-import stockHandler from './src/http/stock-handler.js';
-import stockRepository from './src/repositories/stock-repository.js';
-import StocksService from './src/services/stocks-service.js';
+//import stockHandler from './src/http/stock-handler.js';
+//import stockRepository from './src/repositories/stock-repository.js';
+//import StocksService from './src/services/stocks-service.js';
 
-const stockService = new StocksService(stockRepository);
-app.use('/', stockRoutes(stockHandler(stockService)));
+//const stockService = new StocksService();
+app.use('/', stockRoutes());
 /*------------------ */;
 
 import userRoutes from './src/http/user-routes.js';

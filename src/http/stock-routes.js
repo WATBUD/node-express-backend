@@ -7,9 +7,11 @@ import { validateRequestBody } from '../dto/joi-help.js';
 import { validateCreateTrackingStockRequest,validateTrackingStockRequest } from '../dto/stock-request-dto.js'; 
 
 /** @param {{ getStockTrackingList: (str: string) => Array }} stockHandler */
+import StockHandler from '../http/stock-handler.js';
 
 
-export default function createRoutes(stockHandler) {
+export default function createRoutes() {
+  const stockHandler=StockHandler();
   /**
    * @swagger
    * /stock/trackinglist:
