@@ -4,10 +4,15 @@ import iconv from 'iconv-lite';
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 import {getFirstDayOfMonth,getLastThreeMonthsDates as getLastMonthsDates,dateToYYYYMMDD} from './custom-util-service.js';
 import ResponseDTO from '../http/api-response-dto.js';
+import stockRepository from '../repositories/stock-repository.js';
 
 class StocksService {
-  constructor(stockRepository) {
-    this.StockRepository = stockRepository;
+  constructor() {
+    if (!StocksService.instance) {
+      StocksService.instance = this;
+      this.StockRepository = stockRepository;
+    }
+    return StocksService.instance; // 如果已有實例，則返回現有實例
   }
 
   async getStockTrackingList(inputData) {
@@ -30,10 +35,10 @@ class StocksService {
 
   async listOf_ETF_NotTrackedByTheUser(inputData) {
     try {
-      //const _ETFlist = await this.ETF_DividendYieldRanking();
+      //const _ETFlist = await this.etfDividendYieldRanking();
       let [_usertrackinglist, etfList] = await Promise.all([
         this.StockRepository.getStockTrackingList(inputData),
-        this.ETF_DividendYieldRanking(),
+        this.etfDividendYieldRanking(),
       ]);
 
       let filterlist = [];
@@ -71,11 +76,11 @@ class StocksService {
     }
   }
 
-  async ETF_DividendYieldRanking() {
+  async etfDividendYieldRanking() {
     try {
       //const stockNo = req.params.stockNo;
       console.log(
-        "%c ETF_DividendYieldRanking",
+        "%c etfDividendYieldRanking",
         "color:#BB3D00;font-family:system-ui;font-size:2rem;font-weight:bold"
         // "req.params",
         // req.params,

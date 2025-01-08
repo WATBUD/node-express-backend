@@ -1,8 +1,11 @@
 import axios from 'axios';
 import { fetchTimeout, timeoutPromise } from '../services/custom-util-service.js';
 import ResponseDTO from './api-response-dto.js';
+import StocksService from '../services/stocks-service.js';
 
-const stockHandler = (stocksService) => {
+const stockHandler = () => {
+  const stocksService = new StocksService();
+
   return {
     testStock: async (req, res) => {
       try {
@@ -16,7 +19,7 @@ const stockHandler = (stocksService) => {
     etfDividendYieldRanking: async (req, res) => {
       try {
         const data = await timeoutPromise(
-          stocksService.ETF_DividendYieldRanking(),
+          stocksService.etfDividendYieldRanking(),
           8000
         );
         res.json(data);
