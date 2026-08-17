@@ -1,0 +1,31 @@
+# Render Blueprint — 一鍵部署 Express + Prisma 後端（Web 服務）
+# 文件：https://render.com/docs/blueprint-spec
+#
+# 資料庫改用外部免費 MySQL（TiDB Serverless / Aiven），不用 Render 自帶的 DB，
+# 以避免 Render 免費 Postgres「30 天過期被刪」的問題。
+#
+# 使用方式：
+#   1. 先到 TiDB Serverless 或 Aiven 開一個免費 MySQL，取得連線字串
+#   2. 把這個分支推到 GitHub / GitLab
+#   3. Render 後台 → New → Blueprint → 選這個 repo
+#   4. 部署時在後台把 DATABASE_URL 填入上面拿到的連線字串
+#
+# ⚠️ Render 免費 Web 服務：閒置 15 分鐘會休眠，下次請求約 30~50 秒喚醒
+
+services:
+  - type: web
+    name: node-express-backend
+    runtime: node
+    plan: free
+    region: singapore
+    branch: feature/render-mysql-deploy   # 合併到主分支後記得改這裡
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: DATABASE_URL
+        sync: false        # 在 Render 後台手動填入 TiDB/Aiven 的 MySQL 連線字串
+      - key: JWT_SECRET
+        generateValue: true   # Render 自動產生強隨機值
+      - key: NODE_VERSION
+        value: "22"
