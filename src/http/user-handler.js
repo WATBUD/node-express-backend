@@ -11,6 +11,14 @@ const userHandler = (UserService) => {  return {
     const result = await UserService.checkUserLogin(input);
     return res.json(result);
   },
+  register: async (req, res) => {
+    const input = { ...req.body };
+    const result = await UserService.registerUser(input);
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+    return res.status(201).json(result);
+  },
   getTagGroupDetails: async (req, res) => {
     try {
       const tableData = await UserService.getAssignViewTable("v_tag_group_detail");

@@ -58,6 +58,10 @@ class UserRepository {
     });
   }
 
+  async createUser(data) {
+    return this.prisma.users.create({ data });
+  }
+
   async getUserById(id) {
     const userId = parseInt(id, 10);
 

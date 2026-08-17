@@ -1,4 +1,5 @@
 import { generateToken } from '../utilities/jwt-helper.js';
+import { hashPassword, verifyPassword } from '../utilities/password-helper.js';
 import { avatarUpload } from '../../uploads/upload-service.js';
 import path from 'path'; // 使用 ES6 模块导入
 import ResponseDTO from '../http/api-response-dto.js';
@@ -14,7 +15,8 @@ class UserService {
         if (!user) {
         return ResponseDTO.errorResponse("User does not exist");
       }
-        if (user.password_hash !== inputData.password) {
+        const passwordValid = await verifyPassword(inputData.password, user.password_hash);
+        if (!passwordValid) {
         return ResponseDTO.errorResponse("Incorrect password");
       }
         const token = generateToken(user, '15m');
@@ -24,6 +26,35 @@ class UserService {
         token,
       };
       return ResponseDTO.successResponse(undefined,responsePayload);
+    } catch (error) {
+      return ResponseDTO.errorResponse("Error: " + error.message);
+    }
+  }
+
+  async registerUser(inputData) {
+    try {
+      const existingUser = await this.userRepository.findUserByAccount(inputData.user_account);
+      if (existingUser) {
+        return ResponseDTO.errorResponse("User account already exists");
+      }
+
+      const password_hash = await hashPassword(inputData.password);
+      const newUser = await this.userRepository.createUser({
+        user_account: inputData.user_account,
+        username: inputData.username,
+        email: inputData.email,
+        password_hash,
+      });
+
+      const token = generateToken(newUser, '15m');
+      const responsePayload = {
+        user_id: newUser.user_id,
+        user_account: newUser.user_account,
+        username: newUser.username,
+        email: newUser.email,
+        token,
+      };
+      return ResponseDTO.successResponse(undefined, responsePayload);
     } catch (error) {
       return ResponseDTO.errorResponse("Error: " + error.message);
     }

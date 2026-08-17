@@ -4,7 +4,7 @@ const express_router = express.Router();
 import multer from 'multer';
 const formData_Middlewares_multer = multer(); 
 import { authenticateToken } from '../utilities/jwt-helper.js';
-import { dtoUserCredentials } from '../dto/user-request-dto.js'; 
+import { dtoUserCredentials, dtoUserRegister } from '../dto/user-request-dto.js';
 import { validateRequestBody } from '../dto/joi-help.js';
 
 export default function createRoutes(userHandler) {
@@ -40,36 +40,47 @@ express_router.post('/user-login',
 validateRequestBody(dtoUserCredentials),
 userHandler.checkUserlogin)
   
-  // /**
-  //  * @swagger
-  //  * /register:
-  //  *   post:
-  //  *     tags:
-  //  *       - Users Api
-  //  *     summary: User registration
-  //  *     description: Allows a user to register a new account.
-  //  *     requestBody:
-  //  *       required: true
-  //  *       content:
-  //  *         application/json:
-  //  *           schema:
-  //  *             type: object
-  //  *             properties:
-  //  *               email:
-  //  *                 type: string
-  //  *                 example: newuser@example.com
-  //  *               password:
-  //  *                 type: string
-  //  *                 example: password123
-  //  *     responses:
-  //  *       201:
-  //  *         description: Registration successful, returns user information.
-  //  *       400:
-  //  *         description: Registration failed, possibly due to invalid input data.
-  //  */
-  // express_router.post('/register', (req, res) => {
-  //   // Registration logic
-  // });
+  /**
+ * @swagger
+ * /register:
+ *   post:
+ *     tags:
+ *       - Users Api
+ *     summary: User registration
+ *     description: Allows a user to register a new account.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - user_account
+ *               - username
+ *               - email
+ *               - password
+ *             properties:
+ *               user_account:
+ *                 type: string
+ *                 example: john123
+ *               username:
+ *                 type: string
+ *                 example: John Doe
+ *               email:
+ *                 type: string
+ *                 example: newuser@example.com
+ *               password:
+ *                 type: string
+ *                 example: password123
+ *     responses:
+ *       201:
+ *         description: Registration successful, returns user information and JWT token.
+ *       400:
+ *         description: Registration failed, invalid input or account already exists.
+ */
+  express_router.post('/register',
+    validateRequestBody(dtoUserRegister),
+    userHandler.register);
 
 
 
