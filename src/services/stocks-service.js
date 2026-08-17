@@ -21,7 +21,7 @@ class StocksService {
 
       if (_trackinglist) {
         const modifiedStocks = _trackinglist.map((stock) => {
-          const { index, user_id, ...rest } = stock;
+          const { id, user_id, ...rest } = stock;
           return rest;
         });
         return ResponseDTO.successResponse(undefined,modifiedStocks);

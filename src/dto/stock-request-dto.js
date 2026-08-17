@@ -4,9 +4,8 @@ export const validateCreateTrackingStockRequest = Joi.object({
     'string.base': 'stock_id should be a string',
     'any.required': 'stock_id is required',
   }),
-  note: Joi.string().required().messages({
+  note: Joi.string().allow('').default('').messages({
     'string.base': 'note should be a string',
-    'any.required': 'note is required',
   }),
   is_blocked: Joi.boolean().required().messages({
     'boolean.base': 'is_blocked should be a boolean',
@@ -15,9 +14,8 @@ export const validateCreateTrackingStockRequest = Joi.object({
 });
 
 export const validateTrackingStockRequest = Joi.object({
-  note: Joi.string().required().messages({
+  note: Joi.string().allow('').default('').messages({
     'string.base': 'note should be a string',
-    'any.required': 'note is required',
   }),
   is_blocked: Joi.boolean().required().messages({
     'boolean.base': 'is_blocked should be a boolean',

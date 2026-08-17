@@ -12,7 +12,7 @@ class StockRepository {
   async getStockTrackingList(inputData) {
       const startTime = new Date();
       const whereClause = {
-        user_id: String(inputData.user_id),
+        user_id: Number(inputData.user_id),
       };
 
       if (inputData.contains_is_blocked!=undefined) {
@@ -32,8 +32,8 @@ class StockRepository {
 
   async addStockToTrackinglist(inputData) {
     const createdUserStock = await this.prisma.user_stock.create({
-      data: {   
-        user_id: String(inputData.user_id),
+      data: {
+        user_id: Number(inputData.user_id),
         stock_id: inputData.stock_id,
         note: inputData.note || "", // Default note to an empty string if not provided
         is_blocked: inputData.is_blocked, // Use the isBlocked parameter
@@ -46,7 +46,7 @@ class StockRepository {
     const deletedUserStock = await this.prisma.user_stock.delete({
       where: {
         stock_id_user_id: {
-          user_id: String(inputData.user_id),
+          user_id: Number(inputData.user_id),
           stock_id: inputData.stock_id,
         },
       },
@@ -59,7 +59,7 @@ class StockRepository {
       const updatedUserStock = await this.prisma.user_stock.update({
         where: {
           stock_id_user_id: {
-            user_id: String(inputData.user_id),
+            user_id: Number(inputData.user_id),
             stock_id: inputData.stock_id,
           },
         },

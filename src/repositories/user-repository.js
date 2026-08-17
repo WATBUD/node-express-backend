@@ -19,8 +19,8 @@ class UserRepository {
   }
   async updateUserAvatar(userId, filePath) {
     try {
-      return await this.prisma.user_detail.update({
-        where: { ud_user_id: parseInt(userId, 10) },
+      return await this.prisma.users.update({
+        where: { user_id: parseInt(userId, 10) },
         data: { avatar: filePath },
       });
     } catch (error) {
@@ -71,36 +71,7 @@ class UserRepository {
     });
   }
   async getAllUsers() {
-    const allUsers = await this.prisma.user_detail.findMany();
-    console.log(allUsers);
-  }
-
-  async _findMany() {
-    const allUsers = await this.prisma.user.findMany();
-    console.log(allUsers);
-  }
-
-  async prismacreate() {
-    await this.prisma.user.create({
-      data: {
-        name: "Alice",
-        email: "alice@prisma.io",
-        posts: {
-          create: { title: "Hello World" },
-        },
-        profile: {
-          create: { bio: "I like turtles" },
-        },
-      },
-    });
-
-    const allUsers = await this.prisma.user.findMany({
-      include: {
-        posts: true,
-        profile: true,
-      },
-    });
-    console.dir(allUsers, { depth: null });
+    return await this.prisma.users.findMany();
   }
 }
 const UserRepositoryInstance = new UserRepository();

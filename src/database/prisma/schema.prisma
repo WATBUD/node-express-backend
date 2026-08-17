@@ -8,28 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model all_tags {
-  tag_id       Int?    @unique(map: "all_tags_UN") @default(2)
-  tag_group_id Int     @default(0)
-  tag_Name     String? @default("empty") @db.VarChar(40)
-
-  @@ignore
-}
-
-model all_tags_group {
-  tag_group_id   Int     @id
-  tag_group_name String? @db.VarChar(10)
-}
-
-model chat_messages {
-  message_id  Int       @id @default(autoincrement())
-  content     String?   @db.Text
-  sender_id   Int
-  receiver_id Int
-  time_stamp  DateTime? @db.Timestamp(0)
-}
-
 model record_log_table {
   id         Int       @id @default(autoincrement())
   data_text  String    @db.VarChar(200)
@@ -46,38 +24,31 @@ model request_logs {
 }
 
 model users {
-  user_id              Int                        @id @default(autoincrement())
-  user_account         String                     @unique(map: "Account") @db.VarChar(100)
-  username             String                     @db.VarChar(50)
-  password_hash        String                     @db.VarChar(256)
-  email                String                     @db.VarChar(100)
-  created_at           DateTime?                  @default(now()) @db.Timestamp(0)
-  updated_at           DateTime?                  @default(now()) @db.Timestamp(0)
-  gender               String?                    @db.VarChar(10)
-  birthday             DateTime?                  @db.Date
-  user_has_tag         Json?
-  profile_picture      String?                    @db.VarChar(255)
-  interests            String?                    @db.Text
-  personal_description String?                    @db.Text
-  location             String?                    @db.VarChar(100)
-  relationship_status  users_relationship_status?
-  looking_for          users_looking_for?
-  privacy_settings     Json?
-  social_links         Json?
-  is_banned            Boolean?                   @default(false)
-  avatar               String?                    @db.VarChar(255)
-  user_roles           user_roles[]
+  user_id       Int          @id @default(autoincrement())
+  user_account  String       @unique(map: "Account") @db.VarChar(100)
+  username      String       @db.VarChar(50)
+  password_hash String       @db.VarChar(256)
+  email         String       @db.VarChar(100)
+  created_at    DateTime?    @default(now()) @db.Timestamp(0)
+  updated_at    DateTime?    @default(now()) @db.Timestamp(0)
+  is_banned     Boolean?     @default(false)
+  avatar        String?      @db.VarChar(255)
+  user_roles    user_roles[]
+  user_stock    user_stock[]
 }
 
 model user_stock {
-  index      Int       @id @default(autoincrement())
-  stock_id   String    @db.VarChar(6)
-  user_id    String    @db.VarChar(16)
-  note       String?   @db.VarChar(16)
+  id         Int       @id @default(autoincrement())
+  stock_id   String    @db.VarChar(10)
+  user_id    Int
+  note       String?   @db.VarChar(255)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
   is_blocked Boolean?  @default(false)
+  user       users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "user_stock_user_fk")
 
   @@unique([stock_id, user_id], map: "user_stock_key")
+  @@index([user_id], map: "user_stock_user_id_idx")
 }
 
 model permissions {
@@ -113,16 +84,3 @@ model user_roles {
   @@index([role_id], map: "role_id")
 }
 
-enum users_relationship_status {
-  Single
-  Married
-  Divorced
-  Other
-}
-
-enum users_looking_for {
-  Friendship
-  Dating
-  Long_term_Relationship @map("Long-term Relationship")
-  Other
-}
