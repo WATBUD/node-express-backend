@@ -64,7 +64,9 @@ class UserService {
     try {
       const tableData = await this.userRepository.getUserById(id);
       if (tableData) {
-        return tableData;
+        // 移除敏感欄位，password_hash 不可回傳給客戶端
+        const { password_hash, ...safeUser } = tableData;
+        return safeUser;
       } else {
         return `Unable to retrieve data for ID: ${id}`;
       }
