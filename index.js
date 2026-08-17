@@ -18,6 +18,7 @@ const defaultOrigins = [
   'http://localhost:3000',
   'http://localhost:8080',
   'https://nextshadcn14.vercel.app',
+  'https://watchlab-lovat.vercel.app',
 ];
 const envOrigins = (process.env.CORS_ORIGINS || '')
   .split(',')
