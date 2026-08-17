@@ -18,7 +18,7 @@ services:
     runtime: node
     plan: free
     region: singapore
-    branch: feature/render-mysql-deploy   # 合併到主分支後記得改這裡
+    branch: Development   # 主線分支；Render 端也要把 service 追蹤分支設為 Development
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /
