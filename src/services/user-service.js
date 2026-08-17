@@ -116,7 +116,7 @@ class UserService {
 
   async updateUserPassword(userId, newPassword) {
     if (!userId || !newPassword) {
-      return "userId 和 newPassword 不能为空";
+      return "userId 和 newPassword 不能為空";
     }
 
     try {
@@ -128,12 +128,15 @@ class UserService {
         throw new Error(`ID ${userId} 的用户不存在`);
       }
 
+      // 雜湊後再存，欄位為 password_hash（非 password）
+      const password_hash = await hashPassword(newPassword.toString());
       await this.userRepository.prisma.users.update({
         where: { user_id: parseInt(userId, 10) },
-        data: { password: newPassword.toString() },
+        data: { password_hash },
       });
 
-      return `密碼更新成功 ${newPassword}`;
+      // 回應不可帶明文密碼
+      return "密碼更新成功";
     } catch (error) {
       console.log(error);
       return `Error: ${error.message}`;
