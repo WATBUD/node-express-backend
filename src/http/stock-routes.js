@@ -10,6 +10,16 @@ import { validateCreateTrackingStockRequest,validateTrackingStockRequest } from 
 import StockHandler from '../http/stock-handler.js';
 
 
+// Machine-to-machine guard for the scheduled ingest endpoint (called by the
+// GitHub Actions cron, which has no user JWT). Requires the X-Cron-Secret
+// header to match the CRON_SECRET env var.
+const requireCronSecret = (req, res, next) => {
+  const secret = process.env.CRON_SECRET;
+  if (!secret) return res.status(503).json({ error: "CRON_SECRET not configured" });
+  if (req.get("x-cron-secret") !== secret) return res.status(401).json({ error: "Unauthorized" });
+  next();
+};
+
 export default function createRoutes() {
   const stockHandler=StockHandler();
   /**
@@ -185,6 +195,69 @@ export default function createRoutes() {
    *     summary: TestStock
    *     description:
    */
+  /**
+   * @swagger
+   * /stock/bollinger-lower-band-touch:
+   *   get:
+   *     tags:
+   *       - Stock
+   *     summary: 觸碰布林下軌的股票清單
+   *     description: 回傳（指定或最新交易日）收盤價 ≤ 布林下軌（MA20 − 2σ，母體標準差）的上市股票與 ETF。使用原始股價。
+   *     parameters:
+   *       - in: query
+   *         name: date
+   *         required: false
+   *         description: 指定交易日 YYYYMMDD；省略則用資料庫最新交易日。
+   *         schema:
+   *           type: string
+   *       - in: query
+   *         name: period
+   *         required: false
+   *         description: 移動平均/標準差天數（預設 20）。
+   *         schema:
+   *           type: integer
+   *       - in: query
+   *         name: k
+   *         required: false
+   *         description: 標準差倍數（預設 2）。
+   *         schema:
+   *           type: number
+   *     responses:
+   *       200:
+   *         description: 成功取得清單。
+   */
+  express_router.get(
+    "/stock/bollinger-lower-band-touch",
+    stockHandler.bollingerLowerBandTouch
+  );
+
+  /**
+   * @swagger
+   * /stock/ingest-daily-prices:
+   *   post:
+   *     tags:
+   *       - Stock
+   *     summary: 擷取最新交易日全市場收盤價（排程用）
+   *     description: 由排程（GitHub Actions）以 X-Cron-Secret 標頭觸發，擷取最新交易日 OHLC 寫入 daily_price。冪等。
+   *     parameters:
+   *       - in: header
+   *         name: X-Cron-Secret
+   *         required: true
+   *         description: 需與伺服器 CRON_SECRET 相符。
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: 擷取結果。
+   *       401:
+   *         description: X-Cron-Secret 不符。
+   */
+  express_router.post(
+    "/stock/ingest-daily-prices",
+    requireCronSecret,
+    stockHandler.ingestDailyPrices
+  );
+
   express_router.get("/stock/test-stock", stockHandler.testStock);
 
   /**

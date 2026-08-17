@@ -27,5 +27,7 @@ services:
         sync: false        # 在 Render 後台手動填入 TiDB/Aiven 的 MySQL 連線字串
       - key: JWT_SECRET
         generateValue: true   # Render 自動產生強隨機值
+      - key: CRON_SECRET
+        sync: false   # 排程用密鑰，手動填入；GitHub repo secret 要填「同一組值」
       - key: NODE_VERSION
         value: "22"

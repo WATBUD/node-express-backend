@@ -32,6 +32,8 @@ export const fetchTimeout = (url, options, timeout = 5000) => {
   ]);
 };
 
+export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export function dateToYYYYMMDD(date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从 0 开始，所以要加 1

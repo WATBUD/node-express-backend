@@ -1,0 +1,23 @@
+name: Ingest TWSE daily prices
+
+# Daily after Taiwan market close. TWSE close is 13:30 and MI_INDEX data is
+# settled by ~15:00 TW time, so trigger at 15:30 TW (= 07:30 UTC), weekdays.
+# TW public-holiday weekdays are harmless: the endpoint ingests the latest
+# opening day, which is already stored, so the upsert is a no-op.
+on:
+  schedule:
+    - cron: "30 7 * * 1-5"
+  workflow_dispatch: {} # allow manual runs from the Actions tab
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger ingest endpoint
+        env:
+          BACKEND_URL: ${{ secrets.BACKEND_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -fsS -X POST "$BACKEND_URL/stock/ingest-daily-prices" \
+            -H "X-Cron-Secret: $CRON_SECRET" \
+            --retry 3 --retry-delay 30 --max-time 120

@@ -80,6 +80,28 @@ const stockHandler = () => {
       return res.json(result);
     },
 
+    bollingerLowerBandTouch: async (req, res) => {
+      try {
+        const result = await stocksService.bollingerLowerBandTouch({
+          date: req.query.date,
+          period: req.query.period,
+          k: req.query.k,
+        });
+        return res.json(result);
+      } catch (error) {
+        return res.status(500).json({ error: error.message });
+      }
+    },
+
+    ingestDailyPrices: async (req, res) => {
+      try {
+        const result = await stocksService.ingestLatestDay();
+        return res.json(ResponseDTO.successResponse(undefined, result));
+      } catch (error) {
+        return res.status(500).json({ error: error.message });
+      }
+    },
+
     threeMajorInstitutionalInvestors: async (req, res) => {
       try {
         const data = await timeoutPromise(

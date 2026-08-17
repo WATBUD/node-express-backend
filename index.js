@@ -49,10 +49,11 @@ app.use(
     secret: process.env.JWT_SECRET,  // Make sure JWT_SECRET is set in your .env file
     algorithms: ['HS256'],
   }).unless({ path: [
-  '/user-login', 
+  '/user-login',
   '/register',
   '/fake-api',
   '/',
+  '/stock/ingest-daily-prices',   // protected by X-Cron-Secret instead of JWT
 /^\/shared\/.*/] })  // Exclude routes from JWT verification
 );
 

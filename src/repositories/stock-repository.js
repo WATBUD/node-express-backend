@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 
 class StockRepository {
   constructor() {
@@ -52,6 +52,62 @@ class StockRepository {
       },
     });
     return deletedUserStock;
+  }
+
+  // Bulk-upsert one trading day's OHLC. Idempotent and self-correcting:
+  // re-running a day overwrites its values (via ON DUPLICATE KEY UPDATE on the
+  // (stock_id, trade_date) unique key), so a schema change / data fix picked up
+  // on a re-run is applied to existing rows too.
+  async insertDailyPrices(rows) {
+    if (!rows || rows.length === 0) return { count: 0 };
+    const values = Prisma.join(
+      rows.map(
+        (r) => Prisma.sql`(${r.stock_id}, ${r.name}, ${r.trade_date}, ${r.open}, ${r.high}, ${r.low}, ${r.close}, ${r.volume})`
+      )
+    );
+    const affected = await this.prisma.$executeRaw`
+      INSERT INTO daily_price (stock_id, name, trade_date, open, high, low, close, volume)
+      VALUES ${values}
+      ON DUPLICATE KEY UPDATE
+        name = VALUES(name), open = VALUES(open), high = VALUES(high),
+        low = VALUES(low), close = VALUES(close), volume = VALUES(volume)`;
+    return { count: affected };
+  }
+
+  // How many distinct trading days are already stored for a given date.
+  async countStocksOnDate(tradeDate) {
+    return await this.prisma.daily_price.count({
+      where: { trade_date: tradeDate },
+    });
+  }
+
+  // Most recent trade_date present in daily_price (null if empty).
+  async getLatestTradeDate() {
+    const row = await this.prisma.daily_price.findFirst({
+      orderBy: { trade_date: "desc" },
+      select: { trade_date: true },
+    });
+    return row?.trade_date ?? null;
+  }
+
+  // Latest `period` trading dates on/before anchorDate, plus every
+  // (stock_id, name, trade_date, close) row inside that window.
+  async getPriceWindow(anchorDate, period) {
+    const dates = await this.prisma.daily_price.findMany({
+      where: { trade_date: { lte: anchorDate } },
+      distinct: ["trade_date"],
+      orderBy: { trade_date: "desc" },
+      take: period,
+      select: { trade_date: true },
+    });
+    if (dates.length === 0) return { dates: [], rows: [] };
+    const minDate = dates[dates.length - 1].trade_date;
+    const rows = await this.prisma.daily_price.findMany({
+      where: { trade_date: { gte: minDate, lte: anchorDate }, close: { not: null } },
+      select: { stock_id: true, name: true, trade_date: true, close: true },
+      orderBy: [{ stock_id: "asc" }, { trade_date: "asc" }],
+    });
+    return { dates: dates.map((d) => d.trade_date).reverse(), rows };
   }
 
   async updateSpecifiedStockTrackingData(inputData) {

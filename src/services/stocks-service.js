@@ -2,9 +2,33 @@ import axios from "axios";
 import cheerio from "cheerio";
 import iconv from 'iconv-lite';
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
-import {getFirstDayOfMonth,getLastThreeMonthsDates as getLastMonthsDates,dateToYYYYMMDD} from './custom-util-service.js';
+import {getFirstDayOfMonth,getLastThreeMonthsDates as getLastMonthsDates,dateToYYYYMMDD,sleep} from './custom-util-service.js';
 import ResponseDTO from '../http/api-response-dto.js';
 import stockRepository from '../repositories/stock-repository.js';
+
+// --- TWSE MI_INDEX ingestion helpers -------------------------------------
+// Keep only ordinary stocks + ETFs (incl. leveraged/inverse like 00631L) and
+// preferred shares: a 4-6 digit code with an optional single letter suffix.
+// Warrants are already excluded by MI_INDEX type=ALLBUT0999.
+const STOCK_CODE_RE = /^\d{4,6}[A-Z]?$/;
+
+// TWSE numbers come as strings with commas; "--", "", "X" mean no value.
+function parseDecimalStr(raw) {
+  if (raw == null) return null;
+  const s = String(raw).replace(/,/g, "").trim();
+  if (s === "" || s === "--" || s === "X") return null;
+  return Number.isFinite(Number(s)) ? s : null;
+}
+function parseBigIntOrNull(raw) {
+  if (raw == null) return null;
+  const s = String(raw).replace(/,/g, "").trim();
+  if (!/^\d+$/.test(s)) return null;
+  try { return BigInt(s); } catch { return null; }
+}
+// "YYYYMMDD" -> Date at UTC midnight (Prisma @db.Date stores the date part).
+function yyyymmddToDate(s) {
+  return new Date(Date.UTC(+s.slice(0, 4), +s.slice(4, 6) - 1, +s.slice(6, 8)));
+}
 
 class StocksService {
   constructor() {
@@ -206,6 +230,163 @@ class StocksService {
     }
   }
 
+
+  // Fetch one trading day's full market OHLC from TWSE MI_INDEX.
+  // Returns { ok, date, rows }. ok=false for holidays / no-data days.
+  async fetchDailyAllStocks(dateStr, retries = 3) {
+    const url = `https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date=${dateStr}&type=ALLBUT0999&response=json`;
+    let lastErr;
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        const { data } = await axios.get(url, {
+          headers: { "User-Agent": "Mozilla/5.0" },
+        });
+        if (data.stat !== "OK" || !Array.isArray(data.tables)) {
+          return { ok: false, date: dateStr, rows: [] }; // holiday / no session
+        }
+        const table = data.tables.find((t) => /每日收盤行情/.test(t.title || ""));
+        if (!table || !Array.isArray(table.data)) {
+          return { ok: false, date: dateStr, rows: [] };
+        }
+        // Locate columns by header name (order is not guaranteed stable).
+        const fields = table.fields || [];
+        const col = (name) => fields.findIndex((f) => f.includes(name));
+        const iCode = col("證券代號"), iName = col("證券名稱"), iOpen = col("開盤價"),
+          iHigh = col("最高價"), iLow = col("最低價"), iClose = col("收盤價"), iVol = col("成交股數");
+        if (iCode < 0 || iClose < 0) {
+          throw new Error("MI_INDEX table layout unexpected (missing 證券代號/收盤價)");
+        }
+        const tradeDate = yyyymmddToDate(dateStr);
+        const rows = [];
+        for (const r of table.data) {
+          const code = String(r[iCode]).trim();
+          if (!STOCK_CODE_RE.test(code)) continue;      // skip warrants/indices
+          const close = parseDecimalStr(r[iClose]);
+          if (close == null) continue;                  // skip suspended / no trade
+          rows.push({
+            stock_id: code,
+            name: iName >= 0 ? String(r[iName]).trim() : null,
+            trade_date: tradeDate,
+            open: parseDecimalStr(r[iOpen]),
+            high: parseDecimalStr(r[iHigh]),
+            low: parseDecimalStr(r[iLow]),
+            close,
+            volume: parseBigIntOrNull(r[iVol]),
+          });
+        }
+        return { ok: true, date: dateStr, rows };
+      } catch (err) {
+        lastErr = err;
+        if (attempt < retries) await sleep(1500 * attempt); // linear backoff
+      }
+    }
+    throw new Error(`fetchDailyAllStocks(${dateStr}) failed: ${lastErr?.message}`);
+  }
+
+  // Ingest a single trading day into daily_price (idempotent).
+  async ingestDay(dateStr) {
+    const { ok, rows } = await this.fetchDailyAllStocks(dateStr);
+    if (!ok) return { date: dateStr, ok: false, fetched: 0, inserted: 0 };
+    const { count } = await this.StockRepository.insertDailyPrices(rows);
+    return { date: dateStr, ok: true, fetched: rows.length, inserted: count };
+  }
+
+  // Backfill: walk calendar days backward from Taiwan "today", skipping
+  // weekends and holidays (days MI_INDEX returns no data), until `days`
+  // trading days are ingested or `maxLookback` calendar days are exhausted.
+  async ingestBackfill({ days = 30, maxLookback = 90, delayMs = 1500 } = {}) {
+    const taiwanNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
+    const cursor = new Date(Date.UTC(taiwanNow.getUTCFullYear(), taiwanNow.getUTCMonth(), taiwanNow.getUTCDate()));
+    const summary = [];
+    let tradingDays = 0;
+    for (let i = 0; i < maxLookback && tradingDays < days; i++) {
+      const dow = cursor.getUTCDay();
+      if (dow !== 0 && dow !== 6) { // skip Sat/Sun
+        const dateStr = dateToYYYYMMDD(cursor);
+        const res = await this.ingestDay(dateStr);
+        if (res.ok) {
+          tradingDays++;
+          summary.push(res);
+          console.log(`  ${dateStr}: fetched ${res.fetched}, inserted ${res.inserted} (day ${tradingDays}/${days})`);
+        }
+        await sleep(delayMs); // be polite to TWSE
+      }
+      cursor.setUTCDate(cursor.getUTCDate() - 1);
+    }
+    return { tradingDays, days: summary };
+  }
+
+  // Find all stocks whose close on the (effective) anchor day is at or below
+  // their Bollinger lower band = MA(period) - k * populationStdDev(period).
+  // Uses raw (unadjusted) prices — ex-dividend days may yield false touches.
+  async bollingerLowerBandTouch({ date, period = 20, k = 2 } = {}) {
+    period = Number(period) || 20;
+    k = Number(k) || 2;
+    const anchor = date ? yyyymmddToDate(date) : await this.StockRepository.getLatestTradeDate();
+    if (!anchor) {
+      return ResponseDTO.errorResponse("尚無報價資料，請先執行 ingestion 回補。");
+    }
+    const { dates, rows } = await this.StockRepository.getPriceWindow(anchor, period);
+    if (dates.length < period) {
+      return ResponseDTO.errorResponse(
+        `歷史交易日不足：目前 ${dates.length} 天，需 ${period} 天，請先回補更多資料。`
+      );
+    }
+    const effectiveAnchor = dates[dates.length - 1];
+    const anchorTime = effectiveAnchor.getTime();
+
+    // Group closes by stock (rows already ordered by stock_id, trade_date asc).
+    const byStock = new Map();
+    for (const r of rows) {
+      let g = byStock.get(r.stock_id);
+      if (!g) { g = { name: r.name, closes: [] }; byStock.set(r.stock_id, g); }
+      if (r.name) g.name = r.name;
+      g.closes.push({ t: r.trade_date.getTime(), c: Number(r.close) });
+    }
+
+    const round2 = (n) => Math.round(n * 100) / 100;
+    const items = [];
+    let scanned = 0, skipped = 0;
+    for (const [stock_id, g] of byStock) {
+      // Require a full window AND that the stock traded on the anchor day.
+      if (g.closes.length !== period || g.closes[g.closes.length - 1].t !== anchorTime) {
+        skipped++;
+        continue;
+      }
+      scanned++;
+      const closes = g.closes.map((x) => x.c);
+      const mean = closes.reduce((a, b) => a + b, 0) / period;
+      const variance = closes.reduce((a, b) => a + (b - mean) ** 2, 0) / period; // population σ
+      const sd = Math.sqrt(variance);
+      const lower = mean - k * sd;
+      const close = closes[period - 1];
+      if (close <= lower + 1e-9) {
+        items.push({
+          stock_id,
+          name: g.name,
+          close: round2(close),
+          ma: round2(mean),
+          lower_band: round2(lower),
+          distance_pct: Number((((close - lower) / lower) * 100).toFixed(3)),
+        });
+      }
+    }
+    items.sort((a, b) => a.distance_pct - b.distance_pct);
+
+    const fmt = (d) =>
+      `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, "0")}${String(d.getUTCDate()).padStart(2, "0")}`;
+    return ResponseDTO.successResponse(undefined, {
+      trade_date: fmt(effectiveAnchor),
+      period, k, scanned, skipped, matched: items.length, items,
+    });
+  }
+
+  // Ingest just the latest trading day (for the daily cron).
+  async ingestLatestDay() {
+    const dateStr = await this.theLatestOpeningDate();
+    if (/^Error/.test(dateStr)) throw new Error(dateStr);
+    return await this.ingestDay(dateStr);
+  }
 
   async fiveLevelsOfStockInformation(stockCode) {
     try {
