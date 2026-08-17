@@ -288,6 +288,9 @@ class StocksService {
     const { ok, rows } = await this.fetchDailyAllStocks(dateStr);
     if (!ok) return { date: dateStr, ok: false, fetched: 0, inserted: 0 };
     const { count } = await this.StockRepository.insertDailyPrices(rows);
+    await this.StockRepository.upsertStocks(
+      rows.map((r) => ({ stock_id: r.stock_id, name: r.name }))
+    );
     return { date: dateStr, ok: true, fetched: rows.length, inserted: count };
   }
 

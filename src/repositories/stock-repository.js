@@ -24,11 +24,22 @@ class StockRepository {
       const result = await this.prisma.user_stock.findMany({
         where: whereClause,
       });
+
+      // 併入名稱：用 stock 主檔（主鍵查詢，1400 列小表）補上 name
+      if (result.length > 0) {
+        const stocks = await this.prisma.stock.findMany({
+          where: { stock_id: { in: result.map((r) => r.stock_id) } },
+          select: { stock_id: true, name: true },
+        });
+        const nameMap = new Map(stocks.map((s) => [s.stock_id, s.name]));
+        for (const row of result) row.name = nameMap.get(row.stock_id) ?? null;
+      }
+
       const endTime = new Date();
       const executionTime = endTime - startTime;
       console.log("getStockTrackingList query execution time:", executionTime, "milliseconds");
       return result;
-  }     
+  }
 
   async addStockToTrackinglist(inputData) {
     const createdUserStock = await this.prisma.user_stock.create({
@@ -71,6 +82,21 @@ class StockRepository {
       ON DUPLICATE KEY UPDATE
         name = VALUES(name), open = VALUES(open), high = VALUES(high),
         low = VALUES(low), close = VALUES(close), volume = VALUES(volume)`;
+    return { count: affected };
+  }
+
+  // Upsert the stock master (stock_id -> name). Called during ingestion.
+  async upsertStocks(rows) {
+    if (!rows || rows.length === 0) return { count: 0 };
+    const map = new Map();
+    for (const r of rows) map.set(r.stock_id, r.name ?? null);
+    const values = Prisma.join(
+      [...map].map(([stock_id, name]) => Prisma.sql`(${stock_id}, ${name})`)
+    );
+    const affected = await this.prisma.$executeRaw`
+      INSERT INTO stock (stock_id, name)
+      VALUES ${values}
+      ON DUPLICATE KEY UPDATE name = VALUES(name)`;
     return { count: affected };
   }
 

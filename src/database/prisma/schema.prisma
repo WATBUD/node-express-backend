@@ -67,6 +67,12 @@ model daily_price {
   @@index([trade_date], map: "daily_price_trade_date_idx")
 }
 
+model stock {
+  stock_id   String    @id @db.VarChar(10)
+  name       String?   @db.VarChar(50)
+  updated_at DateTime? @default(now()) @db.Timestamp(0)
+}
+
 model permissions {
   id               Int                @id @default(autoincrement())
   permission_name  String             @db.VarChar(50)
