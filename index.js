@@ -12,14 +12,21 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = "0.0.0.0";
 
-// CORS options
+// CORS 白名單：預設值 + 環境變數 CORS_ORIGINS（逗號分隔）擴充，
+// 上線時在 Render 設定 CORS_ORIGINS 即可加入前端網址，不必改 code。
+const defaultOrigins = [
+  'http://localhost:3000',
+  'http://localhost:8080',
+  'https://nextshadcn14.vercel.app',
+];
+const envOrigins = (process.env.CORS_ORIGINS || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+const allowedOrigins = [...new Set([...defaultOrigins, ...envOrigins])];
+
 const corsOptions = {
-  origin: [
-    'http://www.example.com',
-    'http://localhost:8080',
-    'http://localhost:3000',
-    'https://nextshadcn14.vercel.app',
-  ],
+  origin: allowedOrigins,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
