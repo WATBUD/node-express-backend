@@ -18,7 +18,7 @@
     "schema": "src/database/prisma/schema.prisma"
   },
   "engines": {
-    "node": "22.x"
+    "node": ">=22"
   },
   "keywords": [],
   "author": "",
@@ -36,6 +36,7 @@
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^7.0.13",
     "prisma": "^5.10.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0"

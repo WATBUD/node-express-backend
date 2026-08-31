@@ -152,14 +152,14 @@ class StocksService {
       //   trElements
       // );
 
-      //选择每个<tr>元素
+      // 選擇每個 <tr> 元素
       $("tr").each((index, element) => {
         const $element = $(element);
 
-        // 提取href属性
+        // 取得 href 屬性
         const href = $element.find("td.col01 a").attr("href");
 
-        // 提取其他列的文本内容
+        // 取得其他欄位的文字內容
 
         const stockCode = $element.find("td.col01 a").text();
         const stockName = $element.find("td.col02 a").text();
@@ -400,7 +400,7 @@ class StocksService {
       if (response.status === 200) {
         return response.data;
       } else {
-        return `HTTP请求失败，状态码：${response.status}`;
+        return `HTTP 請求失敗，狀態碼：${response.status}`;
       }
     } catch (error) {
       return `Error：${error.message}`;
@@ -461,7 +461,7 @@ class StocksService {
       }
 
       const rawData =await this.dailyTransactionInfoOfIndividualStockWithMonths(stockNo,4);
-      const closingPrices = rawData.map((entry) => parseFloat(entry[6])); // 提取收盘价并转换为浮点数
+      const closingPrices = rawData.map((entry) => parseFloat(entry[6])); // 取得收盤價並轉換為浮點數
 
       const movingAverages = {
         "5-day": calculateAverage(closingPrices, 5),
@@ -566,7 +566,7 @@ class StocksService {
         const data = (response.data.data || []).slice(0, 100);
         return data;
       } else {
-        return `HTTP请求失败，状态码：${response.status}`;
+        return `HTTP 請求失敗，狀態碼：${response.status}`;
       }
     } catch (error) {
       return `Error：${error.message}`;
@@ -587,7 +587,7 @@ class StocksService {
       const url = `https://fubon-ebrokerdj.fbs.com.tw/z/zc/zco/zco.djhtm?a=${stockNo}&e=2024-2-19&f=2024-2-19`;
 
       const response = await axios.get(url, {
-        responseType: "arraybuffer", // 将响应类型设置为 arraybuffer
+        responseType: "arraybuffer", // 將回應類型設定為 arraybuffer
       });
       const htmlBuffer = response.data;
       const html = iconv.decode(htmlBuffer, "big5"); // 使用 iconv-lite 解码 Big5 编码
@@ -601,10 +601,10 @@ class StocksService {
       //   trElements
       // );
       trElements.each((index, element) => {
-        // 获取当前 <tr> 元素下的所有 <td> 元素
+        // 取得目前 <tr> 元素下的所有 <td> 元素
         const tdElements = $(element).find("td");
         if (tdElements.length === 10) {
-          // 创建一个对象来存储 <td> 元素的文本内容
+          // 建立物件儲存 <td> 元素的文字內容
           const dataObject = {
             securitiesDealer: $(tdElements[0]).text().trim(),
             buyingIn: $(tdElements[1]).text().trim(),
@@ -697,7 +697,7 @@ class StocksService {
         taiwanDate.setDate(taiwanDate.getDate() - 1); // Decrement date
       }
 
-      const _yyyyMMdd = taiwanDate.toISOString().slice(0, 10).replace(/-/g, ""); // 格式化为 yyyyMMdd
+      const _yyyyMMdd = taiwanDate.toISOString().slice(0, 10).replace(/-/g, ""); // 格式化為 yyyyMMdd
       return _yyyyMMdd;
     } catch (error) {
       return "Error：" + error.message;
@@ -740,7 +740,7 @@ class StocksService {
 
   async getQuoteTimeSalesStore() {
     try {
-      // 缺失的代码请自行补充
+      // 缺少的程式碼請自行補充
     } catch (error) {
       console.error("Error：", error.message);
       return "Error：" + error.message;

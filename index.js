@@ -17,6 +17,8 @@ const HOST = "0.0.0.0";
 const defaultOrigins = [
   'http://localhost:3000',
   'http://localhost:8080',
+  'http://localhost:8081',
+  'http://localhost:8082',
   'https://nextshadcn14.vercel.app',
   'https://watchlab-lovat.vercel.app',
 ];
@@ -52,6 +54,9 @@ app.use(
   }).unless({ path: [
   '/user-login',
   '/register',
+  '/api/auth/login',
+  '/api/auth/register',
+  '/api/auth/verification/request',
   '/fake-api',
   '/',
   '/stock/ingest-daily-prices',   // protected by X-Cron-Secret instead of JWT
@@ -76,6 +81,13 @@ import UserService from './src/services/user-service.js';
 const userService = new UserService(userRepository);
 const _userHandler = userHandler(userService);
 app.use('/', userRoutes(_userHandler));
+/*------------------ */;
+import authRoutes from './src/http/auth-routes.js';
+import authHandler from './src/http/auth-handler.js';
+import AuthService from './src/services/auth-service.js';
+
+const authService = new AuthService(userRepository);
+app.use('/', authRoutes(authHandler(authService)));
 /*------------------ */;
 import shardApiHandler from "./src/http/share-api-handler.js";
 import shareApiRoutes from "./src/http/share-api-routes.js";

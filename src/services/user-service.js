@@ -125,7 +125,7 @@ class UserService {
       });
 
       if (!existingUser) {
-        throw new Error(`ID ${userId} 的用户不存在`);
+        throw new Error(`ID ${userId} 的使用者不存在`);
       }
 
       // 雜湊後再存，欄位為 password_hash（非 password）

@@ -49,12 +49,25 @@ class UserRepository {
 
       return customQueryCallbackData;
     } catch (error) {
-      console.error("发生错误：", error.message);
+      console.error("發生錯誤：", error.message);
     }
   }
   async findUserByAccount(account) {
     return this.prisma.users.findUnique({
       where: { user_account:account }
+    });
+  }
+
+  async findUserByLogin(account) {
+    const normalized = account.trim().toLowerCase();
+    return this.prisma.users.findFirst({
+      where: {
+        OR: [
+          { user_account: normalized },
+          { email: normalized },
+          { phone: normalized },
+        ],
+      },
     });
   }
 

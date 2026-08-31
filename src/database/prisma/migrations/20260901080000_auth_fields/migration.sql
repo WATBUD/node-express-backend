@@ -1,0 +1,4 @@
+ALTER TABLE `Users`
+  MODIFY `email` VARCHAR(100) NULL,
+  ADD COLUMN `phone` VARCHAR(20) NULL,
+  ADD COLUMN `birthdate` DATE NULL;
