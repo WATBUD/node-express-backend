@@ -22,15 +22,6 @@ const SharedAPI_Handler = (sharedService, httpClientService) => {
       }
     },
 
-    getRequestLogs: async (req, res) => {
-      try {
-        const table = await sharedService.getAssignViewTable("record_log_table", 5);
-        res.json(table);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    },
-
     homePage: (req, res) => {
       let tableRows = "";
       SwaggerSpecs.forEach((spec) => {
@@ -47,7 +38,7 @@ const SharedAPI_Handler = (sharedService, httpClientService) => {
       const html = `
       <html>
       <head>
-        <title>歡迎來到水靈網站！</title>
+        <title>Swagger API 文件</title>
         <style>
           body {
             font-family: Arial, sans-serif;
@@ -85,7 +76,7 @@ const SharedAPI_Handler = (sharedService, httpClientService) => {
       </head>
       <body>
         <div class="container">
-          <h1>歡迎來到水靈網站！</h1>
+          <h1>Swagger API 文件</h1>
           <table>
             <tr>
               <td>Page</td>
@@ -93,11 +84,6 @@ const SharedAPI_Handler = (sharedService, httpClientService) => {
             </tr>
             ${tableRows}
           </table>
-          <p>
-          感謝您來訪水靈的api文件網站。水靈致力於為您提供最優質的服務和內容。
-          請隨意瀏覽頁面，此網站使用node.js/mysql/swagger/express。
-          祝您在水靈的網站上度過愉快的時光！
-        </p>
         </div>
       </body>
       </html>

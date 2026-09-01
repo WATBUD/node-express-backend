@@ -16,20 +16,6 @@ export default function createSharedRoutes(SharedController) {
  */
 express_router.get("/shared/get-client-ip", SharedController.getClientIP);
 
-/**
- * @swagger
- * /shared/get-request-logs:
- *   get:
- *     tags:
- *         - Shared
- *     summary: Get Api call record table
- *     description: Returns data.
- *     responses:
- *       200:
- *         description: Successful response data.
- */
-express_router.get("/shared/get-request-logs", SharedController.getRequestLogs);
-
 express_router.get("/", SharedController.homePage);
 return express_router;
 

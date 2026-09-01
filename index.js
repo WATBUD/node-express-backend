@@ -3,14 +3,20 @@ import dotenv from 'dotenv';
 //import bodyParser from "body-parser";
 import swaggerUiExpress from 'swagger-ui-express';
 import cors from 'cors';
-import expressJwt from 'express-jwt';
+import helmet from 'helmet';
+import { expressjwt } from 'express-jwt';
 import swaggerSpecs from './swagger-specs.js';
 import requestLogger from './src/middlewares/request-logger.js';
+import { globalLimiter } from './src/middlewares/security.js';
 import HttpClientService from "./src/services/http-client-service.js";
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = "0.0.0.0";
+
+// Render 等反向代理後方需信任第一層代理，才能取得真實用戶 IP。
+const trustProxyHops = Number(process.env.TRUST_PROXY_HOPS || (process.env.NODE_ENV === 'production' ? 1 : 0));
+if (trustProxyHops > 0) app.set('trust proxy', trustProxyHops);
 
 // CORS 白名單：預設值 + 環境變數 CORS_ORIGINS（逗號分隔）擴充，
 // 上線時在 Render 設定 CORS_ORIGINS 即可加入前端網址，不必改 code。
@@ -31,12 +37,16 @@ const allowedOrigins = [...new Set([...defaultOrigins, ...envOrigins])];
 const corsOptions = {
   origin: allowedOrigins,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept-Language'],
 };
 
-app.use(express.json());
+app.disable('x-powered-by');
+// Swagger UI 需要行內樣式與腳本，因此保留其他安全標頭但不啟用預設 CSP。
+app.use(helmet({ contentSecurityPolicy: false }));
+app.use(express.json({ limit: '32kb' }));
 app.use(cors(corsOptions));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: '32kb' }));
+app.use(globalLimiter);
 
 
 
@@ -47,13 +57,21 @@ swaggerSpecs.forEach(spec => {
   app.use(`${spec.info.routePath}`, swaggerUiExpress.serve, (...args) => swaggerUiExpress.setup(spec)(...args));
 });
 
+// 舊文件入口保留轉址，實際 API 路徑不受文件分組調整影響。
+app.get(['/api/stock', '/api/user'], (req, res) => {
+  res.redirect(301, '/api/watchlab/docs');
+});
+
 app.use(
-  expressJwt({
+  expressjwt({
     secret: process.env.JWT_SECRET,  // Make sure JWT_SECRET is set in your .env file
     algorithms: ['HS256'],
+    requestProperty: 'user',
   }).unless({ path: [
   '/user-login',
   '/register',
+  '/api/watchlab/user-login',
+  '/api/watchlab/register',
   '/api/auth/login',
   '/api/auth/register',
   '/api/auth/verification/request',
@@ -71,6 +89,7 @@ import stockRoutes from './src/http/stock-routes.js';
 
 //const stockService = new StocksService();
 app.use('/', stockRoutes());
+app.use('/api/watchlab', stockRoutes());
 /*------------------ */;
 
 import userRoutes from './src/http/user-routes.js';
@@ -81,6 +100,7 @@ import UserService from './src/services/user-service.js';
 const userService = new UserService(userRepository);
 const _userHandler = userHandler(userService);
 app.use('/', userRoutes(_userHandler));
+app.use('/api/watchlab', userRoutes(_userHandler));
 /*------------------ */;
 import authRoutes from './src/http/auth-routes.js';
 import authHandler from './src/http/auth-handler.js';
@@ -100,6 +120,9 @@ app.use('/', shareApiRoutes(_sharedHandler));
 app.use(requestLogger(sharedService));
 
 app.use((err, req, res, next) => {
+  if (err.type === 'entity.too.large') {
+      return res.status(413).json({ success: false, error: { code: 'PAYLOAD_TOO_LARGE', message: 'The request payload is too large.' } });
+  }
   if (err.name === 'UnauthorizedError') {
       res.status(401).send('');
       // res.status(401).json({

@@ -7,15 +7,16 @@ const securitySchemes = {
   description: '請在下方提供 JWT 令牌',
 };
 
-const options1 = {
+const watchlabOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Stocks',
+      title: 'WatchLab API',
       version: '1.0.0',
-      description: 'APIs come from crawlers and third parties. If you have any questions, please contact Louis.',
-      routePath:'/api/stock'
+      description: 'WatchLab 專用後端 API 文件，包含帳號、使用者資料、股票清單、追蹤清單與行情功能。',
+      routePath: '/api/watchlab/docs',
     },
+    servers: [{ url: '/api/watchlab', description: 'WatchLab API' }],
     components: {
       securitySchemes: {
         bearerAuth: securitySchemes,
@@ -25,7 +26,10 @@ const options1 = {
       bearerAuth: [],
     }],
   },
-  apis: ['./src/http/stock-routes.js'],
+  apis: [
+    './src/http/stock-routes.js',
+    './src/http/user-routes.js',
+  ],
 };
 
 const options2 = {
@@ -49,31 +53,52 @@ const options2 = {
   apis: ['./src/http/share-api-routes.js'],
 };
 
-const options3 = {
+const iniDatingOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Users',
+      title: 'INI Dating API',
       version: '1.0.0',
-      description: 'APIs for managing users data',
-      routePath:'/api/user'
+      description: 'INI Dating 專用後端 API 文件。目前包含 Email 驗證碼、帳號註冊、登入及目前使用者資料。',
+      routePath: '/api/ini-dating',
     },
     components: {
       securitySchemes: {
         bearerAuth: securitySchemes,
       },
+      schemas: {
+        ErrorResponse: {
+          type: 'object',
+          required: ['success', 'error'],
+          properties: {
+            success: { type: 'boolean', example: false },
+            error: {
+              type: 'object',
+              required: ['code', 'message'],
+              properties: {
+                code: { type: 'string', example: 'INVALID_CREDENTIALS' },
+                message: { type: 'string', example: 'The account or password is incorrect.' },
+              },
+            },
+          },
+        },
+        AuthSession: {
+          type: 'object',
+          properties: {
+            token: { type: 'string', description: 'JWT 存取權杖' },
+            user: { type: 'object', additionalProperties: true },
+          },
+        },
+      },
     },
-    security: [{
-      bearerAuth: [],
-    }],
   },
-  apis: ['./src/http/user-routes.js'],
+  apis: ['./src/http/auth-routes.js'],
 };
 
 const SwaggerSpecs = [
-  swaggerJsdoc(options1),
+  swaggerJsdoc(watchlabOptions),
   swaggerJsdoc(options2),
-  swaggerJsdoc(options3)
+  swaggerJsdoc(iniDatingOptions)
 ];
 
 export default SwaggerSpecs;

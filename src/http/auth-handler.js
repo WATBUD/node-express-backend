@@ -1,5 +1,5 @@
-import { localizedError } from './auth-messages.js'
-const sendError = (req, res, error) => res.status(error.statusCode || 500).json({ success: false, error: { code: error.code || 'INTERNAL_ERROR', message: localizedError(req,error) } })
+import { publicErrorMessage } from './auth-messages.js'
+const sendError = (_req, res, error) => res.status(error.statusCode || 500).json({ success: false, error: { code: error.code || 'INTERNAL_ERROR', message: publicErrorMessage(error) } })
 
 export default service => ({
   requestVerification: async (req, res) => { try { res.json({ success: true, data: await service.requestCode(req.body) }) } catch (e) { sendError(req,res,e) } },
