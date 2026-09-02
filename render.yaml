@@ -8,7 +8,7 @@
 #   1. 先到 TiDB Serverless 或 Aiven 開一個免費 MySQL，取得連線字串
 #   2. 把這個分支推到 GitHub / GitLab
 #   3. Render 後台 → New → Blueprint → 選這個 repo
-#   4. 部署時在後台把 DATABASE_URL 填入上面拿到的連線字串
+#   4. 部署時在後台設定一個 DATABASE_URL；程式會自動連至 ini_dating 與 watchlab
 #
 # ⚠️ Render 免費 Web 服務：閒置 15 分鐘會休眠，下次請求約 30~50 秒喚醒
 
@@ -24,7 +24,7 @@ services:
     healthCheckPath: /
     envVars:
       - key: DATABASE_URL
-        sync: false        # 在 Render 後台手動填入 TiDB/Aiven 的 MySQL 連線字串
+        sync: false        # 共用叢集連線；程式依服務自動切換 Database 名稱
       - key: JWT_SECRET
         generateValue: true   # Render 自動產生強隨機值
       - key: CRON_SECRET

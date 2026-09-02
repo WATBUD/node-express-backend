@@ -1,20 +1,18 @@
 import { PrismaClient } from "@prisma/client";
+import { iniDatabaseUrl, watchlabDatabaseUrl } from '../database/database-urls.js';
 
 class UserRepository {
-  constructor() {
-    if (!UserRepository.instance) {
-      UserRepository.instance = this;
-      this.prisma = new PrismaClient();
-      this.checkConnection(); // Check connection when instance is created
-    }
-    return UserRepository.instance;
+  constructor(databaseUrl, label) {
+    this.label = label;
+    this.prisma = new PrismaClient({ datasources: { db: { url: databaseUrl } } });
+    this.checkConnection();
   }
   async checkConnection() {
     try {
       await this.prisma.$connect();
-      console.log('Database connection successful.');
+      console.log(`${this.label} database connection successful.`);
     } catch (error) {
-      console.error('Database connection failed:', error);
+      console.error(`${this.label} database connection failed:`, error);
     }
   }
   async updateUserAvatar(userId, filePath) {
@@ -75,6 +73,29 @@ class UserRepository {
     return this.prisma.users.create({ data });
   }
 
+  async updateGenderIfAllowed(userId, gender, cutoff, changedAt) {
+    const result = await this.prisma.users.updateMany({
+      where: {
+        user_id: Number(userId),
+        gender: { not: gender },
+        OR: [
+          { gender_changed_at: null },
+          { gender_changed_at: { lte: cutoff } },
+        ],
+      },
+      data: { gender, gender_changed_at: changedAt },
+    })
+    if (!result.count) return null
+    return this.getUserById(userId)
+  }
+
+  async updateBirthdate(userId, birthdate) {
+    return this.prisma.users.update({
+      where: { user_id: Number(userId) },
+      data: { birthdate },
+    })
+  }
+
   async getUserById(id) {
     const userId = parseInt(id, 10);
 
@@ -87,6 +108,7 @@ class UserRepository {
     return await this.prisma.users.findMany();
   }
 }
-const UserRepositoryInstance = new UserRepository();
+const UserRepositoryInstance = new UserRepository(watchlabDatabaseUrl, 'WatchLab');
+export const iniUserRepository = new UserRepository(iniDatabaseUrl, 'INI Dating');
 
 export default UserRepositoryInstance;

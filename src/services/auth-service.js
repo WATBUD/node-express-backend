@@ -2,8 +2,22 @@ import { generateToken } from '../utilities/jwt-helper.js'
 import { hashPassword, verifyPassword } from '../utilities/password-helper.js'
 import { consumeVerification, requestVerification } from './verification-service.js'
 
-const publicUser = user => ({ id: user.user_id, account: user.user_account, username: user.username, email: user.email, phone: user.phone, createdAt: user.created_at })
+const GENDER_CHANGE_DAYS = 30
+const publicUser = user => ({ id: user.user_id, account: user.user_account, username: user.username, email: user.email, phone: user.phone, birthdate: user.birthdate ? user.birthdate.toISOString().slice(0, 10) : null, gender: user.gender, gender_changed_at: user.gender_changed_at, createdAt: user.created_at })
 const authError = (message, statusCode, code) => Object.assign(new Error(message), { statusCode, code })
+const parseBirthdate = value => {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
+  if (!match) return null
+  const [, year, month, day] = match.map(Number)
+  const date = new Date(Date.UTC(year, month - 1, day))
+  if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return null
+  return date
+}
+const ageAt = (birthdate, today = new Date()) => {
+  let age = today.getUTCFullYear() - birthdate.getUTCFullYear()
+  if (today.getUTCMonth() < birthdate.getUTCMonth() || (today.getUTCMonth() === birthdate.getUTCMonth() && today.getUTCDate() < birthdate.getUTCDate())) age -= 1
+  return age
+}
 
 export default class AuthService {
   constructor(userRepository) { this.users = userRepository }
@@ -28,7 +42,8 @@ export default class AuthService {
     const user = await this.users.createUser({
       user_account: input.account.toLowerCase(), username: input.account.split('@')[0],
       email: input.email || null, phone: input.phone || null,
-      birthdate: new Date(input.birthdate), password_hash: await hashPassword(input.password),
+      birthdate: new Date(input.birthdate), gender: input.gender,
+      password_hash: await hashPassword(input.password),
     })
     return this.session(user)
   }
@@ -46,6 +61,30 @@ export default class AuthService {
     const user = await this.users.getUserById(userId)
     if (!user) throw authError('找不到使用者', 404, 'USER_NOT_FOUND')
     return publicUser(user)
+  }
+
+  async updateGender(userId, { gender }) {
+    const user = await this.users.getUserById(userId)
+    if (!user) throw authError('User not found.', 404, 'USER_NOT_FOUND')
+    if (user.gender === gender) return publicUser(user)
+
+    const now = new Date()
+    const cutoff = new Date(now.getTime() - GENDER_CHANGE_DAYS * 24 * 60 * 60 * 1000)
+    const updated = await this.users.updateGenderIfAllowed(userId, gender, cutoff, now)
+    if (!updated) {
+      throw authError('Gender can only be changed once every 30 days.', 429, 'GENDER_CHANGE_COOLDOWN')
+    }
+    return publicUser(updated)
+  }
+
+  async updateBirthdate(userId, { birthdate }) {
+    const user = await this.users.getUserById(userId)
+    if (!user) throw authError('User not found.', 404, 'USER_NOT_FOUND')
+    const parsed = parseBirthdate(birthdate)
+    if (!parsed) throw authError('Invalid birthdate.', 400, 'INVALID_BIRTHDATE')
+    const age = ageAt(parsed)
+    if (age < 18 || age > 120) throw authError('Birthdate must represent an age from 18 to 120.', 400, 'BIRTHDATE_AGE_RESTRICTED')
+    return publicUser(await this.users.updateBirthdate(userId, parsed))
   }
 
   session(user) { return { user: publicUser(user), accessToken: generateToken(user, '7d') } }

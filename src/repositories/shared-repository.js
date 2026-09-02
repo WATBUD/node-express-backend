@@ -1,10 +1,11 @@
 import { PrismaClient } from "@prisma/client";
+import { watchlabDatabaseUrl } from '../database/database-urls.js';
 
 class SharedRepository {
   constructor() {
     if (!SharedRepository.instance) {
       SharedRepository.instance = this;
-      this.prisma = new PrismaClient();
+      this.prisma = new PrismaClient({ datasources: { db: { url: watchlabDatabaseUrl } } });
     }
     return SharedRepository.instance;
   }

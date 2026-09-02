@@ -1,6 +1,6 @@
 import express from 'express'
 import { validateRequestBody } from '../dto/joi-help.js'
-import { loginDto, registerDto, verificationRequestDto } from '../dto/auth-request-dto.js'
+import { birthdateUpdateDto, genderUpdateDto, loginDto, registerDto, verificationRequestDto } from '../dto/auth-request-dto.js'
 import {
   loginLimiter,
   registrationLimiter,
@@ -70,7 +70,7 @@ export default handler => {
    *         application/json:
    *           schema:
    *             type: object
-   *             required: [channel, account, email, password, verificationCode, birthdate]
+   *             required: [channel, account, email, password, verificationCode, birthdate, gender]
    *             properties:
    *               channel: { type: string, enum: [email], example: email }
    *               account: { type: string, format: email, example: user@example.com }
@@ -79,6 +79,7 @@ export default handler => {
    *               password: { type: string, format: password, minLength: 8, example: Dating123 }
    *               verificationCode: { type: string, pattern: '^\\d{6}$', example: '123456' }
    *               birthdate: { type: string, format: date, example: '1996-05-20' }
+   *               gender: { type: string, enum: [male, female], example: female }
    *     responses:
    *       201:
    *         description: 帳號建立成功
@@ -149,10 +150,79 @@ export default handler => {
    *       - bearerAuth: []
    *     responses:
    *       200:
-   *         description: 使用者資料
+   *         description: 使用者資料，包含註冊生日與性別最後修改時間
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success: { type: boolean, example: true }
+   *                 data:
+   *                   type: object
+   *                   properties:
+   *                     id: { type: integer, example: 1 }
+   *                     account: { type: string, format: email }
+   *                     birthdate: { type: string, format: date, nullable: true }
+   *                     gender: { type: string, enum: [male, female] }
+   *                     gender_changed_at: { type: string, format: date-time, nullable: true }
    *       401:
    *         description: JWT 缺失、無效或已過期
    */
   router.get('/api/auth/me', handler.me)
+  /**
+   * @swagger
+   * /api/auth/gender:
+   *   patch:
+   *     tags: [Account]
+   *     summary: 修改目前使用者性別（每 30 天限一次）
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required: [gender]
+   *             properties:
+   *               gender: { type: string, enum: [male, female], example: male }
+   *     responses:
+   *       200: { description: 修改成功，或提交的性別與目前相同 }
+   *       400: { description: 性別代號無效 }
+   *       401: { description: JWT 缺失、無效或已過期 }
+   *       429: { description: 距離上次修改尚未滿 30 天 }
+   */
+  router.patch(
+    '/api/auth/gender',
+    validateRequestBody(genderUpdateDto, { abortEarly: false }),
+    handler.updateGender,
+  )
+  /**
+   * @swagger
+   * /api/auth/birthdate:
+   *   patch:
+   *     tags: [Account]
+   *     summary: 修改生日（年齡由生日自動計算）
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required: [birthdate]
+   *             properties:
+   *               birthdate: { type: string, format: date, example: '1996-05-20' }
+   *     responses:
+   *       200: { description: 修改成功 }
+   *       400: { description: 日期無效或年齡不在 18 至 120 歲 }
+   *       401: { description: JWT 缺失、無效或已過期 }
+   */
+  router.patch(
+    '/api/auth/birthdate',
+    validateRequestBody(birthdateUpdateDto, { abortEarly: false }),
+    handler.updateBirthdate,
+  )
   return router
 }

@@ -23,4 +23,13 @@ export const registerDto = Joi.object({
   password,
   verificationCode: Joi.string().pattern(/^\d{6}$/).required(),
   birthdate: Joi.date().iso().max('now').required(),
+  gender: Joi.string().valid('male', 'female').required(),
+})
+
+export const genderUpdateDto = Joi.object({
+  gender: Joi.string().valid('male', 'female').required(),
+})
+
+export const birthdateUpdateDto = Joi.object({
+  birthdate: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required(),
 })

@@ -94,7 +94,7 @@ app.use('/api/watchlab', stockRoutes());
 
 import userRoutes from './src/http/user-routes.js';
 import userHandler from "./src/http/user-handler.js";
-import userRepository from './src/repositories/user-repository.js';
+import userRepository, { iniUserRepository } from './src/repositories/user-repository.js';
 import UserService from './src/services/user-service.js';
 
 const userService = new UserService(userRepository);
@@ -106,7 +106,7 @@ import authRoutes from './src/http/auth-routes.js';
 import authHandler from './src/http/auth-handler.js';
 import AuthService from './src/services/auth-service.js';
 
-const authService = new AuthService(userRepository);
+const authService = new AuthService(iniUserRepository);
 app.use('/', authRoutes(authHandler(authService)));
 /*------------------ */;
 import shardApiHandler from "./src/http/share-api-handler.js";
