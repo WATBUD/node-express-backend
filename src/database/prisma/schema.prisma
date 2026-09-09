@@ -24,20 +24,71 @@ model request_logs {
 }
 
 model users {
-  user_id       Int          @id @default(autoincrement())
-  user_account  String       @unique(map: "Account") @db.VarChar(100)
-  username      String       @db.VarChar(50)
-  password_hash String       @db.VarChar(256)
-  email         String?      @db.VarChar(100)
-  phone         String?      @db.VarChar(20)
-  birthdate     DateTime?    @db.Date
-  gender        String       @db.VarChar(6)
-  gender_changed_at DateTime? @db.DateTime(3)
-  created_at    DateTime?    @default(now()) @db.Timestamp(0)
-  updated_at    DateTime?    @default(now()) @db.Timestamp(0)
-  is_banned     Boolean?     @default(false)
-  avatar        String?      @db.VarChar(255)
-  user_stock    user_stock[]
+  user_id           Int                    @id @default(autoincrement())
+  user_account      String                 @unique(map: "Account") @db.VarChar(100)
+  // WatchLab legacy fields remain in this shared client model. INI Dating reads
+  // profile fields from the normalized tables below through its repository.
+  username          String                 @db.VarChar(50)
+  password_hash     String                 @db.VarChar(256)
+  email             String?                @db.VarChar(100)
+  phone             String?                @db.VarChar(20)
+  birthdate         DateTime?              @db.Date
+  gender            String                 @db.VarChar(6)
+  gender_changed_at DateTime?              @db.DateTime(3)
+  avatar            String?                @db.VarChar(255)
+  created_at        DateTime?              @default(now()) @db.Timestamp(0)
+  updated_at        DateTime?              @default(now()) @db.Timestamp(0)
+  is_banned         Boolean?               @default(false)
+  is_test_account   Boolean                @default(false)
+  profile           user_profiles?
+  profile_options   user_profile_options[]
+  custom_options    user_custom_options[]
+  user_stock        user_stock[]
+}
+
+model user_profiles {
+  user_id             Int       @id
+  display_name        String    @db.VarChar(50)
+  birthdate           DateTime? @db.Date
+  gender              String    @db.VarChar(6)
+  gender_changed_at   DateTime? @db.DateTime(3)
+  avatar_id           String?   @db.VarChar(255)
+  location            String?   @db.VarChar(100)
+  headline            String?   @db.VarChar(100)
+  bio                 String?   @db.VarChar(200)
+  zodiac              String?   @db.VarChar(20)
+  relationship        String?   @db.VarChar(30)
+  looking_for         String?   @db.VarChar(30)
+  profile_initialized Boolean   @default(false)
+  created_at          DateTime? @default(now()) @db.Timestamp(0)
+  updated_at          DateTime? @default(now()) @db.Timestamp(0)
+  user                users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+}
+
+model user_profile_options {
+  id          Int      @id @default(autoincrement())
+  user_id     Int
+  option_type String   @db.VarChar(12)
+  option_key  String   @db.VarChar(50)
+  created_at  DateTime @default(now()) @db.Timestamp(0)
+  user        users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@unique([user_id, option_type, option_key])
+  @@index([option_type, option_key])
+}
+
+model user_custom_options {
+  id                Int      @id @default(autoincrement())
+  user_id           Int
+  option_type       String   @db.VarChar(12)
+  value             String   @db.VarChar(20)
+  normalized_value  String   @db.VarChar(20)
+  moderation_status String   @default("approved") @db.VarChar(16)
+  created_at        DateTime @default(now()) @db.Timestamp(0)
+  user              users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@unique([user_id, option_type, normalized_value])
+  @@index([option_type, normalized_value, moderation_status])
 }
 
 model user_stock {
@@ -75,4 +126,3 @@ model stock {
   name       String?   @db.VarChar(50)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
 }
-

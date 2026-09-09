@@ -1,0 +1,12 @@
+ALTER TABLE `users`
+  ADD COLUMN `location` VARCHAR(100) NULL,
+  ADD COLUMN `headline` VARCHAR(100) NULL,
+  ADD COLUMN `bio` VARCHAR(200) NULL,
+  ADD COLUMN `tags` JSON NULL,
+  ADD COLUMN `interests` JSON NULL,
+  ADD COLUMN `custom_tags` JSON NULL,
+  ADD COLUMN `custom_interests` JSON NULL,
+  ADD COLUMN `zodiac` VARCHAR(20) NULL,
+  ADD COLUMN `relationship` VARCHAR(30) NULL,
+  ADD COLUMN `looking_for` VARCHAR(30) NULL,
+  ADD COLUMN `profile_initialized` BOOLEAN NOT NULL DEFAULT FALSE;

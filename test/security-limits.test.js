@@ -14,8 +14,12 @@ describe('Auth abuse protection', () => {
         register: ok,
         login: ok,
         me: ok,
+        publicProfile: ok,
         updateGender: ok,
         updateBirthdate: ok,
+        updateLocation: ok,
+        updateCustomOptions: ok,
+        deleteAccount: ok,
       }),
     )
 

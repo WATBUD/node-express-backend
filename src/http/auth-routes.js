@@ -1,15 +1,24 @@
-import express from 'express'
-import { validateRequestBody } from '../dto/joi-help.js'
-import { birthdateUpdateDto, genderUpdateDto, loginDto, registerDto, verificationRequestDto } from '../dto/auth-request-dto.js'
+import express from "express";
+import { validateRequestBody } from "../dto/joi-help.js";
+import {
+  accountDeleteDto,
+  birthdateUpdateDto,
+  customOptionsUpdateDto,
+  genderUpdateDto,
+  locationUpdateDto,
+  loginDto,
+  registerDto,
+  verificationRequestDto,
+} from "../dto/auth-request-dto.js";
 import {
   loginLimiter,
   registrationLimiter,
   verificationDestinationLimiter,
   verificationIpLimiter,
-} from '../middlewares/security.js'
+} from "../middlewares/security.js";
 
-export default handler => {
-  const router = express.Router()
+export default (handler) => {
+  const router = express.Router();
   /**
    * @swagger
    * /api/auth/verification/request:
@@ -52,12 +61,12 @@ export default handler => {
    *         description: Email 寄送失敗
    */
   router.post(
-    '/api/auth/verification/request',
+    "/api/auth/verification/request",
     verificationIpLimiter,
     verificationDestinationLimiter,
     validateRequestBody(verificationRequestDto, { abortEarly: false }),
     handler.requestVerification,
-  )
+  );
   /**
    * @swagger
    * /api/auth/register:
@@ -98,11 +107,11 @@ export default handler => {
    *         description: 建立帳號次數過多
    */
   router.post(
-    '/api/auth/register',
+    "/api/auth/register",
     registrationLimiter,
     validateRequestBody(registerDto, { abortEarly: false }),
     handler.register,
-  )
+  );
   /**
    * @swagger
    * /api/auth/login:
@@ -135,11 +144,11 @@ export default handler => {
    *         description: 登入失敗次數過多
    */
   router.post(
-    '/api/auth/login',
+    "/api/auth/login",
     loginLimiter,
     validateRequestBody(loginDto, { abortEarly: false }),
     handler.login,
-  )
+  );
   /**
    * @swagger
    * /api/auth/me:
@@ -168,7 +177,8 @@ export default handler => {
    *       401:
    *         description: JWT 缺失、無效或已過期
    */
-  router.get('/api/auth/me', handler.me)
+  router.get("/api/auth/me", handler.me);
+  router.get("/api/profiles/:id", handler.publicProfile);
   /**
    * @swagger
    * /api/auth/gender:
@@ -193,10 +203,10 @@ export default handler => {
    *       429: { description: 距離上次修改尚未滿 30 天 }
    */
   router.patch(
-    '/api/auth/gender',
+    "/api/auth/gender",
     validateRequestBody(genderUpdateDto, { abortEarly: false }),
     handler.updateGender,
-  )
+  );
   /**
    * @swagger
    * /api/auth/birthdate:
@@ -220,9 +230,76 @@ export default handler => {
    *       401: { description: JWT 缺失、無效或已過期 }
    */
   router.patch(
-    '/api/auth/birthdate',
+    "/api/auth/birthdate",
     validateRequestBody(birthdateUpdateDto, { abortEarly: false }),
     handler.updateBirthdate,
-  )
-  return router
-}
+  );
+  router.patch(
+    "/api/auth/location",
+    validateRequestBody(locationUpdateDto, { abortEarly: false }),
+    handler.updateLocation,
+  );
+  /**
+   * @swagger
+   * /api/auth/profile:
+   *   patch:
+   *     tags: [Account]
+   *     summary: 儲存完整個人檔案
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required: [name, image, location, headline, bio, tags, interests, custom_tags, custom_interests, zodiac, relationship, looking_for]
+   *             properties:
+   *               name: { type: string, minLength: 1, maxLength: 20 }
+   *               image: { type: string, description: App 內建角色代號 }
+   *               location: { type: string, maxLength: 100 }
+   *               headline: { type: string, maxLength: 100 }
+   *               bio: { type: string, maxLength: 200 }
+   *               tags: { type: array, maxItems: 5, items: { type: string } }
+   *               interests: { type: array, maxItems: 8, items: { type: string } }
+   *               custom_tags: { type: array, maxItems: 2, items: { type: string, minLength: 2, maxLength: 20 } }
+   *               custom_interests: { type: array, maxItems: 2, items: { type: string, minLength: 2, maxLength: 20 } }
+   *               zodiac: { type: string }
+   *               relationship: { type: string }
+   *               looking_for: { type: string }
+   *     responses:
+   *       200: { description: 儲存成功 }
+   *       400: { description: 自訂內容、數量或格式無效 }
+   *       401: { description: JWT 缺失、無效或已過期 }
+   */
+  router.patch(
+    "/api/auth/profile",
+    validateRequestBody(customOptionsUpdateDto, { abortEarly: false }),
+    handler.updateCustomOptions,
+  );
+  /** @swagger
+   * /api/auth/account:
+   *   delete:
+   *     tags: [Account]
+   *     summary: 驗證目前密碼後永久刪除帳號及其資料
+   *     security: [{ bearerAuth: [] }]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required: [password]
+   *             properties:
+   *               password: { type: string, format: password }
+   *     responses:
+   *       200: { description: 帳號已刪除 }
+   *       401: { description: 密碼錯誤 }
+   */
+  router.delete(
+    "/api/auth/account",
+    validateRequestBody(accountDeleteDto, { abortEarly: false }),
+    handler.deleteAccount,
+  );
+  return router;
+};

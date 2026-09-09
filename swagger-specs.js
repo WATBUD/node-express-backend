@@ -59,7 +59,7 @@ const iniDatingOptions = {
     info: {
       title: 'INI Dating API',
       version: '1.0.0',
-      description: 'INI Dating 專用後端 API 文件。目前包含 Email 驗證碼、帳號註冊、登入及目前使用者資料。',
+      description: 'INI Dating 專用後端 API 文件，包含 Email 驗證、帳號、個人檔案與語音邀請。',
       routePath: '/api/ini-dating',
     },
     components: {
@@ -85,14 +85,25 @@ const iniDatingOptions = {
         AuthSession: {
           type: 'object',
           properties: {
-            token: { type: 'string', description: 'JWT 存取權杖' },
+            accessToken: { type: 'string', description: 'JWT 存取權杖' },
+            user: { type: 'object', additionalProperties: true },
+          },
+        },
+        VoiceInvite: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer' },
+            status: { type: 'string', enum: ['pending', 'approved', 'rejected'] },
+            durationMs: { type: 'integer' },
+            createdAt: { type: 'string', format: 'date-time' },
+            audioPath: { type: 'string' },
             user: { type: 'object', additionalProperties: true },
           },
         },
       },
     },
   },
-  apis: ['./src/http/auth-routes.js'],
+  apis: ['./src/http/auth-routes.js', './src/http/voice-routes.js', './src/http/chat-routes.js'],
 };
 
 const SwaggerSpecs = [

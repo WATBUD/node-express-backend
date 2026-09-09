@@ -8,6 +8,7 @@ import { expressjwt } from 'express-jwt';
 import swaggerSpecs from './swagger-specs.js';
 import requestLogger from './src/middlewares/request-logger.js';
 import { globalLimiter } from './src/middlewares/security.js';
+import { trackIniActivity } from './src/middlewares/ini-activity.js';
 import HttpClientService from "./src/services/http-client-service.js";
 dotenv.config();
 const app = express();
@@ -48,6 +49,11 @@ app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true, limit: '32kb' }));
 app.use(globalLimiter);
 
+// Google Play 與未登入使用者必須能公開查看政策及帳號刪除說明。
+app.use('/ini/legal', express.static('public/ini/legal'));
+app.get('/privacy-policy', (req, res) => res.redirect(302, '/ini/legal/privacy-policy.html'));
+app.get('/delete-account', (req, res) => res.redirect(302, '/ini/legal/delete-account.html'));
+
 
 
 
@@ -77,11 +83,15 @@ app.use(
   '/api/auth/verification/request',
   '/fake-api',
   '/',
+  '/privacy-policy',
+  '/delete-account',
+  /^\/ini\/legal\/.*/,
   '/stock/ingest-daily-prices',   // protected by X-Cron-Secret instead of JWT
 /^\/shared\/.*/] })  // Exclude routes from JWT verification
 );
 
 // Routes
+app.use(['/api/auth', '/api/profiles', '/api/voice', '/api/chat'], trackIniActivity);
 import stockRoutes from './src/http/stock-routes.js';
 //import stockHandler from './src/http/stock-handler.js';
 //import stockRepository from './src/repositories/stock-repository.js';
@@ -109,6 +119,22 @@ import AuthService from './src/services/auth-service.js';
 const authService = new AuthService(iniUserRepository);
 app.use('/', authRoutes(authHandler(authService)));
 /*------------------ */;
+import voiceRoutes from './src/http/voice-routes.js';
+import voiceHandler from './src/http/voice-handler.js';
+import VoiceService from './src/services/voice-service.js';
+import voiceRepository from './src/repositories/voice-repository.js';
+
+const voiceService = new VoiceService(voiceRepository);
+app.use('/api/voice', voiceRoutes(voiceHandler(voiceService)));
+/*------------------ */;
+import chatRoutes from './src/http/chat-routes.js';
+import chatHandler from './src/http/chat-handler.js';
+import ChatService from './src/services/chat-service.js';
+import chatRepository from './src/repositories/chat-repository.js';
+
+const chatService = new ChatService(chatRepository);
+app.use('/api/chat', chatRoutes(chatHandler(chatService)));
+/*------------------ */;
 import shardApiHandler from "./src/http/share-api-handler.js";
 import shareApiRoutes from "./src/http/share-api-routes.js";
 import sharedRepository from './src/repositories/shared-repository.js';
@@ -120,11 +146,15 @@ app.use('/', shareApiRoutes(_sharedHandler));
 app.use(requestLogger(sharedService));
 
 app.use((err, req, res, next) => {
+  if (err?.name === 'MulterError') {
+      const code = err.code === 'LIMIT_FILE_SIZE' ? 'VOICE_FILE_TOO_LARGE' : 'INVALID_VOICE_FILE';
+      return res.status(400).json({ success: false, error: { code, message: code } });
+  }
   if (err.type === 'entity.too.large') {
       return res.status(413).json({ success: false, error: { code: 'PAYLOAD_TOO_LARGE', message: 'The request payload is too large.' } });
   }
   if (err.name === 'UnauthorizedError') {
-      res.status(401).send('');
+      res.status(401).json({ success: false, error: { code: 'UNAUTHORIZED', message: 'UNAUTHORIZED' } });
       // res.status(401).json({
       //     error: {
       //         message: err.message,
