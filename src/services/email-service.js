@@ -10,7 +10,10 @@ export const sendVerificationEmail = async ({ destination, code }) => {
   if (!gmailConfigured()) return false
 
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    requireTLS: true,
     // Avoid leaving the mobile UI waiting indefinitely when the SMTP provider
     // is unreachable. The caller converts this failure into a stable 502 code.
     connectionTimeout: 10_000,
