@@ -22,21 +22,26 @@ export const requestVerification = async (channel, destination) => {
   attempts.set(key, { hash: digest(code), sentAt: Date.now(), expiresAt: Date.now() + CODE_TTL_MS, failures: 0 })
 
   try {
-    if (channel === 'email' && isEmailConfigured()) {
-      await sendVerificationEmail({ destination, code })
-      return {}
+    if (channel === 'email') {
+      if (isEmailConfigured()) {
+        await sendVerificationEmail({ destination, code })
+        return {}
+      }
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error('Email delivery is not configured.')
+      }
     }
   } catch (error) {
     attempts.delete(key)
-    const deliveryError = new Error('驗證信傳送失敗，請稍後再試')
+    const deliveryError = new Error('Verification email delivery failed.')
     deliveryError.statusCode = 502
     deliveryError.code = 'VERIFICATION_DELIVERY_FAILED'
     deliveryError.cause = error
     throw deliveryError
   }
 
-  // 未設定寄信服務時，僅在非正式環境回傳測試碼。
-  return process.env.NODE_ENV === 'production' ? {} : { developmentCode: code }
+  // 僅限非正式環境回傳測試碼；正式環境絕不可假裝寄送成功。
+  return { developmentCode: code }
 }
 
 export const consumeVerification = (channel, destination, code) => {
