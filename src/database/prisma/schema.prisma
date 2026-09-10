@@ -44,6 +44,25 @@ model users {
   profile_options   user_profile_options[]
   custom_options    user_custom_options[]
   user_stock        user_stock[]
+  submitted_reports safety_reports[] @relation("SubmittedSafetyReports")
+  received_reports  safety_reports[] @relation("ReceivedSafetyReports")
+}
+
+model safety_reports {
+  id               Int       @id @default(autoincrement())
+  reporter_user_id Int
+  reported_user_id Int
+  reason_code      String    @db.VarChar(32)
+  note             String?   @db.VarChar(500)
+  status           String    @default("pending") @db.VarChar(20)
+  created_at       DateTime  @default(now()) @db.Timestamp(0)
+  reviewed_at      DateTime? @db.DateTime(0)
+  reporter         users     @relation("SubmittedSafetyReports", fields: [reporter_user_id], references: [user_id], onDelete: Cascade)
+  reported         users     @relation("ReceivedSafetyReports", fields: [reported_user_id], references: [user_id], onDelete: Cascade)
+
+  @@index([reporter_user_id, created_at])
+  @@index([reported_user_id, status, created_at])
+  @@index([reason_code, status, created_at])
 }
 
 model user_profiles {

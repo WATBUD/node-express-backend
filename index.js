@@ -53,6 +53,7 @@ app.use(globalLimiter);
 app.use('/ini/legal', express.static('public/ini/legal'));
 app.get('/privacy-policy', (req, res) => res.redirect(302, '/ini/legal/privacy-policy.html'));
 app.get('/delete-account', (req, res) => res.redirect(302, '/ini/legal/delete-account.html'));
+app.get('/child-safety-standards', (req, res) => res.redirect(302, '/ini/legal/child-safety-standards.html'));
 
 
 
@@ -91,7 +92,7 @@ app.use(
 );
 
 // Routes
-app.use(['/api/auth', '/api/profiles', '/api/voice', '/api/chat'], trackIniActivity);
+app.use(['/api/auth', '/api/profiles', '/api/voice', '/api/chat', '/api/safety'], trackIniActivity);
 import stockRoutes from './src/http/stock-routes.js';
 //import stockHandler from './src/http/stock-handler.js';
 //import stockRepository from './src/repositories/stock-repository.js';
@@ -134,6 +135,13 @@ import chatRepository from './src/repositories/chat-repository.js';
 
 const chatService = new ChatService(chatRepository);
 app.use('/api/chat', chatRoutes(chatHandler(chatService)));
+/*------------------ */;
+import safetyRoutes from './src/http/safety-routes.js';
+import safetyHandler from './src/http/safety-handler.js';
+import SafetyService from './src/services/safety-service.js';
+import safetyRepository from './src/repositories/safety-repository.js';
+
+app.use('/api/safety', safetyRoutes(safetyHandler(new SafetyService(safetyRepository))));
 /*------------------ */;
 import shardApiHandler from "./src/http/share-api-handler.js";
 import shareApiRoutes from "./src/http/share-api-routes.js";

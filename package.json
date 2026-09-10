@@ -20,6 +20,7 @@
     "migrate:ini:discovery-metadata": "node scripts/apply-discovery-metadata-migration.js",
     "migrate:ini:gps-location": "node scripts/apply-gps-location-migration.js",
     "migrate:ini:test-accounts": "node scripts/apply-test-accounts-migration.js",
+    "migrate:ini:safety-reports": "node scripts/apply-safety-reports-migration.js",
     "seed:ini:private-inboxes": "node scripts/seed-private-test-inboxes.js"
   },
   "prisma": {
