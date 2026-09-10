@@ -11,6 +11,11 @@ export const sendVerificationEmail = async ({ destination, code }) => {
 
   const transporter = nodemailer.createTransport({
     service: 'gmail',
+    // Avoid leaving the mobile UI waiting indefinitely when the SMTP provider
+    // is unreachable. The caller converts this failure into a stable 502 code.
+    connectionTimeout: 10_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 15_000,
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_APP_PASSWORD,
