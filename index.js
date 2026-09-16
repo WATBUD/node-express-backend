@@ -1,4 +1,5 @@
 import express from "express";
+import { createServer } from 'node:http';
 import dotenv from 'dotenv';
 //import bodyParser from "body-parser";
 import swaggerUiExpress from 'swagger-ui-express';
@@ -12,6 +13,7 @@ import { trackIniActivity } from './src/middlewares/ini-activity.js';
 import { iniSessionGuard } from './src/middlewares/ini-session.js';
 import HttpClientService from "./src/services/http-client-service.js";
 import { androidReleaseConfig } from './src/config/app-release-config.js';
+import { configureChatSocket } from './src/realtime/chat-socket.js';
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -145,9 +147,14 @@ import chatRoutes from './src/http/chat-routes.js';
 import chatHandler from './src/http/chat-handler.js';
 import ChatService from './src/services/chat-service.js';
 import chatRepository from './src/repositories/chat-repository.js';
+import pushRoutes from './src/http/push-routes.js';
+import PushService from './src/services/push-service.js';
+import pushRepository from './src/repositories/push-repository.js';
 
 const chatService = new ChatService(chatRepository);
 app.use('/api/chat', chatRoutes(chatHandler(chatService)));
+const pushService = new PushService(pushRepository);
+app.use('/api/push', pushRoutes(pushService));
 import textRoutes from './src/http/text-routes.js';
 import TextService from './src/services/text-service.js';
 import textRepository from './src/repositories/text-repository.js';
@@ -198,6 +205,13 @@ app.use((err, req, res, next) => {
 
 
 
-app.listen(PORT, HOST, () => {
+const httpServer = createServer(app);
+configureChatSocket(httpServer, {
+  allowedOrigins,
+  chatService,
+  userRepository: iniUserRepository,
+  onOfflineMessage: event => pushService.sendNewMessage(event),
+});
+httpServer.listen(PORT, HOST, () => {
   console.log(`Server running on port http://localhost:${PORT}`);
 });

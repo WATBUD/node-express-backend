@@ -32,22 +32,28 @@ export default {
 
   async messages(connectionId, limit = 100, afterId) {
     if (afterId !== undefined) return db.$queryRaw`
-      SELECT id, sender_user_id, body, created_at FROM chat_messages
+      SELECT id, sender_user_id, body, client_message_id, created_at FROM chat_messages
       WHERE connection_id = ${numberId(connectionId)} AND deleted_at IS NULL AND id > ${afterId}
       ORDER BY id ASC LIMIT ${limit}`
     return db.$queryRaw`
       SELECT * FROM (
-        SELECT id, sender_user_id, body, created_at FROM chat_messages
+        SELECT id, sender_user_id, body, client_message_id, created_at FROM chat_messages
         WHERE connection_id = ${numberId(connectionId)} AND deleted_at IS NULL
         ORDER BY created_at DESC, id DESC LIMIT ${limit}
       ) latest ORDER BY created_at ASC, id ASC`
   },
 
-  async send(connectionId, senderUserId, body) {
+  async send(connectionId, senderUserId, body, clientMessageId) {
     return db.$transaction(async tx => {
-      await tx.$executeRaw`INSERT INTO chat_messages (connection_id, sender_user_id, body) VALUES (${numberId(connectionId)}, ${numberId(senderUserId)}, ${body})`
+      await tx.$executeRaw`
+        INSERT INTO chat_messages (connection_id, sender_user_id, body, client_message_id)
+        VALUES (${numberId(connectionId)}, ${numberId(senderUserId)}, ${body}, ${clientMessageId || null})
+        ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)`
       const ids = await tx.$queryRaw`SELECT LAST_INSERT_ID() AS id`
-      return { id: numberId(ids[0].id), sender_user_id: numberId(senderUserId), body, created_at: new Date() }
+      const rows = await tx.$queryRaw`
+        SELECT id, sender_user_id, body, client_message_id, created_at
+        FROM chat_messages WHERE id = ${numberId(ids[0].id)} LIMIT 1`
+      return rows[0]
     })
   },
 }

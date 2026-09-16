@@ -25,6 +25,7 @@
     "verify:ini:social": "node scripts/verify-social-backend.js",
     "verify:ini:social:http": "node scripts/verify-social-http.js",
     "migrate:ini:social-safety": "node scripts/apply-social-safety-migration.js",
+    "migrate:ini:chat-realtime": "node scripts/apply-chat-realtime-migration.js",
     "seed:ini:private-inboxes": "node scripts/seed-private-test-inboxes.js"
   },
   "prisma": {
@@ -54,6 +55,7 @@
     "music-metadata": "^11.15.0",
     "nodemailer": "^9.1.0",
     "prisma": "^5.10.2",
+    "socket.io": "^4.8.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0"
   },

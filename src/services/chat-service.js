@@ -5,6 +5,7 @@ const publicMessage = (row, currentUserId) => ({
   mine: Number(row.sender_user_id) === Number(currentUserId),
   text: row.body,
   createdAt: row.created_at,
+  ...(row.client_message_id ? { clientMessageId: row.client_message_id } : {}),
 })
 
 export default class ChatService {
@@ -30,10 +31,12 @@ export default class ChatService {
   }
 
   async send(userId, peerUserId, input) {
-    const body = typeof input === 'string' ? input.trim() : ''
+    const body = (typeof input === 'string' ? input : input?.text || '').trim()
+    const clientMessageId = typeof input === 'object' ? input?.clientMessageId : undefined
     if (!body || Array.from(body).length > 1000) throw fail('INVALID_CHAT_MESSAGE', 400)
+    if (clientMessageId !== undefined && !/^[A-Za-z0-9._:-]{8,64}$/.test(clientMessageId)) throw fail('INVALID_CLIENT_MESSAGE_ID', 400)
     const connection = await this.repository.connection(userId, peerUserId)
     if (!connection) throw fail('CHAT_CONNECTION_REQUIRED', 403)
-    return publicMessage(await this.repository.send(connection.id, userId, body), userId)
+    return publicMessage(await this.repository.send(connection.id, userId, body, clientMessageId), userId)
   }
 }

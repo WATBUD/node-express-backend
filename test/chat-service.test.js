@@ -33,4 +33,18 @@ describe('ChatService', () => {
     expect(stored).to.deep.equal([{ connectionId: 9, senderId: 1, body: 'hello' }])
     expect(result).to.include({ id: '4', mine: true, text: 'hello' })
   })
+
+  it('preserves a validated client id so Socket and HTTP retries are idempotent', async () => {
+    const calls = []
+    const service = new ChatService({
+      connection: async () => ({ id: 9 }),
+      send: async (...args) => {
+        calls.push(args)
+        return { id: 5n, sender_user_id: 1, body: 'hello', client_message_id: args[3], created_at: new Date() }
+      },
+    })
+    const result = await service.send(1, 2, { text: ' hello ', clientMessageId: 'client-msg-123' })
+    expect(calls).to.deep.equal([[9, 1, 'hello', 'client-msg-123']])
+    expect(result.clientMessageId).to.equal('client-msg-123')
+  })
 })
