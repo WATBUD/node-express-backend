@@ -1,14 +1,41 @@
-import express from 'express'
-import { rateLimit } from 'express-rate-limit'
+import express from "express";
+import { rateLimit } from "express-rate-limit";
 
 const messageLimiter = rateLimit({
-  windowMs: 60 * 1000, limit: 60, standardHeaders: 'draft-8', legacyHeaders: false,
-  keyGenerator: req => String(req.user.user_id),
-  handler: (_req, res) => res.status(429).json({ success: false, error: { code: 'CHAT_RATE_LIMITED', message: 'CHAT_RATE_LIMITED' } }),
-})
+  windowMs: 60 * 1000,
+  limit: 60,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  keyGenerator: (req) => String(req.user.user_id),
+  handler: (_req, res) =>
+    res
+      .status(429)
+      .json({
+        success: false,
+        error: { code: "CHAT_RATE_LIMITED", message: "CHAT_RATE_LIMITED" },
+      }),
+});
 
-export default handler => {
-  const router = express.Router()
+const readLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 240,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  keyGenerator: (req) => String(req.user.user_id),
+  handler: (_req, res) =>
+    res
+      .status(429)
+      .json({
+        success: false,
+        error: {
+          code: "CHAT_READ_RATE_LIMITED",
+          message: "CHAT_READ_RATE_LIMITED",
+        },
+      }),
+});
+
+export default (handler) => {
+  const router = express.Router();
   /** @swagger
    * /api/chat/threads:
    *   get:
@@ -18,7 +45,7 @@ export default handler => {
    *     responses:
    *       200: { description: 聊天室清單 }
    */
-  router.get('/threads', handler.threads)
+  router.get("/threads", handler.threads);
   /** @swagger
    * /api/chat/users/{userId}/messages:
    *   get:
@@ -49,7 +76,7 @@ export default handler => {
    *       201: { description: 訊息已儲存 }
    *       403: { description: 尚未成為好友 }
    */
-  router.get('/users/:userId/messages', handler.messages)
-  router.post('/users/:userId/messages', messageLimiter, handler.send)
-  return router
-}
+  router.get("/users/:userId/messages", readLimiter, handler.messages);
+  router.post("/users/:userId/messages", messageLimiter, handler.send);
+  return router;
+};
