@@ -20,6 +20,13 @@ export const configureChatSocket = (httpServer, {
     pingTimeout: 20000,
   })
 
+  chatService.onMessageSent(async ({ senderUserId, recipientUserId, message }) => {
+    io.to(roomFor(senderUserId)).emit('message:new', { peerUserId: recipientUserId, message: { ...message, mine: true } })
+    io.to(roomFor(recipientUserId)).emit('message:new', { peerUserId: senderUserId, message: { ...message, mine: false } })
+    const sockets = await io.in(roomFor(recipientUserId)).fetchSockets()
+    if (sockets.length === 0) await onOfflineMessage({ recipientUserId, senderUserId, message })
+  })
+
   const verifySession = async token => {
     if (!token || !process.env.JWT_SECRET) throw Object.assign(new Error('UNAUTHORIZED'), { code: 'UNAUTHORIZED' })
     const claims = jwt.verify(token, process.env.JWT_SECRET)
@@ -62,12 +69,7 @@ export const configureChatSocket = (httpServer, {
         if (!Number.isSafeInteger(recipientUserId) || recipientUserId <= 0) throw Object.assign(new Error('INVALID_RECIPIENT'), { code: 'INVALID_RECIPIENT', statusCode: 400 })
 
         const message = await chatService.send(userId, recipientUserId, payload)
-        io.to(roomFor(userId)).emit('message:new', { peerUserId: recipientUserId, message: { ...message, mine: true } })
-        io.to(roomFor(recipientUserId)).emit('message:new', { peerUserId: userId, message: { ...message, mine: false } })
         acknowledge({ ok: true, message })
-
-        const sockets = await io.in(roomFor(recipientUserId)).fetchSockets()
-        if (sockets.length === 0) void onOfflineMessage({ recipientUserId, senderUserId: userId, message }).catch(console.error)
       } catch (error) {
         acknowledge({ ok: false, error: socketError(error) })
       }

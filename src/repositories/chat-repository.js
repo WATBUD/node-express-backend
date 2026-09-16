@@ -45,7 +45,7 @@ export default {
 
   async send(connectionId, senderUserId, body, clientMessageId) {
     return db.$transaction(async tx => {
-      await tx.$executeRaw`
+      const inserted = await tx.$executeRaw`
         INSERT INTO chat_messages (connection_id, sender_user_id, body, client_message_id)
         VALUES (${numberId(connectionId)}, ${numberId(senderUserId)}, ${body}, ${clientMessageId || null})
         ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)`
@@ -53,7 +53,7 @@ export default {
       const rows = await tx.$queryRaw`
         SELECT id, sender_user_id, body, client_message_id, created_at
         FROM chat_messages WHERE id = ${numberId(ids[0].id)} LIMIT 1`
-      return rows[0]
+      return { ...rows[0], _created: Number(inserted) > 0 }
     })
   },
 }

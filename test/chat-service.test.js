@@ -47,4 +47,22 @@ describe('ChatService', () => {
     expect(calls).to.deep.equal([[9, 1, 'hello', 'client-msg-123']])
     expect(result.clientMessageId).to.equal('client-msg-123')
   })
+
+  it('publishes newly stored messages but not idempotent retries', async () => {
+    let created = true
+    const service = new ChatService({
+      connection: async () => ({ id: 9 }),
+      send: async (_connectionId, senderId, body, clientMessageId) => ({
+        id: 6n, sender_user_id: senderId, body, client_message_id: clientMessageId,
+        created_at: new Date(), _created: created,
+      }),
+    })
+    const events = []
+    service.onMessageSent(event => events.push(event))
+    await service.send(1, 2, { text: 'hello', clientMessageId: 'client-msg-456' })
+    created = false
+    await service.send(1, 2, { text: 'hello', clientMessageId: 'client-msg-456' })
+    expect(events).to.have.length(1)
+    expect(events[0]).to.include({ senderUserId: 1, recipientUserId: 2 })
+  })
 })

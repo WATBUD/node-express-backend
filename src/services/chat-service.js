@@ -9,7 +9,15 @@ const publicMessage = (row, currentUserId) => ({
 })
 
 export default class ChatService {
-  constructor(repository) { this.repository = repository }
+  constructor(repository) {
+    this.repository = repository
+    this.messageListeners = new Set()
+  }
+
+  onMessageSent(listener) {
+    this.messageListeners.add(listener)
+    return () => this.messageListeners.delete(listener)
+  }
 
   async threads(userId) {
     return (await this.repository.threads(userId)).map(row => ({
@@ -37,6 +45,12 @@ export default class ChatService {
     if (clientMessageId !== undefined && !/^[A-Za-z0-9._:-]{8,64}$/.test(clientMessageId)) throw fail('INVALID_CLIENT_MESSAGE_ID', 400)
     const connection = await this.repository.connection(userId, peerUserId)
     if (!connection) throw fail('CHAT_CONNECTION_REQUIRED', 403)
-    return publicMessage(await this.repository.send(connection.id, userId, body, clientMessageId), userId)
+    const stored = await this.repository.send(connection.id, userId, body, clientMessageId)
+    const message = publicMessage(stored, userId)
+    if (stored._created !== false) {
+      const event = { senderUserId: Number(userId), recipientUserId: Number(peerUserId), message }
+      for (const listener of this.messageListeners) void Promise.resolve(listener(event)).catch(console.error)
+    }
+    return message
   }
 }
