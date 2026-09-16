@@ -35,7 +35,8 @@ export const configureChatSocket = (httpServer, {
       socket.data.userId = await verifySession(socket.handshake.auth?.token)
       next()
     } catch (error) {
-      next(Object.assign(new Error(error.code || 'UNAUTHORIZED'), { data: socketError(error) }))
+      const code = error.code === 'SESSION_REVOKED' ? 'SESSION_REVOKED' : 'UNAUTHORIZED'
+      next(Object.assign(new Error(code), { data: { code, message: code } }))
     }
   })
 
