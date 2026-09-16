@@ -1,5 +1,8 @@
 
 .env
+# Firebase Admin service-account private keys (local backend only)
+firebase-service-account*.json
+service-account*.json
 # Logs
 logs
 *.log
