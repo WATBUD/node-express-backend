@@ -52,14 +52,19 @@ export default class PushService {
     const projectId = process.env.FCM_PROJECT_ID || credentials?.project_id
     if (!credentials?.client_email || !credentials?.private_key || !projectId) return { skipped: 'FCM_NOT_CONFIGURED' }
     const accessToken = await this.accessToken(credentials)
-    const devices = await this.repository.tokens(recipientUserId)
+    const [devices, rawSenderName] = await Promise.all([
+      this.repository.tokens(recipientUserId),
+      this.repository.displayName(senderUserId),
+    ])
+    const senderName = String(rawSenderName || '').trim()
+    const title = senderName ? `${senderName} 傳來新訊息` : 'INI Dating'
     await Promise.allSettled(devices.map(async device => {
       const response = await this.fetch(`https://fcm.googleapis.com/v1/projects/${encodeURIComponent(projectId)}/messages:send`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: {
           token: device.token,
-          notification: { title: 'INI Dating', body: '你有一則新訊息' },
+          notification: { title, body: '你有一則新訊息' },
           data: { type: 'chat', senderUserId: String(senderUserId) },
           android: { priority: 'high', notification: { channel_id: 'messages' } },
         } }),

@@ -16,6 +16,14 @@ export default {
   async tokens(userId) {
     return db.$queryRaw`SELECT token FROM push_devices WHERE user_id=${Number(userId)}`
   },
+  async displayName(userId) {
+    const rows = await db.$queryRaw`
+      SELECT display_name
+      FROM user_profiles
+      WHERE user_id=${Number(userId)}
+      LIMIT 1`
+    return rows[0]?.display_name || null
+  },
   async removeToken(token) {
     await db.$executeRaw`DELETE FROM push_devices WHERE token=${token}`
   },
