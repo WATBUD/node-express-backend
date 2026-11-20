@@ -106,10 +106,52 @@ const iniDatingOptions = {
   apis: ['./src/http/auth-routes.js', './src/http/voice-routes.js', './src/http/chat-routes.js'],
 };
 
+const survivalEquationOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Survival Equation API',
+      version: '1.0.0',
+      description: 'Survival Equation（生存方程）遊戲專用帳號 API。使用獨立 Database（survival_equation），權杖 audience 為 survival-equation，不可用於其他服務。',
+      routePath: '/api/survival-equation/docs',
+    },
+    servers: [{ url: '/api/survival-equation', description: 'Survival Equation API' }],
+    components: {
+      securitySchemes: { bearerAuth: securitySchemes },
+      schemas: {
+        SurvivalAuthSession: {
+          type: 'object',
+          properties: {
+            success: { type: 'boolean', example: true },
+            data: {
+              type: 'object',
+              properties: {
+                accessToken: { type: 'string', description: 'JWT（audience: survival-equation，7 天有效）' },
+                user: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'integer', example: 1 },
+                    account: { type: 'string', example: 'survivor_01' },
+                    nickname: { type: 'string', example: '漂流者' },
+                    createdAt: { type: 'string', format: 'date-time' },
+                    lastLoginAt: { type: 'string', format: 'date-time', nullable: true },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  apis: ['./src/http/survival-auth-routes.js'],
+};
+
 const SwaggerSpecs = [
   swaggerJsdoc(watchlabOptions),
   swaggerJsdoc(options2),
-  swaggerJsdoc(iniDatingOptions)
+  swaggerJsdoc(iniDatingOptions),
+  swaggerJsdoc(survivalEquationOptions)
 ];
 
 export default SwaggerSpecs;

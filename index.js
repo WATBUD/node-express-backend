@@ -95,6 +95,8 @@ app.use(
   '/api/auth/verification/request',
   '/api/auth/password-reset/request',
   '/api/auth/password-reset/confirm',
+  '/api/survival-equation/auth/register',
+  '/api/survival-equation/auth/login',
   '/api/app-config/android',
   '/fake-api',
   '/',
@@ -134,6 +136,14 @@ import AuthService from './src/services/auth-service.js';
 
 const authService = new AuthService(iniUserRepository);
 app.use('/', authRoutes(authHandler(authService)));
+/*------------------ */;
+// Survival Equation（生存方程）：獨立帳號系統與 Database（survival_equation）
+import survivalAuthRoutes from './src/http/survival-auth-routes.js';
+import survivalAuthHandler from './src/http/survival-auth-handler.js';
+import SurvivalAuthService from './src/services/survival-auth-service.js';
+import { survivalUserRepository } from './src/repositories/survival-user-repository.js';
+
+app.use('/', survivalAuthRoutes(survivalAuthHandler(new SurvivalAuthService(survivalUserRepository()))));
 /*------------------ */;
 import voiceRoutes from './src/http/voice-routes.js';
 import voiceHandler from './src/http/voice-handler.js';
