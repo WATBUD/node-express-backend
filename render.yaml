@@ -18,7 +18,7 @@ services:
     runtime: node
     plan: free
     region: singapore
-    branch: Development   # 主線分支；Render 端也要把 service 追蹤分支設為 Development
+    branch: Production   # 正式服務追蹤 Production；Development 通過驗證後再合併上線
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /

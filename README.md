@@ -36,3 +36,7 @@ npm run prisma:push
 npm test
 npm start
 ```
+
+## Survival Equation
+
+遊戲《Survival Equation／生存方程》的獨立帳號 API（`/api/survival-equation/auth/*`）與獨立 Database `survival_equation`。說明與部署步驟見 `docs/DATABASE-SEPARATION.md`，Swagger 文件位於 `/api/survival-equation/docs`。

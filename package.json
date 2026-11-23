@@ -26,7 +26,9 @@
     "verify:ini:social:http": "node scripts/verify-social-http.js",
     "migrate:ini:social-safety": "node scripts/apply-social-safety-migration.js",
     "migrate:ini:chat-realtime": "node scripts/apply-chat-realtime-migration.js",
-    "seed:ini:private-inboxes": "node scripts/seed-private-test-inboxes.js"
+    "seed:ini:private-inboxes": "node scripts/seed-private-test-inboxes.js",
+    "migrate:survival-equation": "node scripts/apply-survival-equation-migration.js",
+    "verify:survival-auth": "node scripts/verify-survival-auth.js"
   },
   "prisma": {
     "schema": "src/database/prisma/schema.prisma"
