@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 //import bodyParser from "body-parser";
 import swaggerUiExpress from 'swagger-ui-express';
 import cors from 'cors';
+import { buildCorsOptions } from './src/config/cors-config.js';
 import helmet from 'helmet';
 import { expressjwt } from 'express-jwt';
 import swaggerSpecs from './swagger-specs.js';
@@ -25,25 +26,7 @@ if (trustProxyHops > 0) app.set('trust proxy', trustProxyHops);
 
 // CORS 白名單：預設值 + 環境變數 CORS_ORIGINS（逗號分隔）擴充，
 // 上線時在 Render 設定 CORS_ORIGINS 即可加入前端網址，不必改 code。
-const defaultOrigins = [
-  'http://localhost:3000',
-  'http://localhost:8080',
-  'http://localhost:8081',
-  'http://localhost:8082',
-  'https://nextshadcn14.vercel.app',
-  'https://watchlab-lovat.vercel.app',
-];
-const envOrigins = (process.env.CORS_ORIGINS || '')
-  .split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-const allowedOrigins = [...new Set([...defaultOrigins, ...envOrigins])];
-
-const corsOptions = {
-  origin: allowedOrigins,
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept-Language'],
-};
+const corsOptions = buildCorsOptions();
 
 app.disable('x-powered-by');
 // Swagger UI 需要行內樣式與腳本，因此保留其他安全標頭但不啟用預設 CSP。
